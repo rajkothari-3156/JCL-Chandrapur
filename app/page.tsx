@@ -32,11 +32,11 @@ export default function Home() {
       Papa.parse(csvText, {
         header: true,
         skipEmptyLines: true,
-        complete: (results) => {
+        complete: (results: any) => {
           setData(results.data)
           setLoading(false)
         },
-        error: (error) => {
+        error: (error: any) => {
           console.error('Error parsing CSV:', error)
           setLoading(false)
         }
