@@ -1,0 +1,83 @@
+player_id,name,team_id,team_name,total_match,innings,total_wickets,balls,highest_wicket,economy,SR,maidens,avg,runs,bowling_style,overs,dot_balls
+14855845,Adi Doshi,8474847,Gladiators Cricket Club,3,3,5,24,3,6.00,4.80,0,4.8,24,Right-arm fast,4.0,12
+35016227,Khush Chopda,8474843,Falcon Giants,5,4,4,30,2,7.20,7.50,0,9,36,-,5.0,18
+19537796,A Puglia,8474843,Falcon Giants,5,5,4,48,2,7.38,12.00,0,14.75,59,Right-arm medium,8.0,22
+24510507,Ankush Jain,8474846,Toxic 11,3,3,4,36,2,9.67,9.00,0,14.5,58,-,6.0,16
+25738533,Rajiv Khajanchi,8474845,Power Hitters,5,5,3,54,2,7.44,18.00,0,22.33,67,Right-arm medium,9.0,24
+19526990,Manav Banthia,8474843,Falcon Giants,5,5,3,54,2,7.56,18.00,1,22.67,68,Left-arm medium,9.0,26
+19507137,Shashank Sanjay Jain,8474849,Parshav Panthers,4,4,3,48,2,8.62,16.00,0,23,69,Right-arm Leg Break,8.0,22
+19519967,Mayur Bhandari,8474844,Chandralok Warriors,3,3,3,36,2,8.83,12.00,0,17.67,53,Right-arm medium,6.0,18
+19502632,Harsh Baid,8474843,Falcon Giants,5,5,3,30,2,10.00,10.00,0,16.67,50,Right-arm fast,5.0,13
+25743254,Adish Banthia,8474845,Power Hitters,5,5,3,48,2,10.88,16.00,0,29,87,Right-arm medium,8.0,18
+19513925,Rahul Kothari,8474848,SR Rangers,4,4,3,22,1,11.45,7.33,0,14,42,Right-arm medium,3.4,10
+9877497,Dr Yashkumar Jain,8474846,Toxic 11,3,3,2,16,2,6.00,8.00,0,8,16,Right-arm medium,2.4,7
+19468485,Palash Singhvi,8474848,SR Rangers,4,4,2,36,1,6.50,18.00,0,19.5,39,None,6.0,20
+19519957,Shanti Dugad,8474845,Power Hitters,5,5,2,42,1,8.57,21.00,0,30,60,Right-arm fast,7.0,22
+24510219,Siddarth Jain,8474849,Parshav Panthers,4,4,2,48,2,8.62,24.00,0,34.5,69,-,8.0,16
+19500771,Pratik Kothari,8474846,Toxic 11,3,3,2,30,1,10.40,15.00,0,26,52,Right-arm medium,5.0,14
+19500636,Aniket Lunawat,8474848,SR Rangers,4,4,2,42,1,10.71,21.00,0,37.5,75,Right-arm medium,7.0,12
+19529463,Sajan Jain,8474848,SR Rangers,4,3,2,18,1,13.00,9.00,0,19.5,39,Right-arm medium,3.0,5
+19513542,Aalekh Gandhi,8474848,SR Rangers,4,4,2,22,1,14.18,11.00,0,26,52,Right-arm medium,3.4,8
+25730976,Aadesh Kothari,8474842,KT Lions,3,3,1,24,1,6.50,24.00,0,26,26,-,4.0,14
+19500313,Madhur Pugliya,8474844,Chandralok Warriors,3,3,1,36,1,6.83,36.00,0,41,41,Right-arm medium,6.0,17
+19519973,Sushil Puglia,8474845,Power Hitters,5,5,1,36,1,8.00,36.00,0,48,48,Right-arm medium,6.0,15
+19501201,Jay Baid,8474846,Toxic 11,3,3,1,18,1,8.67,18.00,0,26,26,Right-arm medium,3.0,9
+19529455,Pranay Puglia,8474847,Gladiators Cricket Club,3,2,1,12,1,9.00,12.00,0,18,18,Right-arm fast,2.0,3
+4672124,Dhawal Pankaj Jain,8474849,Parshav Panthers,4,4,1,24,1,9.50,24.00,0,38,38,Right-arm Off Break,4.0,9
+4178393,Rushabh Puglia,8474843,Falcon Giants,3,3,1,36,1,10.17,36.00,0,61,61,Right-arm medium,6.0,10
+19524579,Chetan Zambad,8474846,Toxic 11,3,3,1,24,1,10.25,24.00,0,41,41,Left-arm fast,4.0,11
+19505004,Siddarth Chopda,8474843,Falcon Giants,5,4,1,24,1,10.25,24.00,0,41,41,-,4.0,10
+19537792,Sidhu Puglia,8474847,Gladiators Cricket Club,3,3,1,24,1,10.75,24.00,0,43,43,Right-arm fast,4.0,12
+19500206,Aayush Nilesh Puglia,8474845,Power Hitters,5,4,1,30,1,12.60,30.00,0,63,63,Right-arm Leg Break,5.0,8
+18368798,Aditya Jogad,8474844,Chandralok Warriors,3,3,1,18,1,12.67,18.00,0,38,38,Right-arm medium,3.0,6
+19500483,Namanchandulal Bohra,8474842,KT Lions,3,1,1,6,1,13.00,6.00,0,13,13,Right-arm Leg Break,1.0,4
+19520051,Hemantraj Singhvi,8474842,KT Lions,3,1,1,6,1,13.00,6.00,0,13,13,Right-arm Off Break,1.0,4
+22431815,Raj Kothari,8474844,Chandralok Warriors,3,3,1,18,1,14.00,18.00,0,42,42,-,3.0,6
+1649800,Akash Surana,8474845,Power Hitters,5,2,1,10,1,15.00,10.00,0,25,25,Right-arm Off Break,1.4,4
+19514122,Nilesh Banwat,8474846,Toxic 11,3,2,1,12,1,16.00,12.00,0,32,32,None,2.0,5
+34995022,Ankit P Jain,8474844,Chandralok Warriors,3,3,1,13,1,18.00,13.00,0,39,39,-,2.1,2
+19501074,Mohit Modi,8474845,Power Hitters,5,1,1,6,1,23.00,6.00,0,23,23,Right-arm fast,1.0,2
+30093714,Yash,8474843,Falcon Giants,5,2,0,6,0,4.00,0.00,0,0,4,Right-arm fast,1.0,2
+18468424,Nirav Bohra,8474842,KT Lions,3,3,0,30,0,5.00,0.00,0,0,25,Right-arm Off Break,5.0,19
+1740460,Pankaj Mutha,8474842,KT Lions,3,2,0,12,0,6.00,0.00,0,0,12,Slow left-arm chinaman,2.0,6
+19502485,Anand Talera,8474847,Gladiators Cricket Club,3,1,0,12,0,8.00,0.00,0,0,16,Right-arm medium,2.0,7
+23693726,Mahavir Khajanchi,8474844,Chandralok Warriors,3,3,0,18,0,8.67,0.00,0,0,26,-,3.0,9
+34990518,Yash Singhvi,8474845,Power Hitters,5,2,0,18,0,9.00,0.00,0,0,27,-,3.0,6
+19500741,Piyush Dugad,8474842,KT Lions,3,3,0,16,0,10.12,0.00,0,0,27,Right-arm fast,2.4,5
+19519863,Saurabh Jain,8474849,Parshav Panthers,4,4,0,24,0,10.25,0.00,0,0,41,Right-arm Leg Break,4.0,8
+19500407,Ojas Pugliya,8474847,Gladiators Cricket Club,3,3,0,24,0,11.00,0.00,0,0,44,Right-arm medium,4.0,8
+19537791,Rishab Saklecha,8474848,SR Rangers,2,2,0,12,0,11.00,0.00,0,0,22,Right-arm medium,2.0,5
+34554511,Varun Jain,8474849,Parshav Panthers,4,4,0,20,0,11.40,0.00,0,0,38,-,3.2,3
+19506123,Ansh Tushar Doshi,8474848,SR Rangers,4,3,0,18,0,12.00,0.00,0,0,36,Right-arm Off Break,3.0,6
+17150580,Pratham Dugad,8474848,SR Rangers,2,2,0,18,0,12.67,0.00,0,0,38,-,3.0,7
+19501771,Tejas Rajesh Jain,8474847,Gladiators Cricket Club,2,2,0,12,0,13.00,0.00,0,0,26,Right-arm medium,2.0,5
+19520050,Gautam Bhandari,8474847,Gladiators Cricket Club,3,3,0,18,0,13.00,0.00,0,0,39,-,3.0,5
+24510656,Sanskar Jain,8474849,Parshav Panthers,4,4,0,24,0,13.00,0.00,0,0,52,-,4.0,8
+19503230,Chetan Nandkishor Munot,8474847,Gladiators Cricket Club,3,3,0,18,0,14.33,0.00,0,0,43,Right-arm medium,3.0,4
+19500516,Shreyans Kothari,8474843,Falcon Giants,5,3,0,18,0,14.33,0.00,0,0,43,Right-arm Leg Break,3.0,5
+19503043,Hiten Khatod,8474842,KT Lions,3,2,0,10,0,15.60,0.00,0,0,26,Right-arm Leg Break,1.4,1
+3551307,Karan Puglia,8474843,Falcon Giants,5,1,0,6,0,17.00,0.00,0,0,17,Right-arm medium,1.0,2
+34997069,Rahul Khatod,8474846,Toxic 11,3,1,0,6,0,37.00,0.00,0,0,37,Right-arm medium,1.0,1
+25739124,Ashish Khajanchi,8474848,SR Rangers,1,0,,,,0.00,0.00,0,0,0,-,0.0,0
+19502819,Ajay Kothari,8474847,Gladiators Cricket Club,1,0,,,,0.00,0.00,0,0,0,-,0.0,0
+19503423,Vansh Shaha,8474843,Falcon Giants,2,0,,,,0.00,0.00,0,0,0,Right-arm medium,0.0,0
+34994708,Suyash Kothari,8474844,Chandralok Warriors,1,0,,,,0.00,0.00,0,0,0,-,0.0,0
+34993729,Rahul Gandhi,8474846,Toxic 11,2,0,,,,0.00,0.00,0,0,0,-,0.0,0
+19508120,Tanish Rajesh Chordiya,8474842,KT Lions,2,0,,,,0.00,0.00,0,0,0,-,0.0,0
+19502387,Harsh Daga,8474844,Chandralok Warriors,1,0,,,,0.00,0.00,0,0,0,-,0.0,0
+34554343,Rishabh Jain,8474849,Parshav Panthers,4,0,,,,0.00,0.00,0,0,0,-,0.0,0
+6439642,Tarun Jain,8474846,Toxic 11,3,0,,,,0.00,0.00,0,0,0,-,0.0,0
+25756680,Nirmal Bhandari,8474844,Chandralok Warriors,3,0,,,,0.00,0.00,0,0,0,-,0.0,0
+25749964,Priyanshu Khajanchi,8474844,Chandralok Warriors,3,0,,,,0.00,0.00,0,0,0,Right-arm medium,0.0,0
+2065452,Dr Pranay Gandhi,8474845,Power Hitters,5,0,,,,0.00,0.00,0,0,0,Right-arm fast,0.0,0
+4136380,Sandip Jain,8474847,Gladiators Cricket Club,3,0,,,,0.00,0.00,0,0,0,Right-arm medium,0.0,0
+19500479,Narendra Bohra,8474842,KT Lions,1,0,,,,0.00,0.00,0,0,0,-,0.0,0
+25729700,Harsh R Chordia,8474846,Toxic 11,1,0,,,,0.00,0.00,0,0,0,-,0.0,0
+24510924,Shubham Jain,8474849,Parshav Panthers,2,0,,,,0.00,0.00,0,0,0,-,0.0,0
+24510923,Ashwin Jain,8474848,SR Rangers,4,0,,,,0.00,0.00,0,0,0,-,0.0,0
+19502345,Chirayuraj Singhvi,8474842,KT Lions,3,0,,,,0.00,0.00,0,0,0,-,0.0,0
+24510510,Aditya Jain,8474849,Parshav Panthers,1,0,,,,0.00,0.00,0,0,0,-,0.0,0
+3551413,Bunty Jain,8474849,Parshav Panthers,4,0,,,,0.00,0.00,0,0,0,Right-arm medium,0.0,0
+3568650,Vivek Jain,8474849,Parshav Panthers,2,0,,,,0.00,0.00,0,0,0,-,0.0,0
+19501490,Sumit P Lunawat,8474848,SR Rangers,3,0,,,,0.00,0.00,0,0,0,-,0.0,0
+19524649,Piyush Jain,8474844,Chandralok Warriors,1,0,,,,0.00,0.00,0,0,0,Right-arm fast,0.0,0
