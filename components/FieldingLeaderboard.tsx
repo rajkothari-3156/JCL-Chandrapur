@@ -12,11 +12,12 @@ interface FieldingData {
   total_dismissal: string
 }
 
-export default function FieldingLeaderboard({ data }: { data: FieldingData[] }) {
+export default function FieldingLeaderboard({ data, search }: { data: FieldingData[]; search?: string }) {
+  const term = (search || '').trim().toLowerCase()
   const sortedData = data
     .filter(player => parseInt(player.total_dismissal) > 0)
+    .filter(player => (term ? player.name.toLowerCase().includes(term) : true))
     .sort((a, b) => parseInt(b.total_dismissal) - parseInt(a.total_dismissal))
-    .slice(0, 20)
 
   return (
     <div className="overflow-x-auto">

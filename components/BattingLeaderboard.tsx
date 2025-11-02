@@ -16,12 +16,13 @@ interface BattingData {
   '100s': string
 }
 
-export default function BattingLeaderboard({ data }: { data: BattingData[] }) {
-  // Filter out players with 0 runs and sort by total runs
+export default function BattingLeaderboard({ data, search }: { data: BattingData[]; search?: string }) {
+  const term = (search || '').trim().toLowerCase()
+  // Filter by search, keep players with >0 runs, sort by runs (desc)
   const sortedData = data
-    .filter(player => parseInt(player.total_runs) > 0)
+    .filter(p => parseInt(p.total_runs) > 0)
+    .filter(p => (term ? p.name.toLowerCase().includes(term) : true))
     .sort((a, b) => parseInt(b.total_runs) - parseInt(a.total_runs))
-    .slice(0, 20)
 
   return (
     <div className="overflow-x-auto">

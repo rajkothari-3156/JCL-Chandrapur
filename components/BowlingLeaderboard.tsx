@@ -16,11 +16,12 @@ interface BowlingData {
   maidens: string
 }
 
-export default function BowlingLeaderboard({ data }: { data: BowlingData[] }) {
+export default function BowlingLeaderboard({ data, search }: { data: BowlingData[]; search?: string }) {
+  const term = (search || '').trim().toLowerCase()
   const sortedData = data
     .filter(player => parseInt(player.total_wickets) > 0)
+    .filter(player => (term ? player.name.toLowerCase().includes(term) : true))
     .sort((a, b) => parseInt(b.total_wickets) - parseInt(a.total_wickets))
-    .slice(0, 20)
 
   return (
     <div className="overflow-x-auto">

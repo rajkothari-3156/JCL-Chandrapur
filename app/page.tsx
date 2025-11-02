@@ -15,6 +15,7 @@ export default function Home() {
   const [category, setCategory] = useState<LeaderboardType>('batting')
   const [data, setData] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState('')
 
   useEffect(() => {
     loadData()
@@ -110,6 +111,17 @@ export default function Home() {
           })}
         </div>
 
+        {/* Search */}
+        <div className="mb-6">
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search player by name..."
+            className="w-full md:w-1/2 px-4 py-3 rounded-lg outline-none border border-white/40 bg-white/90 focus:border-cricket-green shadow"
+          />
+        </div>
+
         {/* Leaderboard Content */}
         <div className="card">
           {loading ? (
@@ -119,10 +131,10 @@ export default function Home() {
             </div>
           ) : (
             <>
-              {category === 'batting' && <BattingLeaderboard data={data} />}
-              {category === 'bowling' && <BowlingLeaderboard data={data} />}
-              {category === 'fielding' && <FieldingLeaderboard data={data} />}
-              {category === 'mvp' && <MVPLeaderboard data={data} />}
+              {category === 'batting' && <BattingLeaderboard data={data} search={search} />}
+              {category === 'bowling' && <BowlingLeaderboard data={data} search={search} />}
+              {category === 'fielding' && <FieldingLeaderboard data={data} search={search} />}
+              {category === 'mvp' && <MVPLeaderboard data={data} search={search} />}
             </>
           )}
         </div>

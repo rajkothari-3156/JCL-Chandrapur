@@ -11,11 +11,12 @@ interface MVPData {
   'Total': string
 }
 
-export default function MVPLeaderboard({ data }: { data: MVPData[] }) {
+export default function MVPLeaderboard({ data, search }: { data: MVPData[]; search?: string }) {
+  const term = (search || '').trim().toLowerCase()
   const sortedData = data
     .filter(player => parseFloat(player.Total) > 0)
+    .filter(player => (term ? player['Player Name'].toLowerCase().includes(term) : true))
     .sort((a, b) => parseFloat(b.Total) - parseFloat(a.Total))
-    .slice(0, 20)
 
   return (
     <div className="overflow-x-auto">
