@@ -1,0 +1,446 @@
+{
+  "source_2024": "840910_fielding_leaderboard.csv",
+  "source_2023": "1243558_fielding_leaderboard.csv",
+  "jcl_2024_to_2023": {
+    "Nirav Bohra": [
+      "Nirav Bohra"
+    ],
+    "Madhur Pugliya": [
+      "Madhur Pugliya"
+    ],
+    "Akash Surana": [
+      "Akash Surana"
+    ],
+    "Adish Banthia": [
+      "Adish Banthia"
+    ],
+    "Sandip Jain": [
+      "Sandip Jain"
+    ],
+    "Anand Talera": [
+      "Anand Talera"
+    ],
+    "Sajan Jain": [
+      "Sajan Jain"
+    ],
+    "Ashwin Jain": [
+      "Ashwin Jain"
+    ],
+    "Nilesh Banwat": [
+      "Nilesh Banwat"
+    ],
+    "Bunty Jain": [
+      "Bunty Jain"
+    ],
+    "Sidhu Puglia": [
+      "Sidhu Puglia"
+    ],
+    "Nirmal Bhandari": [
+      "Nirmal Bhandari"
+    ],
+    "Dr Yashkumar Jain": [
+      "Dr Yashkumar Jain"
+    ],
+    "Gautam Bhandari": [
+      "Gautam Bhandari"
+    ],
+    "Adi Doshi": [
+      "Adi Doshi"
+    ],
+    "Pratham Dugad": [
+      "Pratham Dugad"
+    ],
+    "Shreyans Kothari": [
+      "Shreyans Kothari"
+    ],
+    "Aniket Lunawat": [
+      "Aniket Lunawat"
+    ],
+    "Pratik Kothari": [
+      "Pratik Kothari"
+    ],
+    "Shanti Dugad": [
+      "Shanti Dugad"
+    ],
+    "Pranay Puglia": [
+      "Pranay Puglia"
+    ],
+    "Pankaj Mutha": [
+      "Pankaj Mutha"
+    ],
+    "Jay Baid": [
+      "Jay Baid"
+    ],
+    "Tanish Rajesh Chordiya": [
+      "Tanish Rajesh Chordiya"
+    ],
+    "Ankush Jain": [
+      "Ankush Jain"
+    ],
+    "Narendra Bohra": [
+      "Narendra Bohra"
+    ],
+    "Namanchandulal Bohra": [
+      "Namanchandulal Bohra"
+    ],
+    "Siddarth Jain": [
+      "Siddarth Jain"
+    ],
+    "Rushabh Puglia": [
+      "Rushabh Puglia"
+    ],
+    "A Puglia": [
+      "A Puglia"
+    ],
+    "Sumit P Lunawat": [
+      "Sumit P Lunawat"
+    ],
+    "Vansh shaha": [
+      "Vansh Shaha"
+    ],
+    "Rahul Kothari": [
+      "Rahul Kothari"
+    ],
+    "Aayush Nilesh Puglia": [
+      "Aayush Nilesh Puglia"
+    ],
+    "Tejas Rajesh Jain": [
+      "Tejas Rajesh Jain"
+    ],
+    "Harsh Daga": [
+      "Harsh Daga"
+    ],
+    "Hiten Khatod": [
+      "Hiten Khatod"
+    ],
+    "Chetan Nandkishor Munot": [
+      "Chetan Nandkishor Munot"
+    ],
+    "Ansh Tushar Doshi": [
+      "Ansh Tushar Doshi"
+    ],
+    "Piyush Jain": [
+      "Piyush Jain"
+    ],
+    "Harsh R Chordia": [
+      "Harsh R Chordia"
+    ],
+    "Aadesh Kothari": [
+      "Aadesh Kothari"
+    ],
+    "Rajiv Khajanchi": [
+      "Rajiv Khajanchi"
+    ],
+    "Ashish Khajanchi": [
+      "Ashish Khajanchi"
+    ],
+    "Priyanshu Khajanchi": [
+      "Priyanshu Khajanchi"
+    ],
+    "Tarun Jain": [
+      "Tarun Jain"
+    ],
+    "Aditya Jogad": [
+      "Aditya Jogad"
+    ],
+    "Ojas Pugliya": [
+      "Ojas Pugliya"
+    ],
+    "Piyush Dugad": [
+      "Piyush Dugad"
+    ],
+    "Siddarth Chopda": [
+      "Siddarth Chopda"
+    ],
+    "Hemantraj Singhvi": [
+      "Hemantraj Singhvi"
+    ],
+    "Manav Banthia": [
+      "Manav Banthia"
+    ],
+    "Mohit Modi": [
+      "Mohit Modi"
+    ],
+    "Vivek Jain": [
+      "Vivek Jain"
+    ],
+    "Dhawal Pankaj Jain": [
+      "Dhawal Pankaj Jain"
+    ],
+    "Shashank Sanjay Jain": [
+      "Shashank Sanjay Jain"
+    ],
+    "Chetan Zambad": [
+      "Chetan Zambad"
+    ],
+    "Sanskar Jain": [
+      "Sanskar Jain"
+    ],
+    "Saurabh Jain": [
+      "Saurabh Jain"
+    ]
+  },
+  "jcl_2023_to_2024": {
+    "Sajan Jain": [
+      "Sajan Jain"
+    ],
+    "Shreyans Kothari": [
+      "Shreyans Kothari"
+    ],
+    "Jay Baid": [
+      "Jay Baid"
+    ],
+    "Aditya Jogad": [
+      "Aditya Jogad"
+    ],
+    "Ansh Tushar Doshi": [
+      "Ansh Tushar Doshi"
+    ],
+    "Aniket Lunawat": [
+      "Aniket Lunawat"
+    ],
+    "Akash Surana": [
+      "Akash Surana"
+    ],
+    "Mohit Modi": [
+      "Mohit Modi"
+    ],
+    "Nilesh Banwat": [
+      "Nilesh Banwat"
+    ],
+    "Chetan Zambad": [
+      "Chetan Zambad"
+    ],
+    "Sidhu Puglia": [
+      "Sidhu Puglia"
+    ],
+    "Sandip Jain": [
+      "Sandip Jain"
+    ],
+    "Sumit P Lunawat": [
+      "Sumit P Lunawat"
+    ],
+    "A Puglia": [
+      "A Puglia"
+    ],
+    "Rajiv Khajanchi": [
+      "Rajiv Khajanchi"
+    ],
+    "Harsh R Chordia": [
+      "Harsh R Chordia"
+    ],
+    "Priyanshu Khajanchi": [
+      "Priyanshu Khajanchi"
+    ],
+    "Tarun Jain": [
+      "Tarun Jain"
+    ],
+    "Gautam Bhandari": [
+      "Gautam Bhandari"
+    ],
+    "Hemantraj Singhvi": [
+      "Hemantraj Singhvi"
+    ],
+    "Anand Talera": [
+      "Anand Talera"
+    ],
+    "Nirav Bohra": [
+      "Nirav Bohra"
+    ],
+    "Adi Doshi": [
+      "Adi Doshi"
+    ],
+    "Pratik Kothari": [
+      "Pratik Kothari"
+    ],
+    "Rushabh Puglia": [
+      "Rushabh Puglia"
+    ],
+    "Madhur Pugliya": [
+      "Madhur Pugliya"
+    ],
+    "Ojas Pugliya": [
+      "Ojas Pugliya"
+    ],
+    "Namanchandulal Bohra": [
+      "Namanchandulal Bohra"
+    ],
+    "Ankush Jain": [
+      "Ankush Jain"
+    ],
+    "Siddarth Jain": [
+      "Siddarth Jain"
+    ],
+    "Dhawal Pankaj Jain": [
+      "Dhawal Pankaj Jain"
+    ],
+    "Saurabh Jain": [
+      "Saurabh Jain"
+    ],
+    "Shashank Sanjay Jain": [
+      "Shashank Sanjay Jain"
+    ],
+    "Sanskar Jain": [
+      "Sanskar Jain"
+    ],
+    "Shanti Dugad": [
+      "Shanti Dugad"
+    ],
+    "Siddarth Chopda": [
+      "Siddarth Chopda"
+    ],
+    "Aayush Nilesh Puglia": [
+      "Aayush Nilesh Puglia"
+    ],
+    "Ashish Khajanchi": [
+      "Ashish Khajanchi"
+    ],
+    "Harsh Daga": [
+      "Harsh Daga"
+    ],
+    "Piyush Jain": [
+      "Piyush Jain"
+    ],
+    "Narendra Bohra": [
+      "Narendra Bohra"
+    ],
+    "Tanish Rajesh Chordiya": [
+      "Tanish Rajesh Chordiya"
+    ],
+    "Vivek Jain": [
+      "Vivek Jain"
+    ],
+    "Pratham Dugad": [
+      "Pratham Dugad"
+    ],
+    "Tejas Rajesh Jain": [
+      "Tejas Rajesh Jain"
+    ],
+    "Vansh Shaha": [
+      "Vansh shaha"
+    ],
+    "Aadesh Kothari": [
+      "Aadesh Kothari"
+    ],
+    "Pankaj Mutha": [
+      "Pankaj Mutha"
+    ],
+    "Nirmal Bhandari": [
+      "Nirmal Bhandari"
+    ],
+    "Dr Yashkumar Jain": [
+      "Dr Yashkumar Jain"
+    ],
+    "Piyush Dugad": [
+      "Piyush Dugad"
+    ],
+    "Hiten Khatod": [
+      "Hiten Khatod"
+    ],
+    "Chetan Nandkishor Munot": [
+      "Chetan Nandkishor Munot"
+    ],
+    "Pranay Puglia": [
+      "Pranay Puglia"
+    ],
+    "Rahul Kothari": [
+      "Rahul Kothari"
+    ],
+    "Ashwin Jain": [
+      "Ashwin Jain"
+    ],
+    "Bunty Jain": [
+      "Bunty Jain"
+    ],
+    "Adish Banthia": [
+      "Adish Banthia"
+    ],
+    "Manav Banthia": [
+      "Manav Banthia"
+    ]
+  },
+  "unmatched_2024": [
+    "Ajay Pravin Kothari",
+    "Akshat Chhallani",
+    "Amit Baid",
+    "Amit Bhalgat",
+    "Amit Jain",
+    "Amol Lodha",
+    "Anmol Sunilkumar Khatod",
+    "Anshul Singhvi",
+    "Anup Khatod",
+    "Chikky Jain",
+    "Deepak Jain",
+    "Gaurav Gandhi",
+    "Harsh",
+    "Hemant Prasan Bothra",
+    "Khilesh Jain",
+    "Kushal Daga",
+    "Manish Bhandari",
+    "Manojraj Singhvi",
+    "Mayur Yogeshkumar Bhandari",
+    "Moksh Mahavir Meher",
+    "Nilesh Puglia",
+    "Nishant Lodha",
+    "Nishchay Bohra",
+    "Palashraj Singhvi",
+    "Parshv Khajanchi",
+    "Prashant Bhalgat",
+    "Raja Parakh",
+    "Rajat Golechha",
+    "Rajesh Chordiya",
+    "Rajesh Daga",
+    "Rishabh Gothi",
+    "Ritesh Jain",
+    "Ritesh Pugliya",
+    "Rohan Dinesh Banthia",
+    "Rohit Bothra",
+    "Roshan Kothari",
+    "Rupesh Dugad",
+    "Rupesh Jain",
+    "Sachin Jain",
+    "Samruddhi Jain",
+    "Saransh Baid",
+    "Shreyas Surana",
+    "Siddesh",
+    "Siddharth Kothari",
+    "Soham Khajanchi",
+    "Sunil Pancholi",
+    "Titiksha Singhavi",
+    "Trishul Bamb",
+    "Tushar Bohra",
+    "Tushar Doshi",
+    "Tushar Mutha",
+    "Varun Gandhi",
+    "Viplove",
+    "Vishal Mutha",
+    "Yash Mutha",
+    "Yogesh Chordiya"
+  ],
+  "unmatched_2023": [
+    "Aalekh Gandhi",
+    "Aditya Jain",
+    "Ajay Kothari",
+    "Ankit P Jain",
+    "Chirayuraj Singhvi",
+    "Dr Pranay Gandhi",
+    "Harsh Baid",
+    "Karan Puglia",
+    "Khush Chopda",
+    "Mahavir Khajanchi",
+    "Mayur Bhandari",
+    "Palash Singhvi",
+    "Rahul Gandhi",
+    "Rahul Khatod",
+    "Raj Kothari",
+    "Rishab Saklecha",
+    "Rishabh Jain",
+    "Shubham Jain",
+    "Sushil Puglia",
+    "Suyash Kothari",
+    "Varun Jain",
+    "Yash",
+    "Yash Singhvi"
+  ],
+  "generated_at": "2025-11-06T15:33:35.957Z"
+}
