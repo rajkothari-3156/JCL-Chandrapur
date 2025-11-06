@@ -17,16 +17,20 @@ export default function RegistrationsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [search, setSearch] = useState('')
+  const [cached, setCached] = useState<boolean | null>(null)
+  const [appended, setAppended] = useState<number | null>(null)
 
   useEffect(() => {
-    const load = async () => {
+    const load = async (force = false) => {
       setLoading(true)
       setError(null)
       try {
-        const res = await fetch('/api/registrations', { cache: 'no-store' })
+        const res = await fetch(`/api/registrations${force ? '?refresh=1' : ''}`, { cache: 'no-store' })
         const json = await res.json()
         if (!res.ok) throw new Error(json?.error || 'Failed to load')
         setData(json.data as Registration[])
+        setCached(Boolean(json.cached))
+        setAppended(typeof json.appended === 'number' ? json.appended : null)
       } catch (e: any) {
         setError(e?.message ?? 'Unknown error')
       } finally {
@@ -35,6 +39,27 @@ export default function RegistrationsPage() {
     }
     load()
   }, [])
+
+  const handleRefresh = async () => {
+    await (async () => {
+      setAppended(null)
+      setCached(null)
+      setLoading(true)
+      setError(null)
+      try {
+        const res = await fetch('/api/registrations?refresh=1', { cache: 'no-store' })
+        const json = await res.json()
+        if (!res.ok) throw new Error(json?.error || 'Failed to refresh')
+        setData(json.data as Registration[])
+        setCached(Boolean(json.cached))
+        setAppended(typeof json.appended === 'number' ? json.appended : null)
+      } catch (e: any) {
+        setError(e?.message ?? 'Unknown error')
+      } finally {
+        setLoading(false)
+      }
+    })()
+  }
 
   const filtered = data.filter((r: Registration) =>
     [r.fullName, r.playingStyle, r.tshirtSize]
@@ -59,7 +84,20 @@ export default function RegistrationsPage() {
             placeholder="Search by name, style, size"
             className="w-full md:w-80 rounded-md border border-green-800 bg-green-900/40 text-white placeholder-green-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cricket-gold"
           />
+          <button
+            onClick={handleRefresh}
+            disabled={loading}
+            className="px-3 py-2 rounded-md bg-cricket-gold text-black font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? 'Refreshing...' : 'Refresh'}
+          </button>
           <span className="text-green-100 text-sm">{filtered.length} of {data.length}</span>
+          {cached !== null && (
+            <span className="text-green-200 text-xs">{cached ? 'served from cache' : 'fresh'}</span>
+          )}
+          {appended !== null && appended > 0 && (
+            <span className="text-green-200 text-xs">+{appended} new</span>
+          )}
         </div>
 
         {loading && (

@@ -165,3 +165,47 @@ function normalizeAge(age: any): string | number | null {
   if (n !== null && n >= 15 && n <= 50) return n
   return 'NA'
 }
+
+// Attempt to fetch only new rows after a given start row and append them to cache
+async function tryIncrementalAppend({ saEmail, saKey, sheetId, baseRange, startRow }: { saEmail: string; saKey: string; sheetId: string; baseRange: string; startRow: number }) {
+  try {
+    const { google } = await import('googleapis')
+    const privateKey = saKey.replace(/\\n/g, '\n')
+    const auth = new google.auth.JWT({
+      email: saEmail,
+      key: privateKey,
+      scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
+    })
+    const sheets = google.sheets({ version: 'v4', auth })
+
+    // Expect baseRange like: 'Form responses 1'!A:G or Registrations!A:G
+    const match = baseRange.match(/^'?(.+?)'?!(\w):?(\w)?$/)
+    if (!match) {
+      console.log('[registrations] Incremental parse failed for range, falling back', { baseRange })
+      return { appended: false }
+    }
+    const sheetName = match[1]
+    const colStart = match[2] || 'A'
+    const colEnd = match[3] || 'G'
+    const incRange = `'${sheetName}'!${colStart}${startRow}:${colEnd}`
+
+    const resp = await sheets.spreadsheets.values.get({ spreadsheetId: sheetId, range: incRange })
+    const values = resp.data.values || []
+    if (values.length === 0) {
+      return { appended: true, rows: [], rowsRawCount: 0 }
+    }
+
+    // Fetch header row to map columns
+    const headerResp = await sheets.spreadsheets.values.get({ spreadsheetId: sheetId, range: `'${sheetName}'!${colStart}1:${colEnd}1` })
+    const headerValues = headerResp.data.values || []
+    const headers = (headerValues[0] || []).map((h: any) => String(h))
+    const toObject = (row: any[]) => headers.reduce<Record<string, any>>((acc, h, i) => { acc[h] = row[i] ?? ''; return acc }, {})
+    const objects = values.map((row) => toObject(row as any[]))
+    const rows = objects.map((r) => normalizeRowFromObject(r))
+    const selected = selectImportant(rows)
+    return { appended: true, rows: selected, rowsRawCount: values.length }
+  } catch (e) {
+    console.log('[registrations] Incremental append failed, will full refresh', e)
+    return { appended: false }
+  }
+}
