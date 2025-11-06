@@ -2,12 +2,23 @@ import { NextResponse } from 'next/server'
 import Papa from 'papaparse'
 
 // Fetch registrations from either a published CSV or a private Google Sheet via Service Account
-export async function GET() {
+// Simple in-memory cache (resets on server restart)
+let CACHE: { data: any[]; lastUpdated: number; totalRows: number } | null = null
+
+export async function GET(req: Request) {
   try {
+    const { searchParams } = new URL(req.url)
+    const forceRefresh = searchParams.get('refresh') === '1'
+
     const csvUrl = process.env.SHEETS_CSV_URL
     if (csvUrl) {
       console.log('[registrations] Using CSV mode (SHEETS_CSV_URL present)')
+      // CSV mode: no incremental append available; optionally serve cache
+      if (!forceRefresh && CACHE?.data) {
+        return NextResponse.json({ count: CACHE.data.length, data: CACHE.data, cached: true })
+      }
       const data = await fetchFromCsv(csvUrl)
+      CACHE = { data, lastUpdated: Date.now(), totalRows: data.length }
       return NextResponse.json({ count: data.length, data })
     }
 
@@ -22,8 +33,25 @@ export async function GET() {
         keyPresent: Boolean(saKey),
         sheetId: sheetId?.slice(0, 6) + '...'
       })
+      if (!forceRefresh && CACHE?.data) {
+        return NextResponse.json({ count: CACHE.data.length, data: CACHE.data, cached: true })
+      }
+
+      // Try incremental append when we have a cache
+      if (CACHE?.data && CACHE.totalRows >= 1) {
+        const inc = await tryIncrementalAppend({ saEmail, saKey, sheetId, baseRange: range, startRow: CACHE.totalRows + 2 })
+        if (inc?.appended && inc.rows && inc.rows.length > 0) {
+          CACHE.data = [...CACHE.data, ...inc.rows]
+          CACHE.lastUpdated = Date.now()
+          CACHE.totalRows += inc.rowsRawCount
+          return NextResponse.json({ count: CACHE.data.length, data: CACHE.data, cached: false, appended: inc.rowsRawCount })
+        }
+        // Fallback to full if incremental not possible
+      }
+
       const data = await fetchFromPrivateSheet({ saEmail, saKey, sheetId, range })
-      return NextResponse.json({ count: data.length, data })
+      CACHE = { data, lastUpdated: Date.now(), totalRows: data.length }
+      return NextResponse.json({ count: data.length, data, cached: false })
     }
 
     return NextResponse.json(
