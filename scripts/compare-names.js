@@ -14,8 +14,8 @@ const fs = require('fs')
 const path = require('path')
 const Papa = require('papaparse')
 
-const CSV_2024 = path.join(__dirname, '..', 'public', 'data', '840910_fielding_leaderboard.csv')
-const CSV_2023 = path.join(__dirname, '..', 'public', 'data', '1243558_fielding_leaderboard.csv')
+const CSV_2024 = path.join(__dirname, '..', 'public', 'data', '1243558_fielding_leaderboard.csv')
+const CSV_2023 = path.join(__dirname, '..', 'public', 'data', '840910_fielding_leaderboard.csv')
 const OUTPUT = path.join(__dirname, '..', 'public', 'data', 'name_mapping.json')
 
 function readCsv(filePath) {

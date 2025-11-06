@@ -99,20 +99,20 @@ export default function RegistrationsPage() {
       const parsed = Papa.parse(text, { header: true, skipEmptyLines: true })
       return (parsed.data as any[])
     }
-    // Load all categories for 2024 (840910) and 2023 (1243558)
+    // Load all categories for 2024 (1243558) and 2023 (840910)
     const loaders: Array<Promise<void>> = []
     const categories = ['batting', 'bowling', 'fielding', 'mvp'] as const
     for (const cat of categories) {
       if (!stats2024[cat]) {
         loaders.push(
-          loadCsv(`/data/840910_${cat}_leaderboard.csv`).then(rows => {
+          loadCsv(`/data/1243558_${cat}_leaderboard.csv`).then(rows => {
             setStats2024(prev => ({ ...prev, [cat]: rows }))
           }).catch(() => setStats2024(prev => ({ ...prev, [cat]: [] })))
         )
       }
       if (!stats2023[cat]) {
         loaders.push(
-          loadCsv(`/data/1243558_${cat}_leaderboard.csv`).then(rows => {
+          loadCsv(`/data/840910_${cat}_leaderboard.csv`).then(rows => {
             setStats2023(prev => ({ ...prev, [cat]: rows }))
           }).catch(() => setStats2023(prev => ({ ...prev, [cat]: [] })))
         )
