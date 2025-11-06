@@ -75,6 +75,16 @@ export default function RegistrationsPage() {
         <div className="text-center mb-8">
           <h1 className="text-3xl md:text-5xl font-bold text-white mb-2 drop-shadow-lg">JCL Player Registrations</h1>
           <p className="text-green-100">Live data from Google Sheets</p>
+          <div className="mt-4">
+            <a
+              href="https://forms.gle/nqHc8RjNQcL2JKk76"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-block px-5 py-2 rounded-md bg-cricket-gold text-black font-semibold shadow hover:opacity-90"
+            >
+              Register Now
+            </a>
+          </div>
         </div>
 
         <div className="mb-4 flex items-center gap-3">
