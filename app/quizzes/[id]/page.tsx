@@ -89,6 +89,15 @@ export default function QuizRunPage({ params }: { params: { id: string } }) {
   const submittingRef = useRef(false)
   const [submitMsg, setSubmitMsg] = useState<string | null>(null)
 
+  const nextDateStr = React.useMemo(() => {
+    if (!status?.nextOpenAt) return null
+    try {
+      return new Date(status.nextOpenAt).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'long', year: 'numeric' })
+    } catch {
+      return null
+    }
+  }, [status])
+
   const handleSubmit = async () => {
     if (submittingRef.current) return
     setSubmitMsg(null)
@@ -138,48 +147,52 @@ export default function QuizRunPage({ params }: { params: { id: string } }) {
 
             {!status?.active && (
               <div className="bg-yellow-900/20 border border-yellow-700 text-yellow-200 rounded-md p-3">
-                {status?.nextOpenAt && status?.closesAt ? (
-                  <>
-                    The quiz is available every Sunday between 8:00 PM and 8:15 PM (IST). Next window: {new Date(status.nextOpenAt).toLocaleString()} to {new Date(status.closesAt).toLocaleString()}.
-                  </>
-                ) : (
-                  <>The quiz is not active right now.</>
-                )}
+                <div className="font-semibold text-white">Quiz coming soon</div>
+                <div>
+                  The quiz is available every Sunday between 8:00 PM and 8:15 PM (IST).
+                  {nextDateStr ? <> Next date: {nextDateStr}.</> : null}
+                </div>
               </div>
             )}
 
-            <div className="bg-green-900/30 border border-green-800 rounded-lg p-4 grid gap-3 md:grid-cols-2">
-              <div>
-                <label className="block text-green-200 text-sm mb-1">Your Name</label>
-                <input value={name} onChange={(e)=>setName(e.target.value)} className="w-full rounded-md border border-green-800 bg-green-900/40 text-white px-3 py-2" placeholder="Full name" />
-              </div>
-              <div>
-                <label className="block text-green-200 text-sm mb-1">Phone Number</label>
-                <input value={phone} onChange={(e)=>setPhone(e.target.value)} className="w-full rounded-md border border-green-800 bg-green-900/40 text-white px-3 py-2" placeholder="Phone" />
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              {quiz.questions.map((q, qi) => (
-                <div key={q.id} className="bg-green-900/30 border border-green-800 rounded-lg p-4">
-                  <div className="text-white font-medium mb-2">Q{qi+1}. {q.text}</div>
-                  <div className="grid gap-2">
-                    {q.options.map((opt, idx) => {
-                      const picked = answers[q.id] === idx
-                      return (
-                        <label key={idx} className={`flex items-center gap-2 p-2 rounded border ${picked ? 'border-cricket-gold bg-green-900/60' : 'border-green-800 hover:bg-green-900/40'} ${!status?.active ? 'opacity-60 cursor-not-allowed' : ''}`}>
-                          <input type="radio" name={q.id} checked={picked} onChange={()=>handlePick(q.id, idx)} disabled={!status?.active} />
-                          <span className="text-green-100">{opt}</span>
-                        </label>
-                      )
-                    })}
-                  </div>
+            {status?.active && (
+              <div className="bg-green-900/30 border border-green-800 rounded-lg p-4 grid gap-3 md:grid-cols-2">
+                <div>
+                  <label className="block text-green-200 text-sm mb-1">Your Name</label>
+                  <input value={name} onChange={(e)=>setName(e.target.value)} className="w-full rounded-md border border-green-800 bg-green-900/40 text-white px-3 py-2" placeholder="Full name" />
                 </div>
-              ))}
-            </div>
+                <div>
+                  <label className="block text-green-200 text-sm mb-1">Phone Number</label>
+                  <input value={phone} onChange={(e)=>setPhone(e.target.value)} className="w-full rounded-md border border-green-800 bg-green-900/40 text-white px-3 py-2" placeholder="Phone" />
+                </div>
+              </div>
+            )}
+
+            {status?.active && (
+              <div className="space-y-4">
+                {quiz.questions.map((q, qi) => (
+                  <div key={q.id} className="bg-green-900/30 border border-green-800 rounded-lg p-4">
+                    <div className="text-white font-medium mb-2">Q{qi+1}. {q.text}</div>
+                    <div className="grid gap-2">
+                      {q.options.map((opt, idx) => {
+                        const picked = answers[q.id] === idx
+                        return (
+                          <label key={idx} className={`flex items-center gap-2 p-2 rounded border ${picked ? 'border-cricket-gold bg-green-900/60' : 'border-green-800 hover:bg-green-900/40'}`}>
+                            <input type="radio" name={q.id} checked={picked} onChange={()=>handlePick(q.id, idx)} />
+                            <span className="text-green-100">{opt}</span>
+                          </label>
+                        )
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
 
             <div className="flex items-center gap-3">
-              <button onClick={handleSubmit} disabled={remaining<=0 || !status?.active} className="px-4 py-2 rounded-md bg-cricket-gold text-black font-semibold disabled:opacity-50">Submit</button>
+              {status?.active && (
+                <button onClick={handleSubmit} disabled={remaining<=0} className="px-4 py-2 rounded-md bg-cricket-gold text-black font-semibold disabled:opacity-50">Submit</button>
+              )}
               {submitMsg && <div className="text-green-100 text-sm">{submitMsg}</div>}
               <a href={`/quizzes/${quizId}/leaderboard`} className="ml-auto text-cricket-gold hover:underline">View Leaderboard</a>
               <a href={`/quizzes/${quizId}/answers`} className="text-cricket-gold hover:underline">Answers</a>
