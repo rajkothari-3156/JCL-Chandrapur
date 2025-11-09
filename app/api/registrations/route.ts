@@ -1,9 +1,58 @@
 import { NextResponse } from 'next/server'
 import Papa from 'papaparse'
+import fs from 'node:fs/promises'
+import path from 'node:path'
 
 // Fetch registrations from either a published CSV or a private Google Sheet via Service Account
 // Simple in-memory cache (resets on server restart)
 let CACHE: { data: any[]; lastUpdated: number; totalRows: number } | null = null
+
+// Build a normalized name -> auction attributes map and enrich rows
+async function enrichWithAuction<T extends { fullName: string }>(rows: T[]) {
+  try {
+    const auctionCsvPath = path.join(process.cwd(), 'public', 'data', 'JCL 2k24 Final Players List For Owners - Auction sheet.csv')
+    const csvText = await fs.readFile(auctionCsvPath, 'utf8')
+    const parsed = Papa.parse(csvText, { header: true, skipEmptyLines: true })
+    const norm = (s: any) => String(s || '').toLowerCase().replace(/\s+/g, ' ').trim()
+    const map = new Map<string, { auctionGroup: string | null; auctionAgeCategory: string | null; auctionPoints: number | null; auctionTeam: string | null }>()
+    for (const r of parsed.data as any[]) {
+      const fullName = r['Full Name'] ?? r['full name'] ?? r['Name'] ?? r['name']
+      if (!fullName) continue
+      const key = norm(fullName)
+      const group = r['Group'] ?? r['group'] ?? null
+      const ageCat = r['Age Category'] ?? r['age category'] ?? null
+      const pointsRaw = r['Points'] ?? r['points']
+      const team = r['Team'] ?? r['team'] ?? null
+      const points = pointsRaw === undefined || pointsRaw === null || String(pointsRaw).trim() === '' ? null : Number(String(pointsRaw).replace(/[^\d.-]/g, ''))
+      map.set(key, {
+        auctionGroup: group != null && group !== '' ? String(group) : null,
+        auctionAgeCategory: ageCat != null && ageCat !== '' ? String(ageCat) : null,
+        auctionPoints: Number.isFinite(points as number) ? (points as number) : null,
+        auctionTeam: team != null && team !== '' ? String(team) : null,
+      })
+    }
+
+    return rows.map((row) => {
+      const a = map.get(norm(row.fullName))
+      return {
+        ...row,
+        auctionGroup: a?.auctionGroup ?? null,
+        auctionAgeCategory: a?.auctionAgeCategory ?? null,
+        auctionPoints: a?.auctionPoints ?? null,
+        auctionTeam: a?.auctionTeam ?? null,
+      }
+    })
+  } catch (e) {
+    // On any failure, just return original rows (no auction info)
+    return rows.map((row) => ({
+      ...row,
+      auctionGroup: null,
+      auctionAgeCategory: null,
+      auctionPoints: null,
+      auctionTeam: null,
+    }))
+  }
+}
 
 export async function GET(req: Request) {
   try {
@@ -17,9 +66,11 @@ export async function GET(req: Request) {
       if (!forceRefresh && CACHE?.data) {
         return NextResponse.json({ count: CACHE.data.length, data: CACHE.data, cached: true })
       }
+
       const data = await fetchFromCsv(csvUrl)
-      CACHE = { data, lastUpdated: Date.now(), totalRows: data.length }
-      return NextResponse.json({ count: data.length, data })
+      const enriched = await enrichWithAuction(data)
+      CACHE = { data: enriched, lastUpdated: Date.now(), totalRows: enriched.length }
+      return NextResponse.json({ count: enriched.length, data: enriched })
     }
 
     const saEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL
@@ -41,7 +92,9 @@ export async function GET(req: Request) {
       if (CACHE?.data && CACHE.totalRows >= 1) {
         const inc = await tryIncrementalAppend({ saEmail, saKey, sheetId, baseRange: range, startRow: CACHE.totalRows + 2 })
         if (inc?.appended && inc.rows && inc.rows.length > 0) {
-          CACHE.data = [...CACHE.data, ...inc.rows]
+          // Append and re-enrich only the new rows, then merge
+          const appendedEnriched = await enrichWithAuction(inc.rows)
+          CACHE.data = [...CACHE.data, ...appendedEnriched]
           CACHE.lastUpdated = Date.now()
           CACHE.totalRows += inc.rowsRawCount
           return NextResponse.json({ count: CACHE.data.length, data: CACHE.data, cached: false, appended: inc.rowsRawCount })
@@ -50,8 +103,9 @@ export async function GET(req: Request) {
       }
 
       const data = await fetchFromPrivateSheet({ saEmail, saKey, sheetId, range })
-      CACHE = { data, lastUpdated: Date.now(), totalRows: data.length }
-      return NextResponse.json({ count: data.length, data, cached: false })
+      const enriched = await enrichWithAuction(data)
+      CACHE = { data: enriched, lastUpdated: Date.now(), totalRows: enriched.length }
+      return NextResponse.json({ count: enriched.length, data: enriched, cached: false })
     }
 
     return NextResponse.json(

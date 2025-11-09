@@ -11,6 +11,10 @@ type Registration = {
   playingStyle: string | null
   tshirtSize: string | null
   photoUrl: string | null
+  auctionGroup?: string | null
+  auctionAgeCategory?: string | null
+  auctionPoints?: number | null
+  auctionTeam?: string | null
 }
 
 export default function RegistrationsPage() {
@@ -143,6 +147,8 @@ export default function RegistrationsPage() {
     const map = mapping || {}
     const m2423 = map.jcl_2024_to_2023 || {}
     const m2324 = map.jcl_2023_to_2024 || {}
+    const regTo24 = map.reg_to_2024 || {}
+    const regTo23 = map.reg_to_2023 || {}
 
     // find closest key by normalization
     const keys2024 = Object.keys(m2423 || {})
@@ -153,8 +159,17 @@ export default function RegistrationsPage() {
     const key2023 = keys2023.find(k => normalizeName(k) === normSel)
     const mapped24Candidates: string[] = key2023 ? (m2324[key2023] || []) : []
 
-    const names24 = [selectedName, ...mapped24Candidates].map(normalizeName)
-    const names23 = [selectedName, ...mapped23Candidates].map(normalizeName)
+    // registration -> season mappings (selectedName comes from registration list)
+    const reg24Keys = Object.keys(regTo24)
+    const regKey24 = reg24Keys.find(k => normalizeName(k) === normSel)
+    const regMapped24: string[] = regKey24 ? (regTo24[regKey24] || []) : []
+
+    const reg23Keys = Object.keys(regTo23)
+    const regKey23 = reg23Keys.find(k => normalizeName(k) === normSel)
+    const regMapped23: string[] = regKey23 ? (regTo23[regKey23] || []) : []
+
+    const names24 = [selectedName, ...mapped24Candidates, ...regMapped24].map(normalizeName)
+    const names23 = [selectedName, ...mapped23Candidates, ...regMapped23].map(normalizeName)
 
     const pick = (rows: any[] | undefined, names: string[]) => {
       if (!rows) return []
@@ -221,6 +236,8 @@ export default function RegistrationsPage() {
               <thead>
                 <tr className="bg-cricket-lightgreen text-white">
                   <th className="px-3 py-2 text-left">Name</th>
+                  <th className="px-3 py-2 text-left">Auction Team</th>
+                  <th className="px-3 py-2 text-left">Auction Points</th>
                   <th className="px-3 py-2 text-left">Age</th>
                   <th className="px-3 py-2 text-left">Contact</th>
                   <th className="px-3 py-2 text-left">Playing Style</th>
@@ -241,6 +258,8 @@ export default function RegistrationsPage() {
                         {r.fullName}
                       </button>
                     </td>
+                    <td className="px-3 py-2 text-green-100">{r.auctionTeam ?? ''}</td>
+                    <td className="px-3 py-2 text-green-100">{typeof r.auctionPoints === 'number' ? r.auctionPoints : ''}</td>
                     <td className="px-3 py-2 text-green-100">{r.age ?? ''}</td>
                     <td className="px-3 py-2 text-green-100">
                       {r.contact ? (
