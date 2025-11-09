@@ -1,0 +1,78 @@
+{
+  "id": "jcl-quiz-2025-wk1",
+  "title": "JCL Weekly Quiz — Week 1",
+  "durationMinutes": 15,
+  "weeklyWindow": { "dayOfWeek": 0, "start": "20:00", "end": "20:15", "timezone": "Asia/Kolkata" },
+  "questions": [
+    {
+      "id": "q1",
+      "type": "mcq",
+      "text": "Who won the previous JCL season (2024)?",
+      "options": ["Power Hitters", "Falcon Giants", "KT Lions", "SR Rangers"],
+      "answer": 0
+    },
+    {
+      "id": "q2",
+      "type": "mcq",
+      "text": "Who won the JCL season of 2023?",
+      "options": ["KT Lions", "Toxic 11", "Parshv Panthers", "Gladiators Cricket Club"],
+      "answer": 0
+    },
+    {
+      "id": "q3",
+      "type": "mcq",
+      "text": "Who had the highest total runs in 2024?",
+      "options": ["Aayush Nilesh Puglia", "Siddarth Jain", "Sidhu Puglia", "Nirav Bohra"],
+      "answer": 0
+    },
+    {
+      "id": "q4",
+      "type": "mcq",
+      "text": "Who had the highest total runs in 2023?",
+      "options": ["Nirav Bohra", "Siddarth Jain", "Shashank Sanjay Jain", "Mohit Modi"],
+      "answer": 0
+    },
+    {
+      "id": "q5",
+      "type": "mcq",
+      "text": "Who scored a 100 in 2024 batting leaderboard?",
+      "options": ["Nirav Bohra", "Siddarth Jain", "Rushabh Puglia", "Shashank Sanjay Jain"],
+      "answer": 0
+    },
+    {
+      "id": "q6",
+      "type": "mcq",
+      "text": "Who hit the most sixes among these in 2023?",
+      "options": ["Nirav Bohra", "Shashank Sanjay Jain", "Mohit Modi", "Madhur Pugliya"],
+      "answer": 0
+    },
+    {
+      "id": "q7",
+      "type": "mcq",
+      "text": "Which player bats left-handed in 2024?",
+      "options": ["Manav Banthia", "Aayush Nilesh Puglia", "Tarun Jain", "Jay Baid"],
+      "answer": 0
+    },
+    {
+      "id": "q8",
+      "type": "mcq",
+      "text": "How many 50s did Tarun Jain score in 2024?",
+      "options": ["0", "1", "2", "3"],
+      "answer": 1
+    },
+    {
+      "id": "q9",
+      "type": "mcq",
+      "text": "How many sixes did Siddarth Jain hit in 2023?",
+      "options": ["10", "15", "20", "25"],
+      "answer": 3
+    },
+    {
+      "id": "q10",
+      "type": "mcq",
+      "text": "Who had a strike rate of 250.00 in 2024?",
+      "options": ["Nirav Bohra", "Siddarth Jain", "Rushabh Puglia", "Shashank Sanjay Jain"],
+      "answer": 0
+    }
+  ]
+}
