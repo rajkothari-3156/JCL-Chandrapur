@@ -7,6 +7,12 @@ import path from 'node:path'
 // Simple in-memory cache (resets on server restart)
 let CACHE: { data: any[]; lastUpdated: number; totalRows: number } | null = null
 
+const ALIASES: Record<string, string> = {
+  'Pranay Pugliya': 'Pranay Pravin Pugliya',
+  'Rishabh Saklecha': 'Rishab Mahendra Saklecha',
+  'Harsh Choradiya': 'Harsh Chordia',
+}
+
 // Build a normalized name -> auction attributes map and enrich rows
 async function enrichWithAuction<T extends { fullName: string }>(rows: T[]) {
   try {
@@ -32,8 +38,12 @@ async function enrichWithAuction<T extends { fullName: string }>(rows: T[]) {
       })
     }
 
+    const aliasMap = new Map<string, string>(Object.entries(ALIASES).map(([k, v]) => [norm(k), norm(v)]))
+
     return rows.map((row) => {
-      const a = map.get(norm(row.fullName))
+      const key = norm(row.fullName)
+      const canonical = map.has(key) ? key : (aliasMap.get(key) || key)
+      const a = map.get(canonical)
       return {
         ...row,
         auctionGroup: a?.auctionGroup ?? null,

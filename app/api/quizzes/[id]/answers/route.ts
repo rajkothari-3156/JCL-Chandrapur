@@ -2,11 +2,6 @@ import { NextResponse } from 'next/server'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 
-function nowInIST() {
-  const nowUtc = new Date()
-  return new Date(nowUtc.getTime() + (5.5 * 60 * 60 * 1000))
-}
-
 export async function GET(_: Request, { params }: { params: { id: string } }) {
   try {
     const id = params.id
@@ -14,19 +9,24 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
     const text = await fs.readFile(quizPath, 'utf8')
     const quiz = JSON.parse(text)
 
-    // Only allow answers after the weekly window closes (if defined)
+    // Only allow answers after the weekly window closes (if defined), using IST arithmetic
     const ww = quiz?.weeklyWindow
     if (ww) {
-      const istNow = nowInIST()
-      const day = istNow.getUTCDay()
+      const nowUtc = new Date()
+      const IST_OFFSET_MIN = 330
+      const istNow = new Date(nowUtc.getTime() + IST_OFFSET_MIN * 60 * 1000)
+      const istY = istNow.getUTCFullYear()
+      const istM = istNow.getUTCMonth()
+      const istD = istNow.getUTCDate()
+      const istDow = istNow.getUTCDay()
+      const targetDow = ww.dayOfWeek ?? 0
       const [sh, sm] = String(ww.start || '20:00').split(':').map((x: string)=>parseInt(x,10))
       const [eh, em] = String(ww.end || '20:15').split(':').map((x: string)=>parseInt(x,10))
-      const isToday = day === (ww.dayOfWeek ?? 0)
-      const endIST = new Date(istNow); endIST.setUTCHours(eh, em, 0, 0)
-      const startIST = new Date(istNow); startIST.setUTCHours(sh, sm, 0, 0)
-      const active = isToday && istNow >= startIST && istNow <= endIST
-      const beforeWindowToday = isToday && istNow < endIST
-      if (active || beforeWindowToday) {
+      const endUtcMs = Date.UTC(istY, istM, istD, eh, em) - IST_OFFSET_MIN * 60 * 1000
+      const nowMs = nowUtc.getTime()
+      const isToday = istDow === targetDow
+      // If it's the quiz day and we haven't passed end time yet, block
+      if (isToday && nowMs < endUtcMs) {
         return NextResponse.json({ error: 'Answers will be available after the quiz window closes.' }, { status: 403 })
       }
     }
