@@ -382,12 +382,12 @@ export default function AuctionPage() {
               <div className={`relative overflow-hidden rounded-lg border border-green-800 ${pickedAnimating ? 'animate-pulse' : ''}`}>
                 <div className="p-4 grid md:grid-cols-[160px_1fr] gap-4 items-center">
                   <div className="w-full h-40 bg-green-950/50 flex items-center justify-center rounded">
-                    {picked?.photoUrl ? (
+                    {picked && !pickedAnimating && picked.photoUrl ? (
                       <a href={driveViewUrl(picked.photoUrl)} target="_blank" rel="noreferrer">
                         <img src={driveThumbUrl(picked.photoUrl)} alt={picked.fullName} className="max-h-40 object-contain" />
                       </a>
                     ) : (
-                      <div className="text-green-300 text-sm">No Photo</div>
+                      <div className="text-green-300 text-sm">{pickedAnimating ? 'Selecting player...' : 'No Photo'}</div>
                     )}
                   </div>
                   <div className="space-y-1">
