@@ -32,6 +32,9 @@ export default function RegistrationsPage() {
   const [selectedName, setSelectedName] = useState<string>('')
   const [modalError, setModalError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<'batting' | 'bowling' | 'fielding' | 'mvp'>('fielding')
+  const [photoOpen, setPhotoOpen] = useState(false)
+  const [photoSrc, setPhotoSrc] = useState<string>('')
+  const [photoAlt, setPhotoAlt] = useState<string>('')
 
   // Convert Google Drive share links to direct-view URLs suitable for <img src>
   const toDirectDriveUrl = (url: string): string | null => {
@@ -292,24 +295,28 @@ export default function RegistrationsPage() {
                     <td className="px-3 py-2 text-green-100">{r.tshirtSize ?? ''}</td>
                     <td className="px-3 py-2 text-green-100">
                       {r.photoUrl ? (
-                        <span className="inline-flex items-center gap-2">
-                          {/* Thumbnail with fallback link */}
+                        <button
+                          type="button"
+                          className="group inline-flex items-center gap-2 focus:outline-none"
+                          onClick={() => {
+                            const direct = toDirectDriveUrl(r.photoUrl || '') || ''
+                            setPhotoSrc(direct)
+                            setPhotoAlt(r.fullName + ' photo')
+                            setPhotoOpen(true)
+                          }}
+                          title="View photo"
+                        >
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={toDirectDriveUrl(r.photoUrl) || ''}
                             alt={r.fullName + ' photo'}
                             className="h-12 w-12 object-cover rounded-md border border-green-800/50 bg-green-900/40"
                             onError={(e) => {
-                              const a = document.createElement('a')
-                              a.href = r.photoUrl as string
-                              a.target = '_blank'
-                              a.rel = 'noreferrer'
-                              a.click()
-                              ;(e.currentTarget as HTMLImageElement).style.display = 'none'
+                              (e.currentTarget as HTMLImageElement).style.opacity = '0.3'
                             }}
                           />
-                          <a className="text-cricket-gold hover:underline" href={r.photoUrl} target="_blank" rel="noreferrer">Open</a>
-                        </span>
+                          <span className="sr-only">Open photo</span>
+                        </button>
                       ) : ''}
                     </td>
                     <td className="px-3 py-2 text-green-100">{r.timestamp ?? ''}</td>
