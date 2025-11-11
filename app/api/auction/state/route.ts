@@ -88,6 +88,26 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true, state })
     }
 
+    if (action === 'updatePoints') {
+      const team = String(body.team || '').trim()
+      const fullName = String(body.fullName || '').trim()
+      const points = Number(body.points)
+      if (!team || !fullName || !Number.isFinite(points) || points < 0) {
+        return NextResponse.json({ error: 'Invalid update payload' }, { status: 400 })
+      }
+      if (!state.teams[team]) return NextResponse.json({ error: 'Team not found' }, { status: 404 })
+      const key = normName(fullName)
+      let found = false
+      state.teams[team].players = (state.teams[team].players || []).map(p => {
+        if (normName(p.fullName) === key) { found = true; return { ...p, points } }
+        return p
+      })
+      if (!found) return NextResponse.json({ error: 'Player not found in team' }, { status: 404 })
+      if (state.sold[key]) state.sold[key].points = points
+      await writeState(state)
+      return NextResponse.json({ ok: true, state })
+    }
+
     if (action === 'setTeams') {
       const teams: Array<{ name: string; budget: number }> = Array.isArray(body.teams) ? body.teams : []
       for (const t of teams) {

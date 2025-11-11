@@ -80,6 +80,7 @@ export default function AuctionPage() {
   const [ownerTeam, setOwnerTeam] = useState('')
   const [ownerName, setOwnerName] = useState('')
   const [ownerPlaying, setOwnerPlaying] = useState(false)
+  const [imgLoaded, setImgLoaded] = useState(false)
 
   // aux data for showing previous seasons stats
   const [mapping, setMapping] = useState<any | null>(null)
@@ -181,6 +182,7 @@ export default function AuctionPage() {
     if (!pool.length) { setActionMsg('No players available in selected pool'); return }
     setPickedAnimating(true)
     setPicked(null)
+    setImgLoaded(false)
     setSellTeam('')
     setSellPoints('')
     const duration = 2500
@@ -195,6 +197,8 @@ export default function AuctionPage() {
       }
     }, tick)
   }
+
+  useEffect(() => { setImgLoaded(false) }, [picked])
 
   const handleLogin = () => {
     if (user === 'admin' && pass === '8881212') {
@@ -384,7 +388,7 @@ export default function AuctionPage() {
                   <div className="w-full h-40 bg-green-950/50 flex items-center justify-center rounded">
                     {picked && !pickedAnimating && picked.photoUrl ? (
                       <a href={driveViewUrl(picked.photoUrl)} target="_blank" rel="noreferrer">
-                        <img src={driveThumbUrl(picked.photoUrl)} alt={picked.fullName} className="max-h-40 object-contain" />
+                        <img src={driveThumbUrl(picked.photoUrl)} alt={picked.fullName} onLoad={() => setImgLoaded(true)} className={`max-h-40 object-contain transition-opacity duration-500 ease-out ${imgLoaded ? 'opacity-100' : 'opacity-0'}`} />
                       </a>
                     ) : (
                       <div className="text-green-300 text-sm">{pickedAnimating ? 'Selecting player...' : 'No Photo'}</div>
@@ -412,7 +416,7 @@ export default function AuctionPage() {
                 const hasAny = (y2024.length > 0 || y2023.length > 0)
                 if (!hasAny) return null
                 const keySets: Record<string, string[]> = {
-                  batting: ['Runs','Runs Scored','Total Runs','Innings','Sixes','Fours','Balls','SR','Average','Not Outs','50s','100s'],
+                  batting: ['Sixes','Balls','Runs','Runs Scored','Total Runs','SR','Strike Rate'],
                   bowling: ['Wickets','Overs','Maidens','Economy','Avg','Average','Runs Given','Balls','Dot Balls','Best','5W'],
                   fielding: ['Catches','Run Outs','Stumpings','Dismissals','Innings','Matches'],
                 }
@@ -421,7 +425,21 @@ export default function AuctionPage() {
                     <div key={yr} className="rounded border border-green-800 bg-green-900/30 p-3"><div className="text-white font-semibold">{label} {yr}</div><div className="text-green-300 text-sm">No record</div></div>
                   )
                   const r = rows[0] as any
-                  const items = keySets[cat].map(k => ({ k, v: r[k] ?? r[k.toLowerCase?.()] ?? r[String(k).toLowerCase()] })).filter(x => x.v !== undefined && x.v !== null && String(x.v) !== '')
+                  let items: Array<{ k: string; v: any }>
+                  if (cat === 'batting') {
+                    // Explicit four metrics for batting in desired order
+                    const val = (k: string) => (r[k] ?? r[k.toLowerCase?.()] ?? r[String(k).toLowerCase()])
+                    const runs = val('Runs') ?? val('Runs Scored') ?? val('Total Runs')
+                    const sr = val('SR') ?? val('Strike Rate')
+                    items = [
+                      { k: 'Total 6s', v: val('Sixes') },
+                      { k: 'Total Balls', v: val('Balls') },
+                      { k: 'Total Runs', v: runs },
+                      { k: 'Strike Rate', v: sr },
+                    ].filter(x => x.v !== undefined && x.v !== null && String(x.v) !== '')
+                  } else {
+                    items = keySets[cat].map(k => ({ k, v: r[k] ?? r[k.toLowerCase?.()] ?? r[String(k).toLowerCase()] })).filter(x => x.v !== undefined && x.v !== null && String(x.v) !== '')
+                  }
                   return (
                     <div key={yr} className="rounded border border-green-800 bg-green-900/30 p-3">
                       <div className="text-white font-semibold mb-1">{label} {yr}</div>
