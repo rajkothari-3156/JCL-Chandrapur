@@ -183,6 +183,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true, state })
     }
 
+    if (action === 'reset') {
+      const empty = { teams: {}, sold: {} as Record<string, { team: string; points: number; time: string }>, owners: {}, retentions: {}, unsold: [] as Array<{ fullName: string; time: string }>} 
+      await writeState(empty)
+      return NextResponse.json({ ok: true, state: empty })
+    }
+
     return NextResponse.json({ error: 'Unknown action' }, { status: 400 })
   } catch (e: any) {
     return NextResponse.json({ error: 'Failed to update auction state', details: e?.message ?? String(e) }, { status: 500 })
