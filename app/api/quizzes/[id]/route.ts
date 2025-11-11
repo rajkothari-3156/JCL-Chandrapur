@@ -2,47 +2,51 @@ import { NextResponse } from 'next/server'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 
-function nowInIST() {
-  // IST is UTC+5:30, no DST
-  const nowUtc = new Date()
-  return new Date(nowUtc.getTime() + (5.5 * 60 * 60 * 1000))
-}
-
 function computeWindow(quiz: any) {
   const ww = quiz?.weeklyWindow
   if (!ww) return { active: true }
-  const istNow = nowInIST()
-  const day = istNow.getUTCDay() // after shifting to IST, using UTC methods corresponds to IST-based weekday
-  const isToday = day === (ww.dayOfWeek ?? 0)
-  // Build today's start/end in IST
+
+  const nowUtc = new Date()
+  const IST_OFFSET_MIN = 330 // +05:30
+
+  // Compute IST calendar date components by shifting now to IST
+  const istNow = new Date(nowUtc.getTime() + IST_OFFSET_MIN * 60 * 1000)
+  const istY = istNow.getUTCFullYear()
+  const istM = istNow.getUTCMonth()
+  const istD = istNow.getUTCDate()
+  const istDow = istNow.getUTCDay()
+
+  const targetDow = ww.dayOfWeek ?? 0
   const [sh, sm] = String(ww.start || '20:00').split(':').map((x: string)=>parseInt(x,10))
   const [eh, em] = String(ww.end || '20:15').split(':').map((x: string)=>parseInt(x,10))
-  const startIST = new Date(istNow)
-  startIST.setUTCHours(sh, sm, 0, 0)
-  const endIST = new Date(istNow)
-  endIST.setUTCHours(eh, em, 0, 0)
-  const active = isToday && istNow >= startIST && istNow <= endIST
 
-  // Compute nextOpenAt and closesAt in ISO (UTC) by reverting IST shift
-  const toUTCIso = (d: Date) => new Date(d.getTime() - (5.5 * 60 * 60 * 1000)).toISOString()
+  // Build IST start/end for today (in IST), then convert to UTC by subtracting offset
+  const istStartUtcMs = Date.UTC(istY, istM, istD, sh, sm) - IST_OFFSET_MIN * 60 * 1000
+  const istEndUtcMs = Date.UTC(istY, istM, istD, eh, em) - IST_OFFSET_MIN * 60 * 1000
+
+  const isToday = istDow === targetDow
+  const nowMs = nowUtc.getTime()
+  const active = isToday && nowMs >= istStartUtcMs && nowMs <= istEndUtcMs
+
+  // Next window computation (in UTC ISO)
+  const toIso = (ms: number) => new Date(ms).toISOString()
   let nextOpenAt: string | null = null
   let closesAt: string | null = null
   if (isToday) {
-    nextOpenAt = toUTCIso(startIST)
-    closesAt = toUTCIso(endIST)
+    nextOpenAt = toIso(istStartUtcMs)
+    closesAt = toIso(istEndUtcMs)
   } else {
-    // find next Sunday (or ww.dayOfWeek) from IST now
-    const targetDow = ww.dayOfWeek ?? 0
-    const curDow = day
+    const curDow = istDow
     const delta = (targetDow - curDow + 7) % 7 || 7
-    const next = new Date(istNow)
-    next.setUTCDate(next.getUTCDate() + delta)
-    const nextStart = new Date(next)
-    nextStart.setUTCHours(sh, sm, 0, 0)
-    const nextEnd = new Date(next)
-    nextEnd.setUTCHours(eh, em, 0, 0)
-    nextOpenAt = toUTCIso(nextStart)
-    closesAt = toUTCIso(nextEnd)
+    const nextIstDate = new Date(Date.UTC(istY, istM, istD))
+    nextIstDate.setUTCDate(nextIstDate.getUTCDate() + delta)
+    const nY = nextIstDate.getUTCFullYear()
+    const nM = nextIstDate.getUTCMonth()
+    const nD = nextIstDate.getUTCDate()
+    const nextStartUtcMs = Date.UTC(nY, nM, nD, sh, sm) - IST_OFFSET_MIN * 60 * 1000
+    const nextEndUtcMs = Date.UTC(nY, nM, nD, eh, em) - IST_OFFSET_MIN * 60 * 1000
+    nextOpenAt = toIso(nextStartUtcMs)
+    closesAt = toIso(nextEndUtcMs)
   }
   return { active, nextOpenAt, closesAt }
 }

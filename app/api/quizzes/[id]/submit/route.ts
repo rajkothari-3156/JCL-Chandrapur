@@ -32,18 +32,24 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     const quizText = await fs.readFile(quizPath, 'utf8')
     const quiz = JSON.parse(quizText)
 
-    // Enforce active window if defined
+    // Enforce active window if defined (timezone-agnostic IST calculation)
     const nowUtc = new Date()
-    const istNow = new Date(nowUtc.getTime() + (5.5 * 60 * 60 * 1000))
     const ww = quiz?.weeklyWindow
     if (ww) {
-      const day = istNow.getUTCDay()
-      const isToday = day === (ww.dayOfWeek ?? 0)
+      const IST_OFFSET_MIN = 330
+      const istNow = new Date(nowUtc.getTime() + IST_OFFSET_MIN * 60 * 1000)
+      const istY = istNow.getUTCFullYear()
+      const istM = istNow.getUTCMonth()
+      const istD = istNow.getUTCDate()
+      const istDow = istNow.getUTCDay()
+      const targetDow = ww.dayOfWeek ?? 0
       const [sh, sm] = String(ww.start || '20:00').split(':').map((x: string)=>parseInt(x,10))
       const [eh, em] = String(ww.end || '20:15').split(':').map((x: string)=>parseInt(x,10))
-      const startIST = new Date(istNow); startIST.setUTCHours(sh, sm, 0, 0)
-      const endIST = new Date(istNow); endIST.setUTCHours(eh, em, 0, 0)
-      const active = isToday && istNow >= startIST && istNow <= endIST
+      const istStartUtcMs = Date.UTC(istY, istM, istD, sh, sm) - IST_OFFSET_MIN * 60 * 1000
+      const istEndUtcMs = Date.UTC(istY, istM, istD, eh, em) - IST_OFFSET_MIN * 60 * 1000
+      const isToday = istDow === targetDow
+      const nowMs = nowUtc.getTime()
+      const active = isToday && nowMs >= istStartUtcMs && nowMs <= istEndUtcMs
       if (!active) {
         return NextResponse.json({ error: 'Quiz is not active right now. Please submit during the scheduled window.' }, { status: 403 })
       }
