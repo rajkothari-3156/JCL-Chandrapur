@@ -29,6 +29,33 @@ function norm(s: string) {
   return String(s || '').toLowerCase().replace(/\s+/g, ' ').trim()
 }
 
+// Google Drive helpers (same logic as registrations page)
+const extractDriveId = (url: string): string | null => {
+  if (!url) return null
+  try {
+    const m1 = url.match(/drive\.google\.com\/file\/d\/([^/]+)/)
+    if (m1 && m1[1]) return m1[1]
+    const u = new URL(url)
+    const id = u.searchParams.get('id')
+    if (id) return id
+    const m2 = url.match(/[?&]id=([^&]+)/)
+    if (m2 && m2[1]) return m2[1]
+    return null
+  } catch {
+    return null
+  }
+}
+
+const driveThumbUrl = (url: string): string => {
+  const id = extractDriveId(url)
+  return id ? `https://drive.google.com/thumbnail?id=${id}&sz=w200` : url
+}
+
+const driveViewUrl = (url: string): string => {
+  const id = extractDriveId(url)
+  return id ? `https://drive.google.com/uc?export=view&id=${id}` : url
+}
+
 export default function AuctionPage() {
   const [auth, setAuth] = useState<boolean>(false)
   const [user, setUser] = useState('')
@@ -352,7 +379,9 @@ export default function AuctionPage() {
                 <div className="p-4 grid md:grid-cols-[160px_1fr] gap-4 items-center">
                   <div className="w-full h-40 bg-green-950/50 flex items-center justify-center rounded">
                     {picked?.photoUrl ? (
-                      <img src={picked.photoUrl} alt={picked.fullName} className="max-h-40 object-contain" />
+                      <a href={driveViewUrl(picked.photoUrl)} target="_blank" rel="noreferrer">
+                        <img src={driveThumbUrl(picked.photoUrl)} alt={picked.fullName} className="max-h-40 object-contain" />
+                      </a>
                     ) : (
                       <div className="text-green-300 text-sm">No Photo</div>
                     )}
