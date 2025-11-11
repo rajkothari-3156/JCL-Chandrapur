@@ -114,7 +114,7 @@ export default function AuctionPage() {
 
   useEffect(() => { if (auth) loadAll() }, [auth])
 
-  // Lazy-load mapping and batting CSVs when a player is picked the first time
+  // Lazy-load mapping and CSVs when a player is picked the first time
   const ensureAuxData = async () => {
     try {
       if (!mapping) {
@@ -127,18 +127,21 @@ export default function AuctionPage() {
       const parsed = Papa.parse(text, { header: true, skipEmptyLines: true })
       return (parsed.data as any[])
     }
-    if (!stats2024['batting']) {
-      try { const rows = await loadCsv('/data/1243558_batting_leaderboard.csv'); setStats2024(prev => ({ ...prev, batting: rows })) } catch { setStats2024(prev => ({ ...prev, batting: [] })) }
-    }
-    if (!stats2023['batting']) {
-      try { const rows = await loadCsv('/data/840910_batting_leaderboard.csv'); setStats2023(prev => ({ ...prev, batting: rows })) } catch { setStats2023(prev => ({ ...prev, batting: [] })) }
+    const categories = ['batting','bowling','fielding'] as const
+    for (const cat of categories) {
+      if (!stats2024[cat]) {
+        try { const rows = await loadCsv(`/data/1243558_${cat}_leaderboard.csv`); setStats2024(prev => ({ ...prev, [cat]: rows })) } catch { setStats2024(prev => ({ ...prev, [cat]: [] })) }
+      }
+      if (!stats2023[cat]) {
+        try { const rows = await loadCsv(`/data/840910_${cat}_leaderboard.csv`); setStats2023(prev => ({ ...prev, [cat]: rows })) } catch { setStats2023(prev => ({ ...prev, [cat]: [] })) }
+      }
     }
   }
 
   useEffect(() => { if (picked) { void ensureAuxData() } }, [picked])
 
-  const matchedBatting = useMemo(() => {
-    if (!picked) return { y2024: [], y2023: [] as any[] }
+  const matchedStats = useMemo(() => {
+    if (!picked) return { batting: { y2024: [], y2023: [] }, bowling: { y2024: [], y2023: [] }, fielding: { y2024: [], y2023: [] } }
     const selectedName = picked.fullName
     const map = mapping || {}
     const regTo24 = map.reg_to_2024 || {}
@@ -152,13 +155,14 @@ export default function AuctionPage() {
     const mapped23: string[] = regKey23 ? (regTo23[regKey23] || []) : []
     const names24 = [selectedName, ...mapped24].map(norm)
     const names23 = [selectedName, ...mapped23].map(norm)
-    const pick = (rows: any[] | undefined, names: string[]) => {
+    const pickRows = (rows: any[] | undefined, names: string[]) => {
       if (!rows) return []
       return rows.filter(r => names.includes(norm(r.name || r.Name || '')))
     }
     return {
-      y2024: pick(stats2024['batting'], names24),
-      y2023: pick(stats2023['batting'], names23),
+      batting: { y2024: pickRows(stats2024['batting'], names24), y2023: pickRows(stats2023['batting'], names23) },
+      bowling: { y2024: pickRows(stats2024['bowling'], names24), y2023: pickRows(stats2023['bowling'], names23) },
+      fielding: { y2024: pickRows(stats2024['fielding'], names24), y2023: pickRows(stats2023['fielding'], names23) },
     }
   }, [picked, mapping, stats2024, stats2023])
 
@@ -393,37 +397,51 @@ export default function AuctionPage() {
                     <div className="text-green-200 text-sm">T-shirt: {picked?.tshirtSize ?? ''}</div>
                     <div className="text-green-200 text-sm">Contact: {picked?.contact ?? ''}</div>
                     <div className="text-green-200 text-sm">Group: {picked?.auctionGroup ?? ''} {picked?.auctionAgeCategory ? `• ${picked.auctionAgeCategory}` : ''}</div>
-                    <div className="text-green-200 text-sm">Auction: {picked?.auctionTeam ?? '—'} {typeof picked?.auctionPoints === 'number' ? `• ${picked?.auctionPoints} pts` : ''}</div>
+                    <div className="text-green-200 text-sm">2024 Auction: {picked?.auctionTeam ?? '—'} {typeof picked?.auctionPoints === 'number' ? `• ${picked?.auctionPoints} pts` : ''}</div>
                   </div>
                 </div>
                 {/* pseudo graphic bar */}
                 <div className="absolute bottom-0 left-0 h-1 w-full bg-gradient-to-r from-cricket-gold/0 via-cricket-gold/60 to-cricket-gold/0"></div>
               </div>
 
-              {/* Previous Seasons — Batting */}
-              {(matchedBatting.y2024.length > 0 || matchedBatting.y2023.length > 0) && (
-                <div className="mt-4 grid md:grid-cols-2 gap-3">
-                  {(['2024','2023'] as const).map(yr => {
-                    const rows = yr === '2024' ? matchedBatting.y2024 : matchedBatting.y2023
-                    if (!rows || rows.length === 0) return (
-                      <div key={yr} className="rounded border border-green-800 bg-green-900/30 p-3"><div className="text-white font-semibold">Batting {yr}</div><div className="text-green-300 text-sm">No record</div></div>
-                    )
-                    const r = rows[0] as any
-                    const keys = ['Runs','Runs Scored','Total Runs','Innings','Sixes','Fours','Balls','SR','Average','Not Outs','50s','100s']
-                    const items = keys.map(k => ({ k, v: r[k] ?? r[k.toLowerCase()] })).filter(x => x.v !== undefined && x.v !== null && String(x.v) !== '')
-                    return (
-                      <div key={yr} className="rounded border border-green-800 bg-green-900/30 p-3">
-                        <div className="text-white font-semibold mb-1">Batting {yr}</div>
-                        <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-green-100 text-sm">
-                          {items.slice(0, 10).map((it, i) => (
-                            <div key={i} className="flex justify-between gap-2"><span className="text-green-300">{it.k}</span><span>{String(it.v)}</span></div>
-                          ))}
-                        </div>
+              {/* Previous Seasons — Batting, Bowling, Fielding */}
+              {(['batting','bowling','fielding'] as const).map((cat) => {
+                const label = cat.charAt(0).toUpperCase() + cat.slice(1)
+                const y2024 = (matchedStats as any)[cat]?.y2024 || []
+                const y2023 = (matchedStats as any)[cat]?.y2023 || []
+                const hasAny = (y2024.length > 0 || y2023.length > 0)
+                if (!hasAny) return null
+                const keySets: Record<string, string[]> = {
+                  batting: ['Runs','Runs Scored','Total Runs','Innings','Sixes','Fours','Balls','SR','Average','Not Outs','50s','100s'],
+                  bowling: ['Wickets','Overs','Maidens','Economy','Avg','Average','Runs Given','Balls','Dot Balls','Best','5W'],
+                  fielding: ['Catches','Run Outs','Stumpings','Dismissals','Innings','Matches'],
+                }
+                const renderCard = (yr: '2024'|'2023', rows: any[]) => {
+                  if (!rows || rows.length === 0) return (
+                    <div key={yr} className="rounded border border-green-800 bg-green-900/30 p-3"><div className="text-white font-semibold">{label} {yr}</div><div className="text-green-300 text-sm">No record</div></div>
+                  )
+                  const r = rows[0] as any
+                  const items = keySets[cat].map(k => ({ k, v: r[k] ?? r[k.toLowerCase?.()] ?? r[String(k).toLowerCase()] })).filter(x => x.v !== undefined && x.v !== null && String(x.v) !== '')
+                  return (
+                    <div key={yr} className="rounded border border-green-800 bg-green-900/30 p-3">
+                      <div className="text-white font-semibold mb-1">{label} {yr}</div>
+                      <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-green-100 text-sm">
+                        {items.slice(0, 10).map((it, i) => (
+                          <div key={i} className="flex justify-between gap-2"><span className="text-green-300">{it.k}</span><span>{String(it.v)}</span></div>
+                        ))}
                       </div>
-                    )
-                  })}
-                </div>
-              )}
+                    </div>
+                  )
+                }
+                return (
+                  <div key={cat} className="mt-4">
+                    <div className="grid md:grid-cols-2 gap-3">
+                      {renderCard('2024', y2024)}
+                      {renderCard('2023', y2023)}
+                    </div>
+                  </div>
+                )
+              })}
 
               <div className="mt-4 grid md:grid-cols-[1fr_auto_auto_auto] gap-3 items-end">
                 <div>
