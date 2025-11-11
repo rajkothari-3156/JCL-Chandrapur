@@ -36,26 +36,35 @@ export default function RegistrationsPage() {
   const [photoSrc, setPhotoSrc] = useState<string>('')
   const [photoAlt, setPhotoAlt] = useState<string>('')
 
-  // Convert Google Drive share links to direct-view URLs suitable for <img src>
-  const toDirectDriveUrl = (url: string): string | null => {
+  // Google Drive helpers: extract file id and build reliable URLs
+  const extractDriveId = (url: string): string | null => {
     if (!url) return null
     try {
-      // Pattern 1: https://drive.google.com/file/d/FILE_ID/view?usp=sharing
-      const m1 = url.match(/drive\.google\.com\/file\/d\/([^/]+)\//)
-      if (m1 && m1[1]) return `https://drive.google.com/uc?export=view&id=${m1[1]}`
-
-      // Pattern 2: https://drive.google.com/open?id=FILE_ID or .../uc?id=FILE_ID
+      // Pattern: https://drive.google.com/file/d/FILE_ID/view...
+      const m1 = url.match(/drive\.google\.com\/file\/d\/([^/]+)/)
+      if (m1 && m1[1]) return m1[1]
+      // Pattern: ...?id=FILE_ID (open or uc)
       const u = new URL(url)
       const id = u.searchParams.get('id')
-      if (id) return `https://drive.google.com/uc?export=view&id=${id}`
-
-      // If it's already a uc link, return as-is
-      if (/drive\.google\.com\/uc/.test(url)) return url
-
-      return url
+      if (id) return id
+      // Already a uc link with id param in path (rare)
+      const m2 = url.match(/[?&]id=([^&]+)/)
+      if (m2 && m2[1]) return m2[1]
+      return null
     } catch {
-      return url
+      return null
     }
+  }
+
+  const driveThumbUrl = (url: string): string => {
+    const id = extractDriveId(url)
+    // Use Drive's thumbnail endpoint when we have an id; fall back to original
+    return id ? `https://drive.google.com/thumbnail?id=${id}&sz=w200` : url
+  }
+
+  const driveViewUrl = (url: string): string => {
+    const id = extractDriveId(url)
+    return id ? `https://drive.google.com/uc?export=view&id=${id}` : url
   }
 
   useEffect(() => {
@@ -299,7 +308,7 @@ export default function RegistrationsPage() {
                           type="button"
                           className="group inline-flex items-center gap-2 focus:outline-none"
                           onClick={() => {
-                            const direct = toDirectDriveUrl(r.photoUrl || '') || ''
+                            const direct = driveViewUrl(r.photoUrl || '') || ''
                             setPhotoSrc(direct)
                             setPhotoAlt(r.fullName + ' photo')
                             setPhotoOpen(true)
@@ -308,11 +317,18 @@ export default function RegistrationsPage() {
                         >
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
-                            src={toDirectDriveUrl(r.photoUrl) || ''}
+                            src={driveThumbUrl(r.photoUrl) || ''}
                             alt={r.fullName + ' photo'}
                             className="h-12 w-12 object-cover rounded-md border border-green-800/50 bg-green-900/40"
                             onError={(e) => {
-                              (e.currentTarget as HTMLImageElement).style.opacity = '0.3'
+                              const img = e.currentTarget as HTMLImageElement
+                              // Fallback to view URL once, then hide if still failing
+                              if (img.dataset.fallback !== '1') {
+                                img.dataset.fallback = '1'
+                                img.src = driveViewUrl(r.photoUrl || '') || ''
+                              } else {
+                                img.style.display = 'none'
+                              }
                             }}
                           />
                           <span className="sr-only">Open photo</span>
