@@ -1,0 +1,49 @@
+{
+  "teams": {
+    "SR Rangers": {
+      "budget": 10000,
+      "players": [
+        {
+          "fullName": "Anmol khatod ji",
+          "points": 200,
+          "time": "2025-11-09T18:21:35.555Z"
+        }
+      ]
+    },
+    "KT Lions": {
+      "budget": 10000,
+      "players": []
+    },
+    "Power Hitters": {
+      "budget": 10000,
+      "players": []
+    },
+    "Falcon Giants": {
+      "budget": 10000,
+      "players": []
+    },
+    "Parshv Panthers": {
+      "budget": 10000,
+      "players": []
+    },
+    "Chandralok Warriors": {
+      "budget": 10000,
+      "players": []
+    },
+    "Gladiators Cricket Club": {
+      "budget": 10000,
+      "players": []
+    },
+    "Toxic 11": {
+      "budget": 10000,
+      "players": []
+    }
+  },
+  "sold": {
+    "anmol khatod ji": {
+      "team": "SR Rangers",
+      "points": 200,
+      "time": "2025-11-09T18:21:35.555Z"
+    }
+  }
+}
