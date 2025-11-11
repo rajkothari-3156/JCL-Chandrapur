@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server'
-import fs from 'node:fs/promises'
-import path from 'node:path'
+import { kv } from '@/lib/kv'
 
-const STATE_PATH = path.join(process.cwd(), 'public', 'data', 'auction_state.json')
+const STATE_KEY = 'auction:state:v1'
 
 function normName(s: string) {
   return String(s || '').toLowerCase().replace(/\s+/g, ' ').trim()
@@ -10,13 +9,13 @@ function normName(s: string) {
 
 async function readState() {
   try {
-    const txt = await fs.readFile(STATE_PATH, 'utf8')
-    const json = JSON.parse(txt)
-    const teams: Record<string, { budget: number; players: Array<{ fullName: string; points: number; time: string }> }> = json.teams || {}
-    const sold: Record<string, { team: string; points: number; time: string }> = json.sold || {}
-    const owners: Record<string, { name: string; playing: boolean }> = json.owners || {}
-    const retentions: Record<string, Array<{ fullName: string; time: string }>> = json.retentions || {}
-    const unsold: Array<{ fullName: string; time: string }> = json.unsold || []
+    const json = (await kv.get(STATE_KEY)) as any | null
+    const base = json || {}
+    const teams: Record<string, { budget: number; players: Array<{ fullName: string; points: number; time: string }> }> = base.teams || {}
+    const sold: Record<string, { team: string; points: number; time: string }> = base.sold || {}
+    const owners: Record<string, { name: string; playing: boolean }> = base.owners || {}
+    const retentions: Record<string, Array<{ fullName: string; time: string }>> = base.retentions || {}
+    const unsold: Array<{ fullName: string; time: string }> = base.unsold || []
     return { teams, sold, owners, retentions, unsold }
   } catch {
     return { teams: {}, sold: {} as Record<string, { team: string; points: number; time: string }>, owners: {}, retentions: {}, unsold: [] as Array<{ fullName: string; time: string }>} 
@@ -24,8 +23,7 @@ async function readState() {
 }
 
 async function writeState(state: any) {
-  await fs.mkdir(path.dirname(STATE_PATH), { recursive: true })
-  await fs.writeFile(STATE_PATH, JSON.stringify(state, null, 2), 'utf8')
+  await kv.set(STATE_KEY, state)
 }
 
 export async function GET() {
