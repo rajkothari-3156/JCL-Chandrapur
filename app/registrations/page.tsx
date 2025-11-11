@@ -33,6 +33,28 @@ export default function RegistrationsPage() {
   const [modalError, setModalError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<'batting' | 'bowling' | 'fielding' | 'mvp'>('fielding')
 
+  // Convert Google Drive share links to direct-view URLs suitable for <img src>
+  const toDirectDriveUrl = (url: string): string | null => {
+    if (!url) return null
+    try {
+      // Pattern 1: https://drive.google.com/file/d/FILE_ID/view?usp=sharing
+      const m1 = url.match(/drive\.google\.com\/file\/d\/([^/]+)\//)
+      if (m1 && m1[1]) return `https://drive.google.com/uc?export=view&id=${m1[1]}`
+
+      // Pattern 2: https://drive.google.com/open?id=FILE_ID or .../uc?id=FILE_ID
+      const u = new URL(url)
+      const id = u.searchParams.get('id')
+      if (id) return `https://drive.google.com/uc?export=view&id=${id}`
+
+      // If it's already a uc link, return as-is
+      if (/drive\.google\.com\/uc/.test(url)) return url
+
+      return url
+    } catch {
+      return url
+    }
+  }
+
   useEffect(() => {
     const load = async (force = false) => {
       setLoading(true)
@@ -270,7 +292,24 @@ export default function RegistrationsPage() {
                     <td className="px-3 py-2 text-green-100">{r.tshirtSize ?? ''}</td>
                     <td className="px-3 py-2 text-green-100">
                       {r.photoUrl ? (
-                        <a className="text-cricket-gold hover:underline" href={r.photoUrl} target="_blank" rel="noreferrer">View</a>
+                        <span className="inline-flex items-center gap-2">
+                          {/* Thumbnail with fallback link */}
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={toDirectDriveUrl(r.photoUrl) || ''}
+                            alt={r.fullName + ' photo'}
+                            className="h-12 w-12 object-cover rounded-md border border-green-800/50 bg-green-900/40"
+                            onError={(e) => {
+                              const a = document.createElement('a')
+                              a.href = r.photoUrl as string
+                              a.target = '_blank'
+                              a.rel = 'noreferrer'
+                              a.click()
+                              ;(e.currentTarget as HTMLImageElement).style.display = 'none'
+                            }}
+                          />
+                          <a className="text-cricket-gold hover:underline" href={r.photoUrl} target="_blank" rel="noreferrer">Open</a>
+                        </span>
                       ) : ''}
                     </td>
                     <td className="px-3 py-2 text-green-100">{r.timestamp ?? ''}</td>
