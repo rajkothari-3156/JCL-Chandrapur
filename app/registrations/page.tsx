@@ -35,6 +35,11 @@ export default function RegistrationsPage() {
   const [photoOpen, setPhotoOpen] = useState(false)
   const [photoSrc, setPhotoSrc] = useState<string>('')
   const [photoAlt, setPhotoAlt] = useState<string>('')
+  const [zoom, setZoom] = useState<number>(1)
+  const [tx, setTx] = useState<number>(0)
+  const [ty, setTy] = useState<number>(0)
+  const [panning, setPanning] = useState<boolean>(false)
+  const [last, setLast] = useState<{ x: number; y: number } | null>(null)
 
   // Google Drive helpers: extract file id and build reliable URLs
   const extractDriveId = (url: string): string | null => {
@@ -311,6 +316,11 @@ export default function RegistrationsPage() {
                             const direct = driveViewUrl(r.photoUrl || '') || ''
                             setPhotoSrc(direct)
                             setPhotoAlt(r.fullName + ' photo')
+                            setZoom(1)
+                            setTx(0)
+                            setTy(0)
+                            setPanning(false)
+                            setLast(null)
                             setPhotoOpen(true)
                           }}
                           title="View photo"
