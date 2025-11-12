@@ -8,6 +8,7 @@ type AuctionState = {
   summary: Record<string, { budget: number; spent: number; remaining: number; count: number }>
   owners?: Record<string, { name: string; playing: boolean }>
   retentions?: Record<string, Array<{ fullName: string; time: string }>>
+  unsold?: Array<{ fullName: string; time: string; rounds?: number; unassigned?: boolean }>
 }
 
 export default function AuctionTeamsPage() {
@@ -62,6 +63,20 @@ export default function AuctionTeamsPage() {
     }
   }
 
+  const clearUnsold = async () => {
+    setSaving('clearUnsold')
+    try {
+      const res = await fetch('/api/auction/state', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'clearUnsold' }) })
+      const json = await res.json()
+      if (!res.ok) throw new Error(json?.error || 'Failed to clear unsold')
+      setState(json.state)
+    } catch (e: any) {
+      setError(e?.message ?? 'Failed to clear unsold')
+    } finally {
+      setSaving(null)
+    }
+  }
+
   return (
     <main className="min-h-screen p-4 md:p-8">
       <div className="max-w-6xl mx-auto space-y-6">
@@ -77,6 +92,26 @@ export default function AuctionTeamsPage() {
         {error && <div className="text-red-200">{error}</div>}
 
         {!loading && !error && (
+          <>
+          <div className="bg-green-900/30 border border-green-800 rounded-lg p-4">
+            <div className="text-white font-semibold mb-2">Team Budgets</div>
+            <div className="grid md:grid-cols-4 gap-3">
+              {Object.entries(state?.summary || {}).map(([name, s]) => (
+                <div key={name} className="rounded border border-green-800 p-3 bg-green-900/40">
+                  <div className="text-white font-medium">{name}</div>
+                  <div className="text-green-200 text-sm">Budget: {s.budget}</div>
+                  <div className="text-green-200 text-sm">Spent: {s.spent}</div>
+                  <div className="text-green-200 text-sm">Remaining: {s.remaining}</div>
+                  <div className="text-green-200 text-sm">Players: {s.count}</div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-3 flex items-center gap-3">
+              <div className="text-green-200 text-sm">Unsold Queue: {(state?.unsold || []).filter(u=>!u.unassigned).length}</div>
+              <button onClick={clearUnsold} disabled={saving==='clearUnsold'} className="px-3 py-1.5 rounded-md border border-green-800 text-green-100 text-sm disabled:opacity-50">Clear Unsold</button>
+            </div>
+          </div>
+
           <div className="grid md:grid-cols-2 gap-4">
             {Object.entries(state?.summary || {}).map(([name, s]) => (
               <div key={name} className="rounded-lg border border-green-800 bg-green-900/30">
@@ -126,6 +161,7 @@ export default function AuctionTeamsPage() {
               </div>
             ))}
           </div>
+          </>
         )}
         {/* Print styles */}
         <style jsx global>{`
