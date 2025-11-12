@@ -80,6 +80,7 @@ export default function AuctionPage() {
   const [ownerTeam, setOwnerTeam] = useState('')
   const [ownerName, setOwnerName] = useState('')
   const [ownerPlaying, setOwnerPlaying] = useState(false)
+  const [activeTab, setActiveTab] = useState<'init'|'owners'|'auction'|'budgets'>('auction')
   const [imgLoaded, setImgLoaded] = useState(false)
   const [photoOpen, setPhotoOpen] = useState(false)
   const [photoSrc, setPhotoSrc] = useState<string>('')
@@ -316,6 +317,13 @@ export default function AuctionPage() {
 
         {!loading && !error && (
           <>
+            <div className="flex flex-wrap gap-2 mb-3">
+              <button type="button" onClick={() => setActiveTab('init')} className={`px-3 py-1.5 rounded-md text-sm font-semibold border ${activeTab==='init' ? 'bg-cricket-gold text-black border-cricket-gold' : 'bg-green-900/40 text-green-100 border-green-800'}`}>Initialize Teams</button>
+              <button type="button" onClick={() => setActiveTab('owners')} className={`px-3 py-1.5 rounded-md text-sm font-semibold border ${activeTab==='owners' ? 'bg-cricket-gold text-black border-cricket-gold' : 'bg-green-900/40 text-green-100 border-green-800'}`}>Owners & Retentions</button>
+              <button type="button" onClick={() => setActiveTab('auction')} className={`px-3 py-1.5 rounded-md text-sm font-semibold border ${activeTab==='auction' ? 'bg-cricket-gold text-black border-cricket-gold' : 'bg-green-900/40 text-green-100 border-green-800'}`}>Player Auction</button>
+              <button type="button" onClick={() => setActiveTab('budgets')} className={`px-3 py-1.5 rounded-md text-sm font-semibold border ${activeTab==='budgets' ? 'bg-cricket-gold text-black border-cricket-gold' : 'bg-green-900/40 text-green-100 border-green-800'}`}>Team Budgets</button>
+            </div>
+            {activeTab==='init' && (
             <div className="bg-green-900/30 border border-green-800 rounded-lg p-4">
               <div className="text-white font-semibold mb-2">Initialize Teams</div>
               <div className="grid md:grid-cols-[1fr_auto_auto] gap-3 items-end">
@@ -330,8 +338,10 @@ export default function AuctionPage() {
                 <button onClick={ensureTeams} className="px-4 py-2 rounded-md bg-cricket-gold text-black font-semibold">Save</button>
               </div>
             </div>
+            )}
 
             {/* Owners & Retentions */}
+            {activeTab==='owners' && (
             <div className="bg-green-900/30 border border-green-800 rounded-lg p-4">
               <div className="text-white font-semibold mb-2">Owners & Retentions</div>
               <div className="grid md:grid-cols-2 gap-4">
@@ -387,7 +397,9 @@ export default function AuctionPage() {
                 </div>
               </div>
             </div>
+            )}
 
+            {activeTab==='auction' && (
             <div className="bg-green-900/30 border border-green-800 rounded-lg p-4">
               <div className="flex items-center gap-3 mb-3">
                 <button onClick={startRandomPick} className="px-4 py-2 rounded-md bg-cricket-gold text-black font-semibold">Random Pick</button>
@@ -470,6 +482,60 @@ export default function AuctionPage() {
                       { k: 'Total Runs', v: runs },
                       { k: 'Strike Rate', v: sr },
                     ].filter(x => x.v !== undefined && x.v !== null && String(x.v) !== '')
+                  } else if (cat === 'fielding') {
+                    const pick = (...keys: string[]) => {
+                      for (const k of keys) {
+                        const v = r[k]
+                        if (v !== undefined && v !== null && String(v) !== '') return v
+                      }
+                      return ''
+                    }
+                    const catches = pick('total_catches', 'catches', 'Catches')
+                    const stumpings = pick('stumpings', 'Stumpings')
+                    const runOutsRaw = pick('run_outs', 'Run Outs')
+                    const assistRunOutsRaw = pick('assist_run_outs', 'Assist Run Outs', 'Assists')
+                    const dismissals = pick('total_dismissal', 'Dismissals')
+                    const toNum = (v: any) => {
+                      const n = Number(String(v).replace(/[^0-9.-]/g, ''))
+                      return Number.isFinite(n) ? n : 0
+                    }
+                    const totalRunOuts = toNum(runOutsRaw) + toNum(assistRunOutsRaw)
+                    items = [
+                      { k: 'Catches', v: catches },
+                      { k: 'Stumpings', v: stumpings },
+                      { k: 'Total Run Outs', v: totalRunOuts },
+                      { k: 'Dismissals', v: dismissals },
+                    ].filter(x => x.v !== undefined && x.v !== null && String(x.v) !== '')
+                  } else if (cat === 'bowling') {
+                    const pick = (...keys: string[]) => {
+                      for (const k of keys) {
+                        const v = r[k]
+                        if (v !== undefined && v !== null && String(v) !== '') return v
+                      }
+                      return ''
+                    }
+                    const wickets = pick('total_wickets', 'Wickets', 'wickets')
+                    const overs = pick('overs', 'Overs')
+                    const maidens = pick('maidens', 'Maidens')
+                    const economy = pick('economy', 'Economy', 'Econ')
+                    const average = pick('avg', 'Average', 'Avg')
+                    const runsGiven = pick('runs', 'Runs Given', 'Runs')
+                    const balls = pick('balls', 'Balls')
+                    const dots = pick('dot_balls', 'Dot Balls', 'Dots')
+                    const best = pick('highest_wicket', 'Best', 'Best Bowling')
+                    const fiveW = pick('5W', 'Five Wicket', 'Five-for')
+                    items = [
+                      { k: 'Total Wickets', v: wickets },
+                      { k: 'Overs', v: overs },
+                      { k: 'Maidens', v: maidens },
+                      { k: 'Economy', v: economy },
+                      { k: 'Average', v: average },
+                      { k: 'Runs Given', v: runsGiven },
+                      { k: 'Balls', v: balls },
+                      { k: 'Dot Balls', v: dots },
+                      { k: 'Best', v: best },
+                      { k: '5W', v: fiveW },
+                    ].filter(x => x.v !== undefined && x.v !== null && String(x.v) !== '')
                   } else {
                     items = keySets[cat].map(k => ({ k, v: r[k] ?? r[k.toLowerCase?.()] ?? r[String(k).toLowerCase()] })).filter(x => x.v !== undefined && x.v !== null && String(x.v) !== '')
                   }
@@ -512,7 +578,9 @@ export default function AuctionPage() {
                 <button onClick={markUnsold} disabled={!picked} className="px-4 py-2 rounded-md border border-yellow-600 text-yellow-300 disabled:opacity-50">Mark Unsold</button>
               </div>
             </div>
+            )}
 
+            {activeTab==='budgets' && (
             <div className="bg-green-900/30 border border-green-800 rounded-lg p-4">
               <div className="text-white font-semibold mb-2">Team Budgets</div>
               <div className="grid md:grid-cols-4 gap-3">
@@ -531,6 +599,7 @@ export default function AuctionPage() {
                 <button onClick={clearUnsold} className="px-3 py-1.5 rounded-md border border-green-800 text-green-100 text-sm">Clear Unsold</button>
               </div>
             </div>
+            )}
           </>
         )}
       </div>
@@ -576,6 +645,25 @@ export default function AuctionPage() {
                   alt={photoAlt}
                   className="max-h-[80vh] w-full object-contain rounded will-change-transform"
                   style={{ transform: `translate(${tx}px, ${ty}px) scale(${zoom})` }}
+                  onError={(e) => {
+                    const img = e.currentTarget as HTMLImageElement
+                    const step = img.dataset.fallback || '0'
+                    // Step 0: try original URL
+                    if (step === '0') {
+                      img.dataset.fallback = '1'
+                      setPhotoSrc(picked?.photoUrl || photoSrc)
+                      return
+                    }
+                    // Step 1: try a larger thumbnail as a last resort
+                    const id = extractDriveId(photoSrc || picked?.photoUrl || '')
+                    if (step === '1' && id) {
+                      img.dataset.fallback = '2'
+                      setPhotoSrc(`https://drive.google.com/thumbnail?id=${id}&sz=w1000`)
+                      return
+                    }
+                    // Step 2: give up and close
+                    setPhotoOpen(false)
+                  }}
                   draggable={false}
                 />
               </div>
