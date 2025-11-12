@@ -81,6 +81,14 @@ export default function AuctionPage() {
   const [ownerName, setOwnerName] = useState('')
   const [ownerPlaying, setOwnerPlaying] = useState(false)
   const [imgLoaded, setImgLoaded] = useState(false)
+  const [photoOpen, setPhotoOpen] = useState(false)
+  const [photoSrc, setPhotoSrc] = useState<string>('')
+  const [photoAlt, setPhotoAlt] = useState<string>('')
+  const [zoom, setZoom] = useState<number>(1)
+  const [tx, setTx] = useState<number>(0)
+  const [ty, setTy] = useState<number>(0)
+  const [panning, setPanning] = useState<boolean>(false)
+  const [last, setLast] = useState<{ x: number; y: number } | null>(null)
 
   // aux data for showing previous seasons stats
   const [mapping, setMapping] = useState<any | null>(null)
@@ -199,6 +207,13 @@ export default function AuctionPage() {
   }
 
   useEffect(() => { setImgLoaded(false) }, [picked])
+  useEffect(() => {
+    if (picked?.photoUrl) {
+      setPhotoSrc(driveViewUrl(picked.photoUrl))
+      setPhotoAlt(picked.fullName)
+      setZoom(1); setTx(0); setTy(0); setPanning(false); setLast(null)
+    }
+  }, [picked?.photoUrl])
 
   const handleLogin = () => {
     if (user === 'admin' && pass === '8881212') {
@@ -387,9 +402,19 @@ export default function AuctionPage() {
                 <div className="p-4 grid md:grid-cols-[160px_1fr] gap-4 items-center">
                   <div className="w-full h-40 bg-green-950/50 flex items-center justify-center rounded">
                     {picked && !pickedAnimating && picked.photoUrl ? (
-                      <a href={driveViewUrl(picked.photoUrl)} target="_blank" rel="noreferrer">
+                      <button
+                        type="button"
+                        className="block"
+                        onClick={() => {
+                          setPhotoSrc(driveViewUrl(picked.photoUrl || ''))
+                          setPhotoAlt(picked.fullName)
+                          setZoom(1); setTx(0); setTy(0); setPanning(false); setLast(null)
+                          setPhotoOpen(true)
+                        }}
+                        title="View photo"
+                      >
                         <img src={driveThumbUrl(picked.photoUrl)} alt={picked.fullName} onLoad={() => setImgLoaded(true)} className={`max-h-40 object-contain transition-opacity duration-500 ease-out ${imgLoaded ? 'opacity-100' : 'opacity-0'}`} />
-                      </a>
+                      </button>
                     ) : (
                       <div className="text-green-300 text-sm">{pickedAnimating ? 'Selecting player...' : 'No Photo'}</div>
                     )}
@@ -509,6 +534,60 @@ export default function AuctionPage() {
           </>
         )}
       </div>
+
+      {photoOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+          role="dialog"
+          aria-modal="true"
+          onClick={(e) => { if (e.target === e.currentTarget) setPhotoOpen(false) }}
+          onKeyDown={(e) => { if (e.key === 'Escape') setPhotoOpen(false) }}
+          tabIndex={-1}
+        >
+          <div className="relative max-w-4xl w-full">
+            <button
+              type="button"
+              className="absolute -top-2 -right-2 bg-white/90 text-black rounded-full px-3 py-1 text-sm font-semibold shadow"
+              onClick={() => setPhotoOpen(false)}
+            >
+              Close
+            </button>
+            <div className="bg-green-950 rounded-lg p-2">
+              <div
+                className={`relative overflow-hidden max-h-[80vh] w-full select-none ${panning ? 'cursor-grabbing' : 'cursor-grab'}`}
+                onWheel={(e) => {
+                  e.preventDefault()
+                  const dir = e.deltaY > 0 ? -1 : 1
+                  const next = Math.min(4, Math.max(1, Number((zoom + dir * 0.2).toFixed(2))))
+                  setZoom(next)
+                }}
+                onMouseDown={(e) => { setPanning(true); setLast({ x: e.clientX, y: e.clientY }) }}
+                onMouseMove={(e) => {
+                  if (!panning || !last) return
+                  const dx = e.clientX - last.x
+                  const dy = e.clientY - last.y
+                  setTx(v => v + dx); setTy(v => v + dy); setLast({ x: e.clientX, y: e.clientY })
+                }}
+                onMouseUp={() => { setPanning(false); setLast(null) }}
+                onMouseLeave={() => { setPanning(false); setLast(null) }}
+              >
+                <img
+                  src={photoSrc}
+                  alt={photoAlt}
+                  className="max-h-[80vh] w-full object-contain rounded will-change-transform"
+                  style={{ transform: `translate(${tx}px, ${ty}px) scale(${zoom})` }}
+                  draggable={false}
+                />
+              </div>
+              <div className="flex gap-2 justify-center mt-3">
+                <button type="button" className="px-3 py-1 rounded bg-white/90 text-black text-sm font-semibold" onClick={() => setZoom(z => Math.max(1, Number((z - 0.2).toFixed(2))))}>-</button>
+                <button type="button" className="px-3 py-1 rounded bg-white/90 text-black text-sm font-semibold" onClick={() => setZoom(z => Math.min(4, Number((z + 0.2).toFixed(2))))}>+</button>
+                <button type="button" className="px-3 py-1 rounded bg-white/90 text-black text-sm font-semibold" onClick={() => { setZoom(1); setTx(0); setTy(0) }}>Reset</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   )
 }
