@@ -187,6 +187,8 @@ export default function AuctionPage() {
   const unsoldQueue = useMemo(() => (state?.unsold || []).map(u => u.fullName), [state])
 
   const startRandomPick = () => {
+    if (pickedAnimating) { setActionMsg('Random pick already in progress'); return }
+    if (picked) { setActionMsg('Finish action on current player (sell or mark unsold) before picking next'); return }
     const pool = useUnsoldPool ? regs.filter(r => unsoldQueue.includes(r.fullName)) : unsold
     if (!pool.length) { setActionMsg('No players available in selected pool'); return }
     setPickedAnimating(true)
@@ -402,7 +404,7 @@ export default function AuctionPage() {
             {activeTab==='auction' && (
             <div className="bg-green-900/30 border border-green-800 rounded-lg p-4">
               <div className="flex items-center gap-3 mb-3">
-                <button onClick={startRandomPick} className="px-4 py-2 rounded-md bg-cricket-gold text-black font-semibold">Random Pick</button>
+                <button onClick={startRandomPick} disabled={pickedAnimating || !!picked} className="px-4 py-2 rounded-md bg-cricket-gold text-black font-semibold disabled:opacity-50">Random Pick</button>
                 <label className="inline-flex items-center gap-2 text-green-100">
                   <input type="checkbox" checked={useUnsoldPool} onChange={(e)=>setUseUnsoldPool(e.target.checked)} /> Use Unsold Queue ({unsoldQueue.length})
                 </label>
