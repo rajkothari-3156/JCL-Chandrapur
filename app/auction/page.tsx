@@ -154,17 +154,30 @@ export default function AuctionPage() {
     if (!picked) return { batting: { y2024: [], y2023: [] }, bowling: { y2024: [], y2023: [] }, fielding: { y2024: [], y2023: [] } }
     const selectedName = picked.fullName
     const map = mapping || {}
+    const m2423 = map.jcl_2024_to_2023 || {}
+    const m2324 = map.jcl_2023_to_2024 || {}
     const regTo24 = map.reg_to_2024 || {}
     const regTo23 = map.reg_to_2023 || {}
     const normSel = norm(selectedName)
+
+    const keys2024 = Object.keys(m2423)
+    const key2024 = keys2024.find(k => norm(k) === normSel)
+    const mapped23From24: string[] = key2024 ? (m2423[key2024] || []) : []
+
+    const keys2023 = Object.keys(m2324)
+    const key2023 = keys2023.find(k => norm(k) === normSel)
+    const mapped24From23: string[] = key2023 ? (m2324[key2023] || []) : []
+
     const reg24Keys = Object.keys(regTo24)
     const reg23Keys = Object.keys(regTo23)
     const regKey24 = reg24Keys.find(k => norm(k) === normSel)
     const regKey23 = reg23Keys.find(k => norm(k) === normSel)
-    const mapped24: string[] = regKey24 ? (regTo24[regKey24] || []) : []
-    const mapped23: string[] = regKey23 ? (regTo23[regKey23] || []) : []
-    const names24 = [selectedName, ...mapped24].map(norm)
-    const names23 = [selectedName, ...mapped23].map(norm)
+    const regMapped24: string[] = regKey24 ? (regTo24[regKey24] || []) : []
+    const regMapped23: string[] = regKey23 ? (regTo23[regKey23] || []) : []
+
+    const names24 = [selectedName, ...mapped24From23, ...regMapped24].map(norm)
+    const names23 = [selectedName, ...mapped23From24, ...regMapped23].map(norm)
+
     const pickRows = (rows: any[] | undefined, names: string[]) => {
       if (!rows) return []
       return rows.filter(r => names.includes(norm(r.name || r.Name || '')))
