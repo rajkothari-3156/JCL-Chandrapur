@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 import { kv } from '@/lib/kv'
 
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+
 const STATE_KEY = 'auction:state:v1'
 
 function normName(s: string) {
