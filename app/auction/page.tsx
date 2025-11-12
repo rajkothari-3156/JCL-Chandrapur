@@ -427,13 +427,21 @@ export default function AuctionPage() {
                   const r = rows[0] as any
                   let items: Array<{ k: string; v: any }>
                   if (cat === 'batting') {
-                    // Explicit four metrics for batting in desired order
-                    const val = (k: string) => (r[k] ?? r[k.toLowerCase?.()] ?? r[String(k).toLowerCase()])
-                    const runs = val('Runs') ?? val('Runs Scored') ?? val('Total Runs')
-                    const sr = val('SR') ?? val('Strike Rate')
+                    // Map to actual CSV headers with fallbacks
+                    const pick = (...keys: string[]) => {
+                      for (const k of keys) {
+                        const v = r[k]
+                        if (v !== undefined && v !== null && String(v) !== '') return v
+                      }
+                      return ''
+                    }
+                    const sixes = pick('6s', 'Sixes')
+                    const balls = pick('ball_faced', 'Balls', 'balls')
+                    const runs = pick('total_runs', 'Runs', 'Runs Scored', 'Total Runs')
+                    const sr = pick('strike_rate', 'SR', 'Strike Rate')
                     items = [
-                      { k: 'Total 6s', v: val('Sixes') },
-                      { k: 'Total Balls', v: val('Balls') },
+                      { k: 'Total 6s', v: sixes },
+                      { k: 'Total Balls', v: balls },
                       { k: 'Total Runs', v: runs },
                       { k: 'Strike Rate', v: sr },
                     ].filter(x => x.v !== undefined && x.v !== null && String(x.v) !== '')
