@@ -22,7 +22,7 @@ type AuctionState = {
   summary: Record<string, { budget: number; spent: number; remaining: number; count: number }>
   owners?: Record<string, { name: string; playing: boolean }>
   retentions?: Record<string, Array<{ fullName: string; time: string }>>
-  unsold?: Array<{ fullName: string; time: string }>
+  unsold?: Array<{ fullName: string; time: string; rounds?: number; unassigned?: boolean }>
 }
 
 function norm(s: string) {
@@ -191,19 +191,48 @@ export default function AuctionPage() {
 
   const unsold = useMemo(() => {
     const soldMap = state?.sold || {}
+    const retSet = new Set(
+      Object.values(state?.retentions || {})
+        .flat()
+        .map(r => norm(r.fullName))
+    )
+    const unassignedSet = new Set(
+      (state?.unsold || [])
+        .filter(u => u.unassigned)
+        .map(u => norm(u.fullName))
+    )
+    const queuedUnsoldSet = new Set(
+      (state?.unsold || [])
+        .filter(u => !u.unassigned)
+        .map(u => norm(u.fullName))
+    )
     return regs.filter(r => {
       const key = norm(r.fullName)
-      return !soldMap[key]
+      // Default pool excludes: sold, retained, unassigned, and currently in unsold queue (i.e., will be retried in next round)
+      return !soldMap[key] && !retSet.has(key) && !unassignedSet.has(key) && !queuedUnsoldSet.has(key)
     })
   }, [regs, state])
 
-  const unsoldQueue = useMemo(() => (state?.unsold || []).map(u => u.fullName), [state])
+  const unsoldQueue = useMemo(() => (state?.unsold || [])
+    .filter(u => !u.unassigned)
+    .map(u => u.fullName), [state])
 
   const startRandomPick = () => {
     if (pickedAnimating) { setActionMsg('Random pick already in progress'); return }
     if (picked) { setActionMsg('Finish action on current player (sell or mark unsold) before picking next'); return }
-    const pool = useUnsoldPool ? regs.filter(r => unsoldQueue.includes(r.fullName)) : unsold
-    if (!pool.length) { setActionMsg('No players available in selected pool'); return }
+    let pool = useUnsoldPool ? regs.filter(r => unsoldQueue.includes(r.fullName)) : unsold
+    if (!pool.length) {
+      // If first-round pool is empty but unsold queue has players, auto-switch to Unsold Queue
+      const fallback = regs.filter(r => unsoldQueue.includes(r.fullName))
+      if (fallback.length) {
+        setUseUnsoldPool(true)
+        pool = fallback
+        setActionMsg('First round complete. Rotating Unsold Queue...')
+      } else {
+        setActionMsg('No players available in selected pool');
+        return
+      }
+    }
     setPickedAnimating(true)
     setPicked(null)
     setImgLoaded(false)
@@ -268,6 +297,16 @@ export default function AuctionPage() {
     if (!res.ok) { setActionMsg(json?.error || 'Failed to mark unsold'); return }
     setState(json.state)
     setActionMsg('Marked unsold')
+    setPicked(null)
+  }
+
+  const markUnassigned = async () => {
+    if (!picked) return
+    const res = await fetch('/api/auction/state', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'markUnassigned', fullName: picked.fullName }) })
+    const json = await res.json()
+    if (!res.ok) { setActionMsg(json?.error || 'Failed to mark unassigned'); return }
+    setState(json.state)
+    setActionMsg('Marked unassigned')
     setPicked(null)
   }
 
@@ -575,7 +614,7 @@ export default function AuctionPage() {
                 )
               })}
 
-              <div className="mt-4 grid md:grid-cols-[1fr_auto_auto_auto] gap-3 items-end">
+              <div className="mt-4 grid md:grid-cols-[1fr_auto_auto_auto_auto] gap-3 items-end">
                 <div>
                   <label className="block text-green-200 text-sm mb-1">Team</label>
                   <select value={sellTeam} onChange={(e)=>setSellTeam(e.target.value)} className="w-full rounded-md border border-green-800 bg-green-900/40 text-white px-3 py-2">
@@ -591,6 +630,14 @@ export default function AuctionPage() {
                 </div>
                 <button onClick={sellPicked} disabled={!picked || !sellTeam || sellPoints === ''} className="px-4 py-2 rounded-md bg-cricket-gold text-black font-semibold disabled:opacity-50">Save Sale</button>
                 <button onClick={markUnsold} disabled={!picked} className="px-4 py-2 rounded-md border border-yellow-600 text-yellow-300 disabled:opacity-50">Mark Unsold</button>
+                {(() => {
+                  const key = norm(picked?.fullName || '')
+                  const entry = (state?.unsold || []).find(u => norm(u.fullName) === key)
+                  const canMarkUnassigned = !!picked && entry && !entry.unassigned && Math.max(1, Number(entry.rounds || 1)) >= 2
+                  return (
+                    <button onClick={markUnassigned} disabled={!canMarkUnassigned} className="px-4 py-2 rounded-md border border-red-800 text-red-300 disabled:opacity-50">Mark Unassigned</button>
+                  )
+                })()}
               </div>
             </div>
             )}

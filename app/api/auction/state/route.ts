@@ -18,10 +18,10 @@ async function readState() {
     const sold: Record<string, { team: string; points: number; time: string }> = base.sold || {}
     const owners: Record<string, { name: string; playing: boolean }> = base.owners || {}
     const retentions: Record<string, Array<{ fullName: string; time: string }>> = base.retentions || {}
-    const unsold: Array<{ fullName: string; time: string }> = base.unsold || []
+    const unsold: Array<{ fullName: string; time: string; rounds?: number; unassigned?: boolean }> = base.unsold || []
     return { teams, sold, owners, retentions, unsold }
   } catch {
-    return { teams: {}, sold: {} as Record<string, { team: string; points: number; time: string }>, owners: {}, retentions: {}, unsold: [] as Array<{ fullName: string; time: string }>} 
+    return { teams: {}, sold: {} as Record<string, { team: string; points: number; time: string }>, owners: {}, retentions: {}, unsold: [] as Array<{ fullName: string; time: string; rounds?: number; unassigned?: boolean }> } 
   }
 }
 
@@ -173,9 +173,26 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'Player already sold' }, { status: 409 })
       }
       state.unsold = state.unsold || []
-      if (!state.unsold.some(u => normName(u.fullName) === key)) {
-        state.unsold.push({ fullName, time: new Date().toISOString() })
+      const idx = state.unsold.findIndex(u => normName(u.fullName) === key)
+      if (idx === -1) {
+        state.unsold.push({ fullName, time: new Date().toISOString(), rounds: 1, unassigned: false })
+      } else {
+        const existing = state.unsold[idx]
+        const rounds = Math.max(1, Number(existing.rounds || 1)) + 1
+        state.unsold[idx] = { ...existing, rounds, time: new Date().toISOString() }
       }
+      await writeState(state)
+      return NextResponse.json({ ok: true, state })
+    }
+
+    if (action === 'markUnassigned') {
+      const fullName = String(body.fullName || '').trim()
+      if (!fullName) return NextResponse.json({ error: 'fullName required' }, { status: 400 })
+      const key = normName(fullName)
+      const i = (state.unsold || []).findIndex(u => normName(u.fullName) === key)
+      if (i === -1) return NextResponse.json({ error: 'Player not in unsold queue' }, { status: 404 })
+      const existing = state.unsold[i]
+      state.unsold[i] = { ...existing, unassigned: true, time: new Date().toISOString(), rounds: Math.max(1, Number(existing.rounds || 1)) }
       await writeState(state)
       return NextResponse.json({ ok: true, state })
     }
