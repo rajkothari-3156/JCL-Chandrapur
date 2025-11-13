@@ -659,15 +659,27 @@ export default function AuctionPage() {
             <div className="bg-green-900/30 border border-green-800 rounded-lg p-4">
               <div className="text-white font-semibold mb-2">Team Budgets</div>
               <div className="grid md:grid-cols-4 gap-3">
-                {Object.entries(state?.summary || {}).map(([name, s]) => (
-                  <div key={name} className="rounded border border-green-800 p-3 bg-green-900/40">
-                    <div className="text-white font-medium">{name}</div>
-                    <div className="text-green-200 text-sm">Budget: {s.budget}</div>
-                    <div className="text-green-200 text-sm">Spent: {s.spent}</div>
-                    <div className="text-green-200 text-sm">Remaining: {s.remaining}</div>
-                    <div className="text-green-200 text-sm">Players: {s.count}</div>
-                  </div>
-                ))}
+                {Object.entries(state?.summary || {}).map(([name, s]) => {
+                  const regIndex = new Map(regs.map(r => [norm(r.fullName), r]))
+                  const baseFee = (state?.retentions?.[name] || []).reduce((acc, r) => {
+                    const reg = regIndex.get(norm(r.fullName))
+                    const n = typeof reg?.age === 'number' ? reg.age : parseInt(String(reg?.age ?? ''), 10)
+                    if (Number.isFinite(n) && (n as number) >= 35) return acc + 1000
+                    return acc + 2500
+                  }, 0)
+                  const spent = (s as any).spent + baseFee
+                  const remaining = (s as any).budget - spent
+                  return (
+                    <div key={name} className="rounded border border-green-800 p-3 bg-green-900/40">
+                      <div className="text-white font-medium">{name}</div>
+                      <div className="text-green-200 text-sm">Budget: {(s as any).budget}</div>
+                      <div className="text-green-200 text-sm">Base Fee: {baseFee}</div>
+                      <div className="text-green-200 text-sm">Spent: {spent}</div>
+                      <div className="text-green-200 text-sm">Remaining: {remaining}</div>
+                      <div className="text-green-200 text-sm">Players: {(s as any).count}</div>
+                    </div>
+                  )
+                })}
               </div>
               <div className="mt-3 flex items-center gap-3">
                 <div className="text-green-200 text-sm">Unsold Queue: {unsoldQueue.length}</div>
