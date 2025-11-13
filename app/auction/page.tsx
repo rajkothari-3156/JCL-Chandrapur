@@ -78,8 +78,10 @@ export default function AuctionPage() {
   const [useUnsoldPool, setUseUnsoldPool] = useState(false)
   const [retainTeam, setRetainTeam] = useState('')
   const [retainPlayer, setRetainPlayer] = useState('')
+  const [retainAgeCat, setRetainAgeCat] = useState<'below35'|'35plus'|''>('')
   const [ownerTeam, setOwnerTeam] = useState('')
   const [ownerName, setOwnerName] = useState('')
+  const [ownerAgeCat, setOwnerAgeCat] = useState<'below35'|'35plus'|''>('')
   const [ownerPlaying, setOwnerPlaying] = useState(false)
   const [activeTab, setActiveTab] = useState<'init'|'owners'|'auction'|'budgets'>('auction')
   const [imgLoaded, setImgLoaded] = useState(false)
@@ -357,6 +359,18 @@ export default function AuctionPage() {
 
   const retain = async () => {
     if (!retainTeam || !retainPlayer) { const m = 'Select team and player to retain'; setActionMsg(m); notify(m, 'error'); return }
+    const regIndex = new Map(regs.map(r => [norm(r.fullName), r]))
+    const reg = regIndex.get(norm(retainPlayer))
+    const n = typeof reg?.age === 'number' ? reg.age : parseInt(String(reg?.age ?? ''), 10)
+    let cat: 'below35'|'35plus'|'' = Number.isFinite(n) ? ((n as number) >= 35 ? '35plus' : 'below35') : retainAgeCat
+    if (!cat) { notify('Select age category for retention', 'error'); return }
+    const existing = (state?.retentions?.[retainTeam] || [])
+    const takenCats = new Set(existing.map(x => {
+      const rr = regIndex.get(norm(x.fullName))
+      const xn = typeof rr?.age === 'number' ? rr.age : parseInt(String(rr?.age ?? ''), 10)
+      return Number.isFinite(xn) ? ((xn as number) >= 35 ? '35plus' : 'below35') : undefined
+    }).filter(Boolean) as Array<'below35'|'35plus'>)
+    if (takenCats.has(cat)) { notify('Selected age slot already filled', 'error'); return }
     const res = await fetch('/api/auction/state', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'retain', team: retainTeam, fullName: retainPlayer }) })
     const json = await res.json()
     if (!res.ok) { const m = json?.error || 'Failed to retain'; setActionMsg(m); notify(m, 'error'); return }

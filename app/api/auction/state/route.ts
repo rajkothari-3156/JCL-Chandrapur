@@ -151,7 +151,7 @@ export async function POST(req: Request) {
       if (!team || !fullName) return NextResponse.json({ error: 'Team and fullName required' }, { status: 400 })
       state.retentions = state.retentions || {}
       const arr = state.retentions[team] || []
-      const limit = state.owners?.[team]?.playing ? 1 : 2
+      const limit = 2
       if (arr.length >= limit) {
         return NextResponse.json({ error: `Retention limit reached (${limit}) for ${team}` }, { status: 409 })
       }
