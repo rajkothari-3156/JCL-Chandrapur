@@ -11,21 +11,33 @@ type AuctionState = {
   unsold?: Array<{ fullName: string; time: string; rounds?: number; unassigned?: boolean }>
 }
 
+type Registration = {
+  fullName: string
+  age: string | number | null
+}
+
 export default function AuctionTeamsPage() {
   const [state, setState] = useState<AuctionState | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState<string | null>(null)
+  const [regs, setRegs] = useState<Registration[]>([])
   const handlePrint = () => { if (typeof window !== 'undefined') window.print() }
 
   const load = async () => {
     setLoading(true)
     setError(null)
     try {
-      const res = await fetch('/api/auction/state', { cache: 'no-store' })
-      const json = await res.json()
-      if (!res.ok) throw new Error(json?.error || 'Failed to load state')
-      setState(json)
+      const [rRes, sRes] = await Promise.all([
+        fetch('/api/registrations', { cache: 'no-store' }),
+        fetch('/api/auction/state', { cache: 'no-store' }),
+      ])
+      const rJson = await rRes.json()
+      if (!rRes.ok) throw new Error(rJson?.error || 'Failed to load registrations')
+      setRegs(rJson.data || [])
+      const sJson = await sRes.json()
+      if (!sRes.ok) throw new Error(sJson?.error || 'Failed to load state')
+      setState(sJson)
     } catch (e: any) {
       setError(e?.message ?? 'Unknown error')
     } finally {
@@ -96,15 +108,26 @@ export default function AuctionTeamsPage() {
           <div className="bg-green-900/30 border border-green-800 rounded-lg p-4">
             <div className="text-white font-semibold mb-2">Team Budgets</div>
             <div className="grid md:grid-cols-4 gap-3">
-              {Object.entries(state?.summary || {}).map(([name, s]) => (
-                <div key={name} className="rounded border border-green-800 p-3 bg-green-900/40">
-                  <div className="text-white font-medium">{name}</div>
-                  <div className="text-green-200 text-sm">Budget: {s.budget}</div>
-                  <div className="text-green-200 text-sm">Spent: {s.spent}</div>
-                  <div className="text-green-200 text-sm">Remaining: {s.remaining}</div>
-                  <div className="text-green-200 text-sm">Players: {s.count}</div>
-                </div>
-              ))}
+              {Object.entries(state?.summary || {}).map(([name, s]) => {
+                const regIndex = new Map(regs.map(r => [String(r.fullName || '').toLowerCase().replace(/\s+/g,' ').trim(), r]))
+                const baseFee = (state?.retentions?.[name] || []).reduce((acc, r) => {
+                  const rr = regIndex.get(String(r.fullName || '').toLowerCase().replace(/\s+/g,' ').trim())
+                  const n = typeof rr?.age === 'number' ? rr.age : parseInt(String(rr?.age ?? ''), 10)
+                  if (Number.isFinite(n) && (n as number) >= 35) return acc + 1000
+                  return acc + 2500
+                }, 0)
+                const spent = s.spent + baseFee
+                const remaining = s.budget - spent
+                return (
+                  <div key={name} className="rounded border border-green-800 p-3 bg-green-900/40">
+                    <div className="text-white font-medium">{name}</div>
+                    <div className="text-green-200 text-sm">Budget: {s.budget}</div>
+                    <div className="text-green-200 text-sm">Spent: {spent}</div>
+                    <div className="text-green-200 text-sm">Remaining: {remaining}</div>
+                    <div className="text-green-200 text-sm">Players: {s.count}</div>
+                  </div>
+                )
+              })}
             </div>
             <div className="mt-3 flex items-center gap-3">
               <div className="text-green-200 text-sm">Unsold Queue: {(state?.unsold || []).filter(u=>!u.unassigned).length}</div>
@@ -118,7 +141,20 @@ export default function AuctionTeamsPage() {
                 <div className="p-4 border-b border-green-800 flex items-center justify-between">
                   <div>
                     <div className="text-white font-semibold text-lg">{name}</div>
-                    <div className="text-green-200 text-sm">Budget: {s.budget} • Spent: {s.spent} • Remaining: {s.remaining} • Players: {s.count}</div>
+                    {(() => {
+                      const regIndex = new Map(regs.map(r => [String(r.fullName || '').toLowerCase().replace(/\s+/g,' ').trim(), r]))
+                      const baseFee = (state?.retentions?.[name] || []).reduce((acc, r) => {
+                        const rr = regIndex.get(String(r.fullName || '').toLowerCase().replace(/\s+/g,' ').trim())
+                        const n = typeof rr?.age === 'number' ? rr.age : parseInt(String(rr?.age ?? ''), 10)
+                        if (Number.isFinite(n) && (n as number) >= 35) return acc + 1000
+                        return acc + 2500
+                      }, 0)
+                      const spent = s.spent + baseFee
+                      const remaining = s.budget - spent
+                      return (
+                        <div className="text-green-200 text-sm">Budget: {s.budget} • Spent: {spent} • Remaining: {remaining} • Players: {s.count}</div>
+                      )
+                    })()}
                     <div className="text-green-300 text-xs mt-1">Owner: {state?.owners?.[name]?.name || '—'} {state?.owners?.[name] ? (state?.owners?.[name]?.playing ? '(Playing)' : '(Non-playing)') : ''}</div>
                   </div>
                   <button onClick={load} className="px-3 py-1.5 rounded-md bg-cricket-gold text-black text-sm font-semibold">Refresh</button>
