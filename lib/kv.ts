@@ -23,8 +23,19 @@ async function createKV(): Promise<KV> {
     const dynamicImport = new Function('m', 'return import(m)') as (m: string) => Promise<any>
     const mod = await dynamicImport(pkg)
     const Redis = (mod as any).Redis
-    if (Redis && typeof Redis.fromEnv === 'function') {
-      return Redis.fromEnv()
+    if (Redis) {
+      const u1 = process.env.UPSTASH_REDIS_REST_URL
+      const t1 = process.env.UPSTASH_REDIS_REST_TOKEN
+      const u2 = process.env.KV_REST_API_URL || process.env.KV_REST_API_URL
+      const t2 = process.env.KV_REST_API_TOKEN || process.env.KV_REST_API_TOKEN
+      if (typeof Redis.fromEnv === 'function' && u1 && t1) {
+        return Redis.fromEnv()
+      }
+      const url = u1 || u2
+      const token = t1 || t2
+      if (url && token) {
+        return new Redis({ url, token })
+      }
     }
   } catch {
     // ignore; fall back to memory
