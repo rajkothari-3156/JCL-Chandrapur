@@ -322,6 +322,22 @@ export default function AuctionPage() {
 
   // ...
 
+  const updatePoints = async (team: string, fullName: string, points: number) => {
+    const res = await fetch('/api/auction/state', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'updatePoints', team, fullName, points }) })
+    const json = await res.json()
+    if (!res.ok) { const m = json?.error || 'Failed to update points'; setActionMsg(m); notify(m, 'error'); return }
+    setState(json.state)
+    notify('Points updated', 'success')
+  }
+
+  const removePlayer = async (fullName: string) => {
+    const res = await fetch('/api/auction/state', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'unsell', fullName }) })
+    const json = await res.json()
+    if (!res.ok) { const m = json?.error || 'Failed to delete player'; setActionMsg(m); notify(m, 'error'); return }
+    setState(json.state)
+    notify('Player removed', 'success')
+  }
+
   const markUnassigned = async () => {
     if (!picked) return
     const res = await fetch('/api/auction/state', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'markUnassigned', fullName: picked.fullName }) })
@@ -384,7 +400,6 @@ export default function AuctionPage() {
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl md:text-4xl font-bold text-white drop-shadow-lg">JCL Player Auction</h1>
-          <a className="text-cricket-gold hover:underline" href="/auction/teams">Teams</a>
         </div>
 
         {toast && (
@@ -701,6 +716,65 @@ export default function AuctionPage() {
               <div className="mt-3 flex items-center gap-3">
                 <div className="text-green-200 text-sm">Unsold Queue: {unsoldQueue.length}</div>
                 <button onClick={clearUnsold} className="px-3 py-1.5 rounded-md border border-green-800 text-green-100 text-sm">Clear Unsold</button>
+              </div>
+
+              <div className="mt-6 grid md:grid-cols-2 gap-4">
+                {Object.entries(state?.summary || {}).map(([name, s]) => (
+                  <div key={name} className="rounded-lg border border-green-800 bg-green-900/30">
+                    <div className="p-4 border-b border-green-800 flex items-center justify-between">
+                      <div>
+                        <div className="text-white font-semibold text-lg">{name}</div>
+                        {(() => {
+                          const regIndex = new Map(regs.map(r => [norm(r.fullName), r]))
+                          const baseFee = (state?.retentions?.[name] || []).reduce((acc, r) => {
+                            const rr = regIndex.get(norm(r.fullName))
+                            const n = typeof rr?.age === 'number' ? rr.age : parseInt(String(rr?.age ?? ''), 10)
+                            if (Number.isFinite(n) && (n as number) >= 35) return acc + 1000
+                            return acc + 2500
+                          }, 0)
+                          const spent = (s as any).spent + baseFee
+                          const remaining = (s as any).budget - spent
+                          return (
+                            <div className="text-green-200 text-sm">Budget: {(s as any).budget} • Spent: {spent} • Remaining: {remaining} • Players: {(s as any).count}</div>
+                          )
+                        })()}
+                        <div className="text-green-300 text-xs mt-1">Owner: {state?.owners?.[name]?.name || '—'} {state?.owners?.[name] ? (state?.owners?.[name]?.playing ? '(Playing)' : '(Non-playing)') : ''}</div>
+                      </div>
+                      <button onClick={() => loadAll()} className="px-3 py-1.5 rounded-md bg-cricket-gold text-black text-sm font-semibold">Refresh</button>
+                    </div>
+                    <div className="p-4">
+                      {(state?.retentions?.[name] || []).length > 0 && (
+                        <div className="mb-3">
+                          <div className="text-white font-medium">Retained Players</div>
+                          <ul className="text-green-200 text-sm list-disc pl-5">
+                            {(state?.retentions?.[name] || []).map((r, i) => (<li key={i}>{r.fullName}</li>))}
+                          </ul>
+                        </div>
+                      )}
+                      {(state?.teams[name]?.players || []).length === 0 && (
+                        <div className="text-green-300 text-sm">No players yet.</div>
+                      )}
+                      <div className="grid gap-2">
+                        {(state?.teams[name]?.players || []).map((p, i) => (
+                          <div key={i} className="grid grid-cols-[1fr_auto_auto_auto] items-center gap-2 rounded border border-green-800 bg-green-900/40 px-3 py-2">
+                            <div className="text-green-100 truncate" title={p.fullName}>{p.fullName}</div>
+                            <input
+                              type="number"
+                              defaultValue={p.points}
+                              className="w-24 rounded-md border border-green-800 bg-green-900/40 text-white px-2 py-1 text-sm"
+                              onBlur={(e)=>{
+                                const val = parseInt(e.currentTarget.value||'0',10);
+                                if (!isNaN(val) && val !== p.points) updatePoints(name, p.fullName, val)
+                              }}
+                            />
+                            <button onClick={()=>updatePoints(name, p.fullName, parseInt((document.activeElement as HTMLInputElement)?.value || String(p.points), 10) || p.points)} className="px-2 py-1 rounded-md bg-cricket-gold text-black text-sm">Save</button>
+                            <button onClick={()=>removePlayer(p.fullName)} className="px-2 py-1 rounded-md border border-red-700 text-red-300 text-sm">Delete</button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
             )}
