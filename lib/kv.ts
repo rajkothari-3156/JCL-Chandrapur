@@ -1,6 +1,9 @@
 // Lightweight KV with dynamic Upstash import and in-memory fallback
 // Used by API routes (e.g., auction state) via kv.get/kv.set
 
+import { promises as fs } from 'fs'
+import path from 'path'
+
 type KV = {
   get: (key: string) => Promise<any>
   set: (key: string, value: any) => Promise<void>
@@ -13,6 +16,37 @@ class MemoryKV implements KV {
   }
   async set(key: string, value: any) {
     this.store.set(key, value)
+  }
+}
+
+class FileKV implements KV {
+  private filePath: string
+  private cache: Record<string, any> | null = null
+  private loaded = false
+  constructor(filePath: string) {
+    this.filePath = filePath
+  }
+  private async ensureLoaded() {
+    if (this.loaded) return
+    try {
+      const txt = await fs.readFile(this.filePath, 'utf8')
+      this.cache = JSON.parse(txt || '{}')
+    } catch {
+      this.cache = {}
+      await fs.mkdir(path.dirname(this.filePath), { recursive: true })
+      await fs.writeFile(this.filePath, JSON.stringify(this.cache), 'utf8')
+    }
+    this.loaded = true
+  }
+  async get(key: string) {
+    await this.ensureLoaded()
+    return (this.cache as any)[key]
+  }
+  async set(key: string, value: any) {
+    await this.ensureLoaded()
+    ;(this.cache as any)[key] = value
+    await fs.mkdir(path.dirname(this.filePath), { recursive: true })
+    await fs.writeFile(this.filePath, JSON.stringify(this.cache), 'utf8')
   }
 }
 
@@ -40,7 +74,14 @@ async function createKV(): Promise<KV> {
   } catch {
     // ignore; fall back to memory
   }
-  return new MemoryKV()
+  // File-backed fallback for local/dev so data persists across hard refreshes and hot reloads
+  try {
+    const defaultPath = process.env.KV_FILE_PATH || path.join(process.cwd(), '.data', 'kv.json')
+    return new FileKV(defaultPath)
+  } catch {
+    // Final fallback: in-memory (non-persistent)
+    return new MemoryKV()
+  }
 }
 
 // Reuse a singleton across hot reloads
