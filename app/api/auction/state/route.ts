@@ -156,6 +156,12 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: `Retention limit reached (${limit}) for ${team}` }, { status: 409 })
       }
       const key = normName(fullName)
+      // Prevent same player being retained across multiple teams
+      const alreadyRetainedElsewhere = Object.entries(state.retentions)
+        .some(([t, a]) => t !== team && (a || []).some(r => normName(r.fullName) === key))
+      if (alreadyRetainedElsewhere) {
+        return NextResponse.json({ error: 'Player already retained by another team' }, { status: 409 })
+      }
       if (arr.some(r => normName(r.fullName) === key)) {
         return NextResponse.json({ error: 'Player already retained' }, { status: 409 })
       }

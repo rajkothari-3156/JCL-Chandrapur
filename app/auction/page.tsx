@@ -438,10 +438,13 @@ export default function AuctionPage() {
                     </div>
                     <div>
                       <label className="block text-green-200 text-sm mb-1">Owner Name</label>
-                      <input value={ownerName} onChange={(e)=>setOwnerName(e.target.value)} className="w-full rounded-md border border-green-800 bg-green-900/40 text-white px-3 py-2" />
+                      <input list="ownerPlayers" value={ownerName} onChange={(e)=>setOwnerName(e.target.value)} className="w-full rounded-md border border-green-800 bg-green-900/40 text-white px-3 py-2" placeholder="Type to search or enter custom" />
+                      <datalist id="ownerPlayers">
+                        {regs.map(r => (<option key={r.fullName} value={r.fullName} />))}
+                      </datalist>
                     </div>
                     <label className="inline-flex items-center gap-2 text-green-100">
-                      <input type="checkbox" checked={ownerPlaying} onChange={(e)=>setOwnerPlaying(e.target.checked)} /> Owner is playing (limits to 1 retention)
+                      <input type="checkbox" checked={ownerPlaying} onChange={(e)=>setOwnerPlaying(e.target.checked)} /> Owner is playing (auto-retain fills one age slot; max 2 slots per team)
                     </label>
                     <button onClick={saveOwner} className="px-3 py-2 rounded-md bg-cricket-gold text-black font-semibold">Save Owner</button>
                   </div>
@@ -468,7 +471,7 @@ export default function AuctionPage() {
                   <div className="mt-3 grid md:grid-cols-2 gap-3">
                     {Object.entries(state?.retentions || {}).map(([team, arr]) => (
                       <div key={team} className="rounded border border-green-800 p-2">
-                        <div className="text-white font-medium">{team} — Retained ({arr.length}/{(state?.owners?.[team]?.playing ? 1 : 2)})</div>
+                        <div className="text-white font-medium">{team} — Retained ({arr.length}/2)</div>
                         <ul className="text-green-200 text-sm list-disc pl-5">
                           {arr.map((r, i) => (<li key={i}>{r.fullName}</li>))}
                         </ul>
