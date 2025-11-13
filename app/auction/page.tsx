@@ -74,6 +74,7 @@ export default function AuctionPage() {
   const [sellTeam, setSellTeam] = useState('')
   const [sellPoints, setSellPoints] = useState<number | ''>('')
   const [actionMsg, setActionMsg] = useState<string | null>(null)
+  const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
   const [useUnsoldPool, setUseUnsoldPool] = useState(false)
   const [retainTeam, setRetainTeam] = useState('')
   const [retainPlayer, setRetainPlayer] = useState('')
@@ -90,6 +91,12 @@ export default function AuctionPage() {
   const [ty, setTy] = useState<number>(0)
   const [panning, setPanning] = useState<boolean>(false)
   const [last, setLast] = useState<{ x: number; y: number } | null>(null)
+
+  const notify = (message: string, type: 'success' | 'error' = 'success') => {
+    setToast({ type, message })
+    window.clearTimeout((notify as any)._t)
+    ;(notify as any)._t = window.setTimeout(() => setToast(null), 2500)
+  }
 
   // aux data for showing previous seasons stats
   const [mapping, setMapping] = useState<any | null>(null)
@@ -274,88 +281,88 @@ export default function AuctionPage() {
     const teams = names.map(name => ({ name, budget: budgetInput }))
     const res = await fetch('/api/auction/state', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'setTeams', teams }) })
     const json = await res.json()
-    if (!res.ok) throw new Error(json?.error || 'Failed to set teams')
+    if (!res.ok) { setActionMsg(json?.error || 'Failed to set teams'); notify(json?.error || 'Failed to set teams', 'error'); return }
     setState(json.state)
     setActionMsg('Teams initialized')
+    notify('Teams initialized', 'success')
   }
 
   const sellPicked = async () => {
     if (!picked) return
-    if (!sellTeam || sellPoints === '' || Number(sellPoints) < 0) { setActionMsg('Pick team and points'); return }
+    if (!sellTeam || sellPoints === '' || Number(sellPoints) < 0) { const m = 'Pick team and points'; setActionMsg(m); notify(m, 'error'); return }
     const res = await fetch('/api/auction/state', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'sell', fullName: picked.fullName, team: sellTeam, points: Number(sellPoints) }) })
     const json = await res.json()
-    if (!res.ok) { setActionMsg(json?.error || 'Failed to sell'); return }
+    if (!res.ok) { const m = json?.error || 'Failed to sell'; setActionMsg(m); notify(m, 'error'); return }
     setState(json.state)
     setActionMsg('Sold saved')
-    setPicked(null)
+    notify('Sold saved', 'success')
   }
 
   const markUnsold = async () => {
     if (!picked) return
     const res = await fetch('/api/auction/state', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'unsold', fullName: picked.fullName }) })
     const json = await res.json()
-    if (!res.ok) { setActionMsg(json?.error || 'Failed to mark unsold'); return }
+    if (!res.ok) { const m = json?.error || 'Failed to mark unsold'; setActionMsg(m); notify(m, 'error'); return }
     setState(json.state)
     setActionMsg('Marked unsold')
-    setPicked(null)
-  }
-
-  const markUnassigned = async () => {
-    if (!picked) return
-    const res = await fetch('/api/auction/state', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'markUnassigned', fullName: picked.fullName }) })
-    const json = await res.json()
-    if (!res.ok) { setActionMsg(json?.error || 'Failed to mark unassigned'); return }
-    setState(json.state)
-    setActionMsg('Marked unassigned')
+    notify('Marked unsold', 'success')
     setPicked(null)
   }
 
   const clearUnsold = async () => {
     const res = await fetch('/api/auction/state', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'clearUnsold' }) })
     const json = await res.json()
-    if (!res.ok) { setActionMsg(json?.error || 'Failed to clear unsold'); return }
+    if (!res.ok) { const m = json?.error || 'Failed to clear unsold'; setActionMsg(m); notify(m, 'error'); return }
     setState(json.state)
     setActionMsg('Cleared unsold queue')
+    notify('Cleared unsold queue', 'success')
+  }
+
+  // ...
+
+  const markUnassigned = async () => {
+    if (!picked) return
+    const res = await fetch('/api/auction/state', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'markUnassigned', fullName: picked.fullName }) })
+    const json = await res.json()
+    if (!res.ok) { const m = json?.error || 'Failed to mark unassigned'; setActionMsg(m); notify(m, 'error'); return }
+    setState(json.state)
+    setActionMsg('Marked unassigned')
+    notify('Marked unassigned', 'success')
+    setPicked(null)
   }
 
   const saveOwner = async () => {
-    if (!ownerTeam) { setActionMsg('Select team for owner'); return }
+    if (!ownerTeam) { const m = 'Select team for owner'; setActionMsg(m); notify(m, 'error'); return }
     const res = await fetch('/api/auction/state', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'setOwner', team: ownerTeam, ownerName, playing: ownerPlaying }) })
     const json = await res.json()
-    if (!res.ok) { setActionMsg(json?.error || 'Failed to save owner'); return }
+    if (!res.ok) { const m = json?.error || 'Failed to save owner'; setActionMsg(m); notify(m, 'error'); return }
     setState(json.state)
     setActionMsg('Owner saved')
+    notify('Owner saved', 'success')
+    if (ownerName && ownerTeam) {
+      try {
+        const r2 = await fetch('/api/auction/state', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'retain', team: ownerTeam, fullName: ownerName }) })
+        const j2 = await r2.json()
+        if (r2.ok) {
+          setState(j2.state)
+          notify('Owner retained by default', 'success')
+        } else {
+          notify(j2?.error || 'Failed to retain owner', 'error')
+        }
+      } catch (e) {
+        notify('Failed to retain owner', 'error')
+      }
+    }
   }
 
   const retain = async () => {
-    if (!retainTeam || !retainPlayer) { setActionMsg('Select team and player to retain'); return }
+    if (!retainTeam || !retainPlayer) { const m = 'Select team and player to retain'; setActionMsg(m); notify(m, 'error'); return }
     const res = await fetch('/api/auction/state', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'retain', team: retainTeam, fullName: retainPlayer }) })
     const json = await res.json()
-    if (!res.ok) { setActionMsg(json?.error || 'Failed to retain'); return }
+    if (!res.ok) { const m = json?.error || 'Failed to retain'; setActionMsg(m); notify(m, 'error'); return }
     setState(json.state)
     setActionMsg('Retention saved')
-  }
-
-  if (!auth) {
-    return (
-      <main className="min-h-screen p-4 md:p-8">
-        <div className="max-w-md mx-auto bg-green-900/30 border border-green-800 p-6 rounded-lg">
-          <div className="text-2xl font-bold text-white mb-4">Auction Admin Login</div>
-          <div className="grid gap-3">
-            <div>
-              <label className="block text-green-200 text-sm mb-1">Username</label>
-              <input value={user} onChange={(e)=>setUser(e.target.value)} className="w-full rounded-md border border-green-800 bg-green-900/40 text-white px-3 py-2" />
-            </div>
-            <div>
-              <label className="block text-green-200 text-sm mb-1">Password</label>
-              <input type="password" value={pass} onChange={(e)=>setPass(e.target.value)} className="w-full rounded-md border border-green-800 bg-green-900/40 text-white px-3 py-2" />
-            </div>
-            <button onClick={handleLogin} className="px-4 py-2 rounded-md bg-cricket-gold text-black font-semibold">Login</button>
-            {actionMsg && <div className="text-red-200 text-sm">{actionMsg}</div>}
-          </div>
-        </div>
-      </main>
-    )
+    notify('Retention saved', 'success')
   }
 
   return (
@@ -365,6 +372,12 @@ export default function AuctionPage() {
           <h1 className="text-3xl md:text-4xl font-bold text-white drop-shadow-lg">JCL Player Auction</h1>
           <a className="text-cricket-gold hover:underline" href="/auction/teams">Teams</a>
         </div>
+
+        {toast && (
+          <div className={`fixed top-4 right-4 z-50 rounded-md px-4 py-2 shadow-lg ${toast.type === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}`}>
+            {toast.message}
+          </div>
+        )}
 
         {loading && <div className="text-green-100">Loading...</div>}
         {error && <div className="text-red-200">{error}</div>}
