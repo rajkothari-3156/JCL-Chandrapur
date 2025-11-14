@@ -76,7 +76,12 @@ async function createKV(): Promise<KV> {
   }
   // File-backed fallback for local/dev so data persists across hard refreshes and hot reloads
   try {
-    const defaultPath = process.env.KV_FILE_PATH || path.join(process.cwd(), '.data', 'kv.json')
+    // Prefer a writable temp directory in serverless environments (e.g., Vercel/Netlify/AWS Lambda)
+    const isServerless = Boolean(process.env.VERCEL || process.env.NETLIFY || process.env.AWS_REGION || process.env.LAMBDA_TASK_ROOT)
+    const baseDir = process.env.KV_FILE_PATH
+      ? path.dirname(process.env.KV_FILE_PATH)
+      : (isServerless ? (process.env.TMPDIR || '/tmp') : path.join(process.cwd(), '.data'))
+    const defaultPath = process.env.KV_FILE_PATH || path.join(baseDir, 'kv.json')
     return new FileKV(defaultPath)
   } catch {
     // Final fallback: in-memory (non-persistent)
