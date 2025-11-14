@@ -357,7 +357,7 @@ export default function AuctionPage() {
     setState(json.state)
     setActionMsg('Owner saved')
     notify('Owner saved', 'success')
-    if (ownerName && ownerTeam) {
+    if (ownerName && ownerTeam && ownerPlaying) {
       try {
         const r2 = await fetch('/api/auction/state', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'retain', team: ownerTeam, fullName: ownerName }) })
         const j2 = await r2.json()

@@ -150,6 +150,15 @@ export async function POST(req: Request) {
       const fullName = String(body.fullName || '').trim()
       if (!team || !fullName) return NextResponse.json({ error: 'Team and fullName required' }, { status: 400 })
       state.retentions = state.retentions || {}
+      // Do not allow retaining the owner if they are marked as not playing
+      const owner = (state.owners || {})[team]
+      if (owner && owner.name && owner.playing === false) {
+        const keyOwner = normName(owner.name)
+        const keyReq = normName(fullName)
+        if (keyOwner === keyReq) {
+          return NextResponse.json({ error: 'Owner not playing cannot be retained' }, { status: 409 })
+        }
+      }
       const arr = state.retentions[team] || []
       const limit = 2
       if (arr.length >= limit) {
