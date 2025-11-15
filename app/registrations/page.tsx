@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react'
 import Papa from 'papaparse'
+import Navbar from '@/components/layout/Navbar'
 
 type Registration = {
   timestamp: string | null
@@ -233,7 +234,9 @@ export default function RegistrationsPage() {
   }, [selectedName, mapping, stats2024, stats2023, activeTab])
 
   return (
-    <main className="min-h-screen p-4 md:p-8">
+    <>
+      <Navbar />
+      <main className="min-h-screen p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-3xl md:text-5xl font-bold text-white mb-2 drop-shadow-lg">JCL Player Registrations</h1>
@@ -398,6 +401,7 @@ export default function RegistrationsPage() {
         </Modal>
       </div>
     </main>
+    </>
   )
 }
 

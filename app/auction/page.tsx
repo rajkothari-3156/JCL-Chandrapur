@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import Papa from 'papaparse'
+import Navbar from '@/components/layout/Navbar'
 
 type Registration = {
   fullName: string
@@ -396,7 +397,9 @@ export default function AuctionPage() {
   }
 
   return (
-    <main className="min-h-screen p-4 md:p-8">
+    <>
+      <Navbar />
+      <main className="min-h-screen p-4 md:p-8">
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl md:text-4xl font-bold text-white drop-shadow-lg">JCL Player Auction</h1>
@@ -845,5 +848,6 @@ export default function AuctionPage() {
         </div>
       )}
     </main>
+    </>
   )
 }

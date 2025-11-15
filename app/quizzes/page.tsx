@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import Navbar from '@/components/layout/Navbar'
 
 type QuizIndex = {
   quizzes: Array<{ id: string; title: string; durationMinutes: number }>
@@ -28,7 +29,9 @@ export default function QuizzesPage() {
   }, [])
 
   return (
-    <main className="min-h-screen p-4 md:p-8">
+    <>
+      <Navbar />
+      <main className="min-h-screen p-4 md:p-8">
       <div className="max-w-5xl mx-auto">
         <h1 className="text-3xl md:text-5xl font-bold text-white mb-6 drop-shadow-lg">JCL Quizzes</h1>
         {loading && <div className="text-green-100">Loading...</div>}
@@ -45,5 +48,6 @@ export default function QuizzesPage() {
         )}
       </div>
     </main>
+    </>
   )
 }

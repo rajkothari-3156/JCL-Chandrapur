@@ -2,8 +2,8 @@ import './globals.css'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'JCL Cricket Leaderboard',
-  description: 'Player performance statistics for JCL Cricket League',
+  title: 'JCL Chandrapur | Cricket League Management Platform',
+  description: 'Complete cricket management platform featuring live player statistics, interactive quizzes, player registrations, and real-time auction systems for JCL Chandrapur 2025',
 }
 
 export default function RootLayout({
