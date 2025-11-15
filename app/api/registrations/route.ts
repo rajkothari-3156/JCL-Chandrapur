@@ -198,7 +198,7 @@ function normalizeRowFromObject(r: Record<string, any>) {
   const contact = get(['your contact no.', 'contact', 'phone', 'mobile'])
   const playingStyle = get(['your playing style', 'playing style', 'style'])
   const tshirtSize = get(['your t-shirt size', 't-shirt size', 'tshirt size', 'size'])
-  const photoUrl = get(['your photo', 'photo', 'image', 'photo url'])
+  const photoUrl = get(['your photo', 'photo', 'image', 'photo url','Column 6','Your photo'])
 
   return { timestamp, fullName, age, contact, playingStyle, tshirtSize, photoUrl }
 }
