@@ -183,6 +183,8 @@ async function fetchFromPrivateSheet({ saEmail, saKey, sheetId, range }: { saEma
   }
 }
 
+let debugLogged = false
+
 function normalizeRowFromObject(r: Record<string, any>) {
   const get = (keys: string[], fallback: any = null) => {
     for (const k of keys) {
@@ -198,7 +200,14 @@ function normalizeRowFromObject(r: Record<string, any>) {
   const contact = get(['your contact no.', 'contact', 'phone', 'mobile'])
   const playingStyle = get(['your playing style', 'playing style', 'style'])
   const tshirtSize = get(['your t-shirt size', 't-shirt size', 'tshirt size', 'size'])
-  const photoUrl = get(['your photo', 'photo', 'image', 'photo url','Column 6','Your photo'])
+  const photoUrl = get(['your photo', 'photo', 'image', 'photo url','column 6','your photo'])
+
+  // Debug: Log headers and photoUrl for first row only
+  if (fullName && !debugLogged) {
+    console.log('[registrations] First row headers:', Object.keys(r))
+    console.log('[registrations] First row photoUrl:', photoUrl)
+    debugLogged = true
+  }
 
   return { timestamp, fullName, age, contact, playingStyle, tshirtSize, photoUrl }
 }

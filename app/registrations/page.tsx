@@ -83,6 +83,17 @@ export default function RegistrationsPage() {
         setData(json.data as Registration[])
         setCached(Boolean(json.cached))
         setAppended(typeof json.appended === 'number' ? json.appended : null)
+        
+        // Debug: Log first 3 photoUrl values
+        console.log('[registrations] Photo URL samples:', 
+          (json.data as Registration[]).slice(0, 3).map(r => ({
+            name: r.fullName,
+            photoUrl: r.photoUrl,
+            hasPhoto: !!r.photoUrl,
+            thumbUrl: r.photoUrl ? driveThumbUrl(r.photoUrl) : null,
+            extractedId: r.photoUrl ? extractDriveId(r.photoUrl) : null
+          }))
+        )
       } catch (e: any) {
         setError(e?.message ?? 'Unknown error')
       } finally {
@@ -313,6 +324,7 @@ export default function RegistrationsPage() {
                           type="button"
                           className="group inline-flex items-center gap-2 focus:outline-none"
                           onClick={() => {
+                            console.log('[photo-click]', { name: r.fullName, photoUrl: r.photoUrl, driveId: extractDriveId(r.photoUrl || ''), viewUrl: driveViewUrl(r.photoUrl || '') })
                             const direct = driveViewUrl(r.photoUrl || '') || ''
                             setPhotoSrc(direct)
                             setPhotoAlt(r.fullName + ' photo')
@@ -332,6 +344,7 @@ export default function RegistrationsPage() {
                             className="h-12 w-12 object-cover rounded-md border border-green-800/50 bg-green-900/40"
                             onError={(e) => {
                               const img = e.currentTarget as HTMLImageElement
+                              console.log('[photo-error]', { name: r.fullName, photoUrl: r.photoUrl, src: img.src, fallback: img.dataset.fallback })
                               // Fallback to view URL once, then hide if still failing
                               if (img.dataset.fallback !== '1') {
                                 img.dataset.fallback = '1'
@@ -343,7 +356,9 @@ export default function RegistrationsPage() {
                           />
                           <span className="sr-only">Open photo</span>
                         </button>
-                      ) : ''}
+                      ) : (
+                        <span className="text-xs text-gray-500" title={`No photo URL for ${r.fullName}`}>—</span>
+                      )}
                     </td>
                     <td className="px-3 py-2 text-green-100">{r.timestamp ?? ''}</td>
                   </tr>
