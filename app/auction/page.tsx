@@ -62,7 +62,7 @@ export default function AuctionPage() {
   const [pass, setPass] = useState('')
 
   const [regs, setRegs] = useState<Registration[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const [state, setState] = useState<AuctionState | null>(null)
@@ -408,11 +408,50 @@ export default function AuctionPage() {
           </div>
         )}
 
-        {loading && <div className="text-green-100">Loading...</div>}
-        {error && <div className="text-red-200">{error}</div>}
+        {/* Admin login panel */}
+        {!auth && (
+          <div className="bg-green-900/30 border border-green-800 rounded-lg p-4 max-w-md">
+            <div className="text-white font-semibold mb-3">Admin Login</div>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-green-200 text-sm mb-1">Username</label>
+                <input
+                  value={user}
+                  onChange={(e) => setUser(e.target.value)}
+                  className="w-full rounded-md border border-green-800 bg-green-900/40 text-white px-3 py-2"
+                  placeholder="admin"
+                />
+              </div>
+              <div>
+                <label className="block text-green-200 text-sm mb-1">Password</label>
+                <input
+                  type="password"
+                  value={pass}
+                  onChange={(e) => setPass(e.target.value)}
+                  className="w-full rounded-md border border-green-800 bg-green-900/40 text-white px-3 py-2"
+                  placeholder="Enter password"
+                />
+              </div>
+              {actionMsg && <div className="text-red-200 text-sm">{actionMsg}</div>}
+              <button
+                type="button"
+                onClick={handleLogin}
+                className="px-4 py-2 rounded-md bg-cricket-gold text-black font-semibold"
+              >
+                Login
+              </button>
+            </div>
+          </div>
+        )}
 
-        {!loading && !error && (
+        {/* Main auction UI only visible after login */}
+        {auth && (
           <>
+            {loading && <div className="text-green-100">Loading...</div>}
+            {error && <div className="text-red-200">{error}</div>}
+
+            {!loading && !error && (
+              <>
             <div className="flex flex-wrap gap-2 mb-3">
               <button type="button" onClick={() => setActiveTab('init')} className={`px-3 py-1.5 rounded-md text-sm font-semibold border ${activeTab==='init' ? 'bg-cricket-gold text-black border-cricket-gold' : 'bg-green-900/40 text-green-100 border-green-800'}`}>Initialize Teams</button>
               <button type="button" onClick={() => setActiveTab('owners')} className={`px-3 py-1.5 rounded-md text-sm font-semibold border ${activeTab==='owners' ? 'bg-cricket-gold text-black border-cricket-gold' : 'bg-green-900/40 text-green-100 border-green-800'}`}>Owners & Retentions</button>
@@ -778,20 +817,15 @@ export default function AuctionPage() {
               </div>
             </div>
             )}
+              </>
+            )}
           </>
         )}
       </div>
 
       {photoOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
-          role="dialog"
-          aria-modal="true"
-          onClick={(e) => { if (e.target === e.currentTarget) setPhotoOpen(false) }}
-          onKeyDown={(e) => { if (e.key === 'Escape') setPhotoOpen(false) }}
-          tabIndex={-1}
-        >
-          <div className="relative max-w-4xl w-full">
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/80">
+          <div className="relative max-w-4xl w-full p-4">
             <button
               type="button"
               className="absolute -top-2 -right-2 bg-white/90 text-black rounded-full px-3 py-1 text-sm font-semibold shadow"
@@ -799,57 +833,13 @@ export default function AuctionPage() {
             >
               Close
             </button>
-            <div className="bg-green-950 rounded-lg p-2">
-              <div
-                className={`relative overflow-hidden max-h-[80vh] w-full select-none ${panning ? 'cursor-grabbing' : 'cursor-grab'}`}
-                onWheel={(e) => {
-                  e.preventDefault()
-                  const dir = e.deltaY > 0 ? -1 : 1
-                  const next = Math.min(4, Math.max(1, Number((zoom + dir * 0.2).toFixed(2))))
-                  setZoom(next)
-                }}
-                onMouseDown={(e) => { setPanning(true); setLast({ x: e.clientX, y: e.clientY }) }}
-                onMouseMove={(e) => {
-                  if (!panning || !last) return
-                  const dx = e.clientX - last.x
-                  const dy = e.clientY - last.y
-                  setTx(v => v + dx); setTy(v => v + dy); setLast({ x: e.clientX, y: e.clientY })
-                }}
-                onMouseUp={() => { setPanning(false); setLast(null) }}
-                onMouseLeave={() => { setPanning(false); setLast(null) }}
-              >
-                <img
-                  src={photoSrc}
-                  alt={photoAlt}
-                  className="max-h-[80vh] w-full object-contain rounded will-change-transform"
-                  style={{ transform: `translate(${tx}px, ${ty}px) scale(${zoom})` }}
-                  onError={(e) => {
-                    const img = e.currentTarget as HTMLImageElement
-                    const step = img.dataset.fallback || '0'
-                    // Step 0: try original URL
-                    if (step === '0') {
-                      img.dataset.fallback = '1'
-                      setPhotoSrc(picked?.photoUrl || photoSrc)
-                      return
-                    }
-                    // Step 1: try a larger thumbnail as a last resort
-                    const id = extractDriveId(photoSrc || picked?.photoUrl || '')
-                    if (step === '1' && id) {
-                      img.dataset.fallback = '2'
-                      setPhotoSrc(`https://drive.google.com/thumbnail?id=${id}&sz=w1000`)
-                      return
-                    }
-                    // Step 2: give up and close
-                    setPhotoOpen(false)
-                  }}
-                  draggable={false}
-                />
-              </div>
-              <div className="flex gap-2 justify-center mt-3">
-                <button type="button" className="px-3 py-1 rounded bg-white/90 text-black text-sm font-semibold" onClick={() => setZoom(z => Math.max(1, Number((z - 0.2).toFixed(2))))}>-</button>
-                <button type="button" className="px-3 py-1 rounded bg-white/90 text-black text-sm font-semibold" onClick={() => setZoom(z => Math.min(4, Number((z + 0.2).toFixed(2))))}>+</button>
-                <button type="button" className="px-3 py-1 rounded bg-white/90 text-black text-sm font-semibold" onClick={() => { setZoom(1); setTx(0); setTy(0) }}>Reset</button>
-              </div>
+            <div className="bg-green-950 rounded-lg p-2 flex items-center justify-center max-h-[80vh]">
+              <img
+                src={photoSrc}
+                alt={photoAlt}
+                className="max-h-[80vh] w-full object-contain rounded"
+                draggable={false}
+              />
             </div>
           </div>
         </div>
