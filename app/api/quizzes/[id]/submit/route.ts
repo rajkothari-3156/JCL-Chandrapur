@@ -67,20 +67,27 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       submittedAt: submittedAt.toISOString(),
     }
 
-    // Append to results file per quiz
-    const resultsDir = path.join(process.cwd(), 'public', 'data', 'quiz_results')
-    const resultsPath = path.join(resultsDir, `${id}.json`)
-    await fs.mkdir(resultsDir, { recursive: true })
-    let existing: StoredResult[] = []
+    // Append to results file per quiz (best-effort; ignore read-only FS errors in production)
     try {
-      const existingText = await fs.readFile(resultsPath, 'utf8')
-      existing = JSON.parse(existingText)
-      if (!Array.isArray(existing)) existing = []
-    } catch {}
-    existing.push(result)
-    await fs.writeFile(resultsPath, JSON.stringify(existing, null, 2), 'utf8')
+      const resultsDir = path.join(process.cwd(), 'public', 'data', 'quiz_results')
+      const resultsPath = path.join(resultsDir, `${id}.json`)
+      await fs.mkdir(resultsDir, { recursive: true })
+      let existing: StoredResult[] = []
+      try {
+        const existingText = await fs.readFile(resultsPath, 'utf8')
+        existing = JSON.parse(existingText)
+        if (!Array.isArray(existing)) existing = []
+      } catch {}
+      existing.push(result)
+      await fs.writeFile(resultsPath, JSON.stringify(existing, null, 2), 'utf8')
+    } catch (e: any) {
+      // In serverless/read-only environments, just skip persisting results
+      if (e && e.code !== 'EROFS') {
+        console.error('Failed to persist quiz results', e)
+      }
+    }
 
-    // Do not return correct answers; only score and place token
+    // Do not return correct answers; only score
     return NextResponse.json({ ok: true, score, total: (quiz.questions || []).length })
   } catch (e: any) {
     return NextResponse.json({ error: 'Failed to submit quiz', details: e?.message ?? String(e) }, { status: 500 })
