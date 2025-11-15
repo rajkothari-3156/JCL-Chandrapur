@@ -34,34 +34,10 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     const quiz = JSON.parse(quizText)
     if (!quiz.id) quiz.id = id
 
-    // Enforce KV override first; if not set, fall back to weekly window
     try {
       const v = await kv.get(`quiz:${quiz.id}:active`)
-      if (typeof v === 'boolean') {
-        if (!v) return NextResponse.json({ error: 'Quiz is currently turned off.' }, { status: 403 })
-      } else {
-        // Time window enforcement (timezone-agnostic IST calculation)
-        const nowUtc = new Date()
-        const ww = quiz?.weeklyWindow
-        if (ww) {
-          const IST_OFFSET_MIN = 330
-          const istNow = new Date(nowUtc.getTime() + IST_OFFSET_MIN * 60 * 1000)
-          const istY = istNow.getUTCFullYear()
-          const istM = istNow.getUTCMonth()
-          const istD = istNow.getUTCDate()
-          const istDow = istNow.getUTCDay()
-          const targetDow = ww.dayOfWeek ?? 0
-          const [sh, sm] = String(ww.start || '20:00').split(':').map((x: string)=>parseInt(x,10))
-          const [eh, em] = String(ww.end || '20:15').split(':').map((x: string)=>parseInt(x,10))
-          const istStartUtcMs = Date.UTC(istY, istM, istD, sh, sm) - IST_OFFSET_MIN * 60 * 1000
-          const istEndUtcMs = Date.UTC(istY, istM, istD, eh, em) - IST_OFFSET_MIN * 60 * 1000
-          const isToday = istDow === targetDow
-          const nowMs = nowUtc.getTime()
-          const active = isToday && nowMs >= istStartUtcMs && nowMs <= istEndUtcMs
-          if (!active) {
-            return NextResponse.json({ error: 'Quiz is not active right now. Please submit during the scheduled window.' }, { status: 403 })
-          }
-        }
+      if (v !== true) {
+        return NextResponse.json({ error: 'Quiz is currently turned off.' }, { status: 403 })
       }
     } catch {}
     const keyById = new Map<string, number>()

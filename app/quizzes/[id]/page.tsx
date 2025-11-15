@@ -45,7 +45,7 @@ export default function QuizRunPage({ params }: { params: { id: string } }) {
         for (const q of json.questions) init[q.id] = null
         setAnswers(init)
 
-        // Start timer only if active window
+        // Start timer only if quiz is active
         if (json?.status?.active) {
           startedAtRef.current = new Date().toISOString()
           const durationMs = (json.durationMinutes ?? 15) * 60 * 1000
@@ -88,15 +88,6 @@ export default function QuizRunPage({ params }: { params: { id: string } }) {
 
   const submittingRef = useRef(false)
   const [submitMsg, setSubmitMsg] = useState<string | null>(null)
-
-  const nextDateStr = React.useMemo(() => {
-    if (!status?.nextOpenAt) return null
-    try {
-      return new Date(status.nextOpenAt).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'long', year: 'numeric' })
-    } catch {
-      return null
-    }
-  }, [status])
 
   const handleSubmit = async () => {
     if (submittingRef.current) return
@@ -147,11 +138,8 @@ export default function QuizRunPage({ params }: { params: { id: string } }) {
 
             {!status?.active && (
               <div className="bg-yellow-900/20 border border-yellow-700 text-yellow-200 rounded-md p-3">
-                <div className="font-semibold text-white">Quiz coming soon</div>
-                <div>
-                  The quiz is available every Sunday between 8:00 PM and 8:15 PM (IST).
-                  {nextDateStr ? <> Next date: {nextDateStr}.</> : null}
-                </div>
+                <div className="font-semibold text-white">Quiz is not active right now.</div>
+                <div>Please check back later when the quiz is turned on by the admins.</div>
               </div>
             )}
 

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 
 type QuizIndex = {
-  quizzes: Array<{ id: string; title: string; startsAt: string; endsAt: string; durationMinutes: number }>
+  quizzes: Array<{ id: string; title: string; durationMinutes: number }>
 }
 
 export default function QuizzesPage() {
@@ -38,8 +38,6 @@ export default function QuizzesPage() {
             {(data?.quizzes ?? []).map((q) => (
               <a key={q.id} href={`/quizzes/${q.id}`} className="block bg-green-900/30 border border-green-800 rounded-lg p-4 hover:bg-green-900/50">
                 <div className="text-white font-semibold text-lg mb-1">{q.title}</div>
-                <div className="text-green-200 text-sm">Starts: {new Date(q.startsAt).toLocaleString()}</div>
-                <div className="text-green-200 text-sm">Ends: {new Date(q.endsAt).toLocaleString()}</div>
                 <div className="text-green-200 text-sm">Duration: {q.durationMinutes} minutes</div>
               </a>
             ))}
