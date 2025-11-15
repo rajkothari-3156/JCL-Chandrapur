@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import Navbar from '@/components/layout/Navbar'
+import SponsorsBar from '@/components/layout/SponsorsBar'
 
 type QuizIndex = {
   quizzes: Array<{ id: string; title: string; durationMinutes: number }>
@@ -47,6 +48,7 @@ export default function QuizzesPage() {
           </div>
         )}
       </div>
+      <SponsorsBar />
     </main>
     </>
   )

@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import Papa from 'papaparse'
 import Navbar from '@/components/layout/Navbar'
+import SponsorsBar from '@/components/layout/SponsorsBar'
 
 type Registration = {
   fullName: string
@@ -847,6 +848,7 @@ export default function AuctionPage() {
           </div>
         </div>
       )}
+      <SponsorsBar />
     </main>
     </>
   )

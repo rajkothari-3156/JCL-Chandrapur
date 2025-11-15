@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Navbar from '@/components/layout/Navbar'
+import SponsorsBar from '@/components/layout/SponsorsBar'
 
 type Quiz = {
   id: string
@@ -191,6 +192,7 @@ export default function QuizRunPage({ params }: { params: { id: string } }) {
           </div>
         )}
       </div>
+      <SponsorsBar />
     </main>
     </>
   )

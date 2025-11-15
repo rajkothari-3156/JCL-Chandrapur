@@ -8,6 +8,7 @@ import BowlingLeaderboard from '@/components/BowlingLeaderboard'
 import FieldingLeaderboard from '@/components/FieldingLeaderboard'
 import MVPLeaderboard from '@/components/MVPLeaderboard'
 import Navbar from '@/components/layout/Navbar'
+import SponsorsBar from '@/components/layout/SponsorsBar'
 
 type LeaderboardType = 'batting' | 'bowling' | 'fielding' | 'mvp'
 
@@ -142,6 +143,7 @@ export default function StatsPage() {
           )}
         </div>
       </div>
+      <SponsorsBar />
     </main>
     </>
   )

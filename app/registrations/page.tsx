@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import Papa from 'papaparse'
 import Navbar from '@/components/layout/Navbar'
+import SponsorsBar from '@/components/layout/SponsorsBar'
 
 type Registration = {
   timestamp: string | null
@@ -400,6 +401,7 @@ export default function RegistrationsPage() {
           )}
         </Modal>
       </div>
+      <SponsorsBar />
     </main>
     </>
   )

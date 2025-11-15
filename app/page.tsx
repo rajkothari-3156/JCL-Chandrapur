@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { Trophy, Brain, Users, Gavel, BarChart3, TrendingUp, Award, Zap, ArrowRight } from 'lucide-react'
 import Navbar from '@/components/layout/Navbar'
+import SponsorsBar from '@/components/layout/SponsorsBar'
 
 export default function Home() {
   const features = [
@@ -37,6 +38,14 @@ export default function Home() {
       href: '/auction',
       color: 'from-orange-500 to-orange-700',
       stats: ['Live Bidding', 'Team Budgets', 'Player Pool']
+    },
+    {
+      title: 'Our Sponsors',
+      description: 'Meet our valued partners and sponsors who make JCL Chandrapur possible',
+      icon: Award,
+      href: '/sponsors',
+      color: 'from-yellow-500 to-yellow-700',
+      stats: ['Title Sponsor', 'Co-Sponsors', 'Partners']
     },
   ]
 
@@ -150,6 +159,9 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* Sponsors Bar */}
+        <SponsorsBar />
 
         {/* Footer */}
         <footer className="border-t border-green-800/50 bg-green-950/50 backdrop-blur-sm mt-20">

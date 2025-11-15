@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Trophy, Brain, Users, Gavel, BarChart3 } from 'lucide-react'
+import { Home, Trophy, Brain, Users, Gavel, BarChart3, Award } from 'lucide-react'
 
 export default function Navbar() {
   const pathname = usePathname()
@@ -13,6 +13,7 @@ export default function Navbar() {
     { href: '/quizzes', label: 'Quizzes', icon: Brain },
     { href: '/registrations', label: 'Players', icon: Users },
     { href: '/auction', label: 'Auction', icon: Gavel },
+    { href: '/sponsors', label: 'Sponsors', icon: Award },
   ]
 
   const isActive = (href: string) => {
