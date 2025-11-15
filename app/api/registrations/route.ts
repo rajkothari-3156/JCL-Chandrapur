@@ -226,7 +226,7 @@ function normalizeAge(age: any): string | number | null {
     const digits = String(age).match(/\d+/)?.[0]
     n = digits ? parseInt(digits, 10) : null
   }
-  if (n !== null && n >= 15 && n <= 50) return n
+  if (n !== null && n >= 14 && n <= 50) return n
   return 'NA'
 }
 
