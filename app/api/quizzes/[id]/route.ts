@@ -1,9 +1,19 @@
 import { NextResponse } from 'next/server'
 import fs from 'node:fs/promises'
 import path from 'node:path'
+import { kv } from '@/lib/kv'
 
-function computeWindow(quiz: any) {
+async function computeWindow(quiz: any): Promise<{ active: boolean; nextOpenAt?: string | null; closesAt?: string | null }> {
   const ww = quiz?.weeklyWindow
+  // KV override: if a boolean is set at quiz:{id}:active, use it
+  try {
+    if (quiz?.id) {
+      const v = await kv.get(`quiz:${quiz.id}:active`)
+      if (typeof v === 'boolean') {
+        return { active: v, nextOpenAt: null, closesAt: null }
+      }
+    }
+  } catch {}
   if (!ww) return { active: true }
 
   const nowUtc = new Date()
@@ -57,7 +67,9 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
     const quizPath = path.join(process.cwd(), 'public', 'data', 'quizzes', `${id}.json`)
     const text = await fs.readFile(quizPath, 'utf8')
     const quiz = JSON.parse(text)
-    const window = computeWindow(quiz)
+    // ensure quiz.id is available for KV
+    if (!quiz.id) quiz.id = id
+    const window = await computeWindow(quiz)
     // Strip answers; attach status
     const redacted = {
       ...quiz,
