@@ -72,7 +72,7 @@ export default function Home() {
               <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
                 Welcome to
                 <span className="block bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-400 bg-clip-text text-transparent">
-                  JCL Cricket League
+                  Jain Cricket League
                 </span>
               </h1>
               

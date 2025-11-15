@@ -65,7 +65,7 @@ export default function StatsPage() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-2 drop-shadow-lg">
-            JCL Cricket Leaderboard
+            Jain Cricket League Leaderboard
           </h1>
           <p className="text-xl text-green-100">Player Performance Statistics</p>
         </div>
