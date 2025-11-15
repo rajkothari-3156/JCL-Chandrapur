@@ -130,8 +130,8 @@ export default function Home() {
             <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
                 { label: 'Active Players', value: '50+', icon: Users },
-                { label: 'Total Matches', value: '100+', icon: Trophy },
-                { label: 'Quiz Participants', value: '200+', icon: Brain },
+                { label: 'Total Matches', value: '15+', icon: Trophy },
+                { label: 'Quiz Participants', value: '50+', icon: Brain },
                 { label: 'Auction Teams', value: '8', icon: Gavel },
               ].map((stat, index) => {
                 const Icon = stat.icon
