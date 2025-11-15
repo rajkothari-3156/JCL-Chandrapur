@@ -1,0 +1,77 @@
+{
+  "id": "jcl-quiz-2025-wk2",
+  "title": "JCL Weekly Quiz — Week 2",
+  "durationMinutes": 15,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "mcq",
+      "text": "Which of these players is known for explosive starts in the powerplay?",
+      "options": ["Aayush Nilesh Puglia", "Madhur Pugliya", "Raghav Shah", "Harsh Vora"],
+      "answer": 0
+    },
+    {
+      "id": "q2",
+      "type": "mcq",
+      "text": "Who is most likely to be sent in as a finisher in the last 3 overs?",
+      "options": ["Siddarth Jain", "Jay Baid", "Pranav Kothari", "Chirag Doshi"],
+      "answer": 1
+    },
+    {
+      "id": "q3",
+      "type": "mcq",
+      "text": "Which captain is most associated with calm field placements under pressure?",
+      "options": ["Tarun Jain", "Nirav Bohra", "Vishal Baid", "Rohit Sanghvi"],
+      "answer": 2
+    },
+    {
+      "id": "q4",
+      "type": "mcq",
+      "text": "Who would you back to bowl the 20th over while defending 10 runs?",
+      "options": ["Parth Purohit", "Manav Banthia", "Dhruv Mehta", "Rushabh Puglia"],
+      "answer": 3
+    },
+    {
+      "id": "q5",
+      "type": "mcq",
+      "text": "Which player is most likely to save a certain four with a diving stop at long-off?",
+      "options": ["Ritesh Bothra", "Ankit Lodha", "Kunal Baid", "Meet Pugaliya"],
+      "answer": 0
+    },
+    {
+      "id": "q6",
+      "type": "mcq",
+      "text": "Who is the safest pair of hands under a high swirling catch?",
+      "options": ["Shashank Sanjay Jain", "Mohit Modi", "Parshv Shah", "Devang Sanghvi"],
+      "answer": 1
+    },
+    {
+      "id": "q7",
+      "type": "mcq",
+      "text": "Which all-rounder gives you both tight overs and crucial lower-order runs?",
+      "options": ["Raj Kothari", "Smit Purohit", "Naman Pugalia", "Yash Baid"],
+      "answer": 0
+    },
+    {
+      "id": "q8",
+      "type": "mcq",
+      "text": "Who is most likely to turn a quick single into two with sharp running between the wickets?",
+      "options": ["Dhaval Jain", "Pratik Bohra", "Rohan Banthia", "Kartik Bothra"],
+      "answer": 2
+    },
+    {
+      "id": "q9",
+      "type": "mcq",
+      "text": "Which bowler is most likely to break a big partnership with a clever slower ball?",
+      "options": ["Saurabh Baid", "Tejas Pugaliya", "Ronak Lodha", "Harshit Jain"],
+      "answer": 0
+    },
+    {
+      "id": "q10",
+      "type": "mcq",
+      "text": "Who is most likely to be awarded \"Player of the Match\" in a tight JCL chase?",
+      "options": ["Aayush Nilesh Puglia", "Nirav Bohra", "Siddarth Jain", "Rushabh Puglia"],
+      "answer": 1
+    }
+  ]
+}

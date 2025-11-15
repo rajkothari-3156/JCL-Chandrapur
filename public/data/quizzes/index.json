@@ -6,6 +6,11 @@
       "startsAt": "2025-11-10T00:00:00.000Z",
       "endsAt": "2025-11-17T00:00:00.000Z",
       "durationMinutes": 15
+    },
+    {
+      "id": "jcl-quiz-2025-wk2",
+      "title": "JCL Weekly Quiz — Week 2",
+      "durationMinutes": 15
     }
   ]
 }
