@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
-import fs from 'node:fs/promises'
-import path from 'node:path'
+import { kv } from '@/lib/kv'
 
 type StoredResult = {
   name: string
@@ -14,12 +13,11 @@ type StoredResult = {
 export async function GET(_: Request, { params }: { params: { id: string } }) {
   try {
     const id = params.id
-    const resultsPath = path.join(process.cwd(), 'public', 'data', 'quiz_results', `${id}.json`)
+    const resultsKey = `quiz:${id}:results`
     let rows: StoredResult[] = []
     try {
-      const text = await fs.readFile(resultsPath, 'utf8')
-      rows = JSON.parse(text)
-      if (!Array.isArray(rows)) rows = []
+      const existing = (await kv.get(resultsKey)) as StoredResult[] | null
+      if (Array.isArray(existing)) rows = existing
     } catch {}
 
     rows.sort((a, b) => {

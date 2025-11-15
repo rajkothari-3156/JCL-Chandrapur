@@ -40,6 +40,19 @@ export async function POST(req: Request, { params }: { params: { id: string } })
         return NextResponse.json({ error: 'Quiz is currently turned off.' }, { status: 403 })
       }
     } catch {}
+    // Enforce one attempt per quiz+phone
+    const phoneRaw = String(body.phone).trim()
+    const phoneKey = phoneRaw.replace(/\s+/g, '')
+    const perPhoneKey = `quiz:${quiz.id}:result:${phoneKey}`
+    const resultsKey = `quiz:${quiz.id}:results`
+
+    try {
+      const existing = (await kv.get(perPhoneKey)) as StoredResult | null
+      if (existing && typeof existing.score === 'number') {
+        return NextResponse.json({ ok: true, alreadySubmitted: true, score: existing.score, total: (quiz.questions || []).length })
+      }
+    } catch {}
+
     const keyById = new Map<string, number>()
     for (const q of quiz.questions || []) {
       if (q && typeof q.id === 'string' && typeof q.answer === 'number') {
@@ -60,31 +73,22 @@ export async function POST(req: Request, { params }: { params: { id: string } })
 
     const result: StoredResult = {
       name: String(body.name).trim(),
-      phone: String(body.phone).trim(),
+      phone: phoneRaw,
       score,
       durationMs,
       startedAt: startedAt.toISOString(),
       submittedAt: submittedAt.toISOString(),
     }
 
-    // Append to results file per quiz (best-effort; ignore read-only FS errors in production)
+    // Persist in KV: per-phone record and quiz results array
     try {
-      const resultsDir = path.join(process.cwd(), 'public', 'data', 'quiz_results')
-      const resultsPath = path.join(resultsDir, `${id}.json`)
-      await fs.mkdir(resultsDir, { recursive: true })
-      let existing: StoredResult[] = []
-      try {
-        const existingText = await fs.readFile(resultsPath, 'utf8')
-        existing = JSON.parse(existingText)
-        if (!Array.isArray(existing)) existing = []
-      } catch {}
-      existing.push(result)
-      await fs.writeFile(resultsPath, JSON.stringify(existing, null, 2), 'utf8')
+      const existing = (await kv.get(resultsKey)) as StoredResult[] | null
+      const rows = Array.isArray(existing) ? existing.slice() : []
+      rows.push(result)
+      await kv.set(perPhoneKey, result)
+      await kv.set(resultsKey, rows)
     } catch (e: any) {
-      // In serverless/read-only environments, just skip persisting results
-      if (e && e.code !== 'EROFS') {
-        console.error('Failed to persist quiz results', e)
-      }
+      console.error('Failed to persist quiz results in KV', e)
     }
 
     // Do not return correct answers; only score
