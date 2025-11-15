@@ -1,73 +1,176 @@
 'use client'
 
 import Navbar from '@/components/layout/Navbar'
-import { Award, Trophy, Star, Heart } from 'lucide-react'
+import { Award, Trophy, Heart, UtensilsCrossed, Hotel, Gift, Droplets, Radio, DoorOpen, Users } from 'lucide-react'
 
 export default function SponsorsPage() {
+  const sponsorCategories = [
+    { 
+      label: 'Title Sponsor', 
+      icon: Trophy, 
+      color: 'yellow',
+      description: 'Premium visibility across all platforms and events',
+      logoSize: '800x400px'
+    },
+    { 
+      label: 'Co-Sponsor', 
+      icon: Award, 
+      color: 'green',
+      description: 'Strategic partnership with prominent brand placement',
+      logoSize: '600x300px'
+    },
+    { 
+      label: 'Food Sponsor', 
+      icon: UtensilsCrossed, 
+      color: 'orange',
+      description: 'Official food and catering partner for all events',
+      logoSize: '500x250px'
+    },
+    { 
+      label: 'Hospitality Sponsor', 
+      icon: Hotel, 
+      color: 'blue',
+      description: 'Providing comfort and hospitality services',
+      logoSize: '500x250px'
+    },
+    { 
+      label: 'Presentation Sponsor', 
+      icon: Gift, 
+      color: 'purple',
+      description: 'Associated with trophy and award presentations',
+      logoSize: '500x250px'
+    },
+    { 
+      label: 'Water Bottle Sponsor', 
+      icon: Droplets, 
+      color: 'cyan',
+      description: 'Official hydration partner for players and audience',
+      logoSize: '500x250px'
+    },
+    { 
+      label: 'Media Partner', 
+      icon: Radio, 
+      color: 'red',
+      description: 'Official media coverage and promotion partner',
+      logoSize: '500x250px'
+    },
+    { 
+      label: 'Entry Gate Sponsor', 
+      icon: DoorOpen, 
+      color: 'indigo',
+      description: 'Prominent branding at venue entry points',
+      logoSize: '500x250px'
+    },
+    { 
+      label: 'Event Partners', 
+      icon: Users, 
+      color: 'pink',
+      description: 'Supporting partners for successful event execution',
+      logoSize: '400x200px'
+    },
+  ]
+
   return (
     <>
       <Navbar />
       <main className="min-h-screen p-4 md:p-8">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 drop-shadow-lg">
-              Our Sponsors
+              Our Sponsors & Partners
             </h1>
             <p className="text-xl text-green-100 max-w-2xl mx-auto">
-              We thank our generous sponsors for making JCL Chandrapur possible
+              We thank our generous sponsors and partners for making JCL Chandrapur 2025 possible
             </p>
           </div>
 
-          {/* Title Sponsor Section */}
-          <div className="mb-12">
-            <div className="text-center mb-6">
-              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-yellow-600 px-4 py-2 rounded-lg shadow-lg">
-                <Trophy className="w-6 h-6 text-green-900" />
-                <span className="text-green-900 font-bold text-lg">TITLE SPONSOR</span>
-              </div>
-            </div>
-            
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-12 border border-white/20 text-center">
-              <div className="h-48 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="w-32 h-32 mx-auto mb-4 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-lg flex items-center justify-center">
-                    <Trophy className="w-16 h-16 text-green-900" />
+          {/* All Sponsor Categories */}
+          <div className="space-y-12 mb-12">
+            {sponsorCategories.map((category, index) => {
+              const Icon = category.icon
+              const isTitle = category.label === 'Title Sponsor'
+              const borderColorClasses = {
+                yellow: 'border-yellow-400',
+                green: 'border-green-400',
+                orange: 'border-orange-400',
+                blue: 'border-blue-400',
+                purple: 'border-purple-400',
+                cyan: 'border-cyan-400',
+                red: 'border-red-400',
+                indigo: 'border-indigo-400',
+                pink: 'border-pink-400',
+              }
+              const bgColorClasses = {
+                yellow: 'from-yellow-400 to-yellow-600',
+                green: 'from-green-500 to-green-700',
+                orange: 'from-orange-500 to-orange-700',
+                blue: 'from-blue-500 to-blue-700',
+                purple: 'from-purple-500 to-purple-700',
+                cyan: 'from-cyan-500 to-cyan-700',
+                red: 'from-red-500 to-red-700',
+                indigo: 'from-indigo-500 to-indigo-700',
+                pink: 'from-pink-500 to-pink-700',
+              }
+              const iconColorClasses = {
+                yellow: 'text-yellow-500',
+                green: 'text-green-500',
+                orange: 'text-orange-500',
+                blue: 'text-blue-500',
+                purple: 'text-purple-500',
+                cyan: 'text-cyan-500',
+                red: 'text-red-500',
+                indigo: 'text-indigo-500',
+                pink: 'text-pink-500',
+              }
+              
+              return (
+                <div key={index} className={isTitle ? 'mb-16' : ''}>
+                  {/* Category Header */}
+                  <div className="text-center mb-6">
+                    <div className={`inline-flex items-center gap-2 bg-gradient-to-r ${bgColorClasses[category.color as keyof typeof bgColorClasses]} px-6 py-3 rounded-lg shadow-lg`}>
+                      <Icon className={`w-6 h-6 ${category.color === 'yellow' ? 'text-green-900' : 'text-white'}`} />
+                      <span className={`${category.color === 'yellow' ? 'text-green-900' : 'text-white'} font-bold text-lg uppercase`}>
+                        {category.label}
+                      </span>
+                    </div>
+                    <p className="text-green-200 mt-2 text-sm">{category.description}</p>
                   </div>
-                  <p className="text-2xl font-bold text-white">Your Brand Here</p>
-                  <p className="text-green-200 mt-2">Title Sponsor</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Co-Sponsors Section */}
-          <div className="mb-12">
-            <div className="text-center mb-6">
-              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-500 to-green-700 px-4 py-2 rounded-lg shadow-lg">
-                <Award className="w-6 h-6 text-white" />
-                <span className="text-white font-bold text-lg">CO-SPONSORS</span>
-              </div>
-            </div>
-            
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[1, 2, 3, 4, 5, 6].map((index) => (
-                <div
-                  key={index}
-                  className="bg-white/10 backdrop-blur-md rounded-xl p-8 border border-white/20 text-center hover:border-white/40 transition-all hover:scale-105"
-                >
-                  <div className="h-32 flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="w-20 h-20 mx-auto mb-3 bg-gradient-to-br from-green-500 to-green-700 rounded-lg flex items-center justify-center">
-                        <Star className="w-10 h-10 text-white" />
+                  
+                  {/* Logo Card */}
+                  <div className={`${isTitle ? 'max-w-4xl' : 'max-w-2xl'} mx-auto`}>
+                    <div className={`bg-white rounded-2xl p-8 shadow-2xl border-4 ${borderColorClasses[category.color as keyof typeof borderColorClasses]}`}>
+                      {/* Logo Placeholder */}
+                      <div className={`relative ${isTitle ? 'h-64' : 'h-48'} bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex items-center justify-center mb-4 border-2 border-dashed border-gray-300`}>
+                        <div className="text-center">
+                          <Icon className={`${isTitle ? 'w-24 h-24' : 'w-16 h-16'} ${iconColorClasses[category.color as keyof typeof iconColorClasses]} mx-auto mb-3`} />
+                          <p className={`${isTitle ? 'text-3xl' : 'text-2xl'} font-bold text-gray-800 mb-2 uppercase`}>
+                            {category.label}
+                          </p>
+                          <p className="text-gray-500 text-sm">Logo Size: {category.logoSize}</p>
+                          <p className="text-gray-400 text-xs mt-1">PNG/SVG with transparent background</p>
+                        </div>
                       </div>
-                      <p className="text-lg font-semibold text-white">Co-Sponsor {index}</p>
-                      <p className="text-green-200 text-sm mt-1">Partner</p>
+                      
+                      {/* Benefits */}
+                      {isTitle && (
+                        <div className="text-center space-y-2 mt-6">
+                          <h3 className="text-xl font-bold text-gray-800">Premium Visibility Package</h3>
+                          <div className="grid md:grid-cols-2 gap-2 text-gray-600 text-sm max-w-xl mx-auto">
+                            <div>✓ Logo on all website pages</div>
+                            <div>✓ Venue banner placement</div>
+                            <div>✓ Social media features</div>
+                            <div>✓ Press release mentions</div>
+                            <div>✓ Official merchandise branding</div>
+                            <div>✓ Live streaming credits</div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
+              )
+            })}
           </div>
 
           {/* Become a Sponsor CTA */}
