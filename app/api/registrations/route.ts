@@ -86,7 +86,7 @@ export async function GET(req: Request) {
     const saEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL
     const saKey = process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY
     const sheetId = process.env.GOOGLE_SHEET_ID
-    const range = process.env.GOOGLE_SHEET_RANGE || 'Registrations!A:G'
+    const range = process.env.GOOGLE_SHEET_RANGE || 'Registrations!A:Z'
 
     if (saEmail && saKey && sheetId) {
       console.log('[registrations] Using Google Service Account mode', {
@@ -198,7 +198,18 @@ function normalizeRowFromObject(r: Record<string, any>) {
   const contact = get(['your contact no.', 'contact', 'phone', 'mobile'])
   const playingStyle = get(['your playing style', 'playing style', 'style'])
   const tshirtSize = get(['your t-shirt size', 't-shirt size', 'tshirt size', 'size'])
-  const photoUrl = get(['your photo', 'photo', 'image', 'photo url'])
+  // Try exact matches first, then fuzzy match for any header containing photo/image/pic
+  let photoUrl = get(['your photo', 'photo', 'image', 'photo url'])
+  if (!photoUrl) {
+    const keys = Object.keys(r)
+    const lowered = keys.map((h) => h.trim().toLowerCase())
+    const idx = lowered.findIndex((h) => (
+      h.includes('photo') || h.includes('image') || h.includes('pic')
+    ))
+    if (idx !== -1) {
+      photoUrl = (r as any)[keys[idx]]
+    }
+  }
 
   return { timestamp, fullName, age, contact, playingStyle, tshirtSize, photoUrl }
 }
