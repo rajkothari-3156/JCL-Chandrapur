@@ -183,6 +183,8 @@ async function fetchFromPrivateSheet({ saEmail, saKey, sheetId, range }: { saEma
   }
 }
 
+let debugLogged = false
+
 function normalizeRowFromObject(r: Record<string, any>) {
   const get = (keys: string[], fallback: any = null) => {
     for (const k of keys) {
@@ -198,17 +200,13 @@ function normalizeRowFromObject(r: Record<string, any>) {
   const contact = get(['your contact no.', 'contact', 'phone', 'mobile'])
   const playingStyle = get(['your playing style', 'playing style', 'style'])
   const tshirtSize = get(['your t-shirt size', 't-shirt size', 'tshirt size', 'size'])
-  // Try exact matches first, then fuzzy match for any header containing photo/image/pic
-  let photoUrl = get(['your photo', 'photo', 'image', 'photo url'])
-  if (!photoUrl) {
-    const keys = Object.keys(r)
-    const lowered = keys.map((h) => h.trim().toLowerCase())
-    const idx = lowered.findIndex((h) => (
-      h.includes('photo') || h.includes('image') || h.includes('pic')
-    ))
-    if (idx !== -1) {
-      photoUrl = (r as any)[keys[idx]]
-    }
+  const photoUrl = get(['your photo', 'photo', 'image', 'photo url','column 6','your photo'])
+
+  // Debug: Log headers and photoUrl for first row only
+  if (fullName && !debugLogged) {
+    console.log('[registrations] First row headers:', Object.keys(r))
+    console.log('[registrations] First row photoUrl:', photoUrl)
+    debugLogged = true
   }
 
   return { timestamp, fullName, age, contact, playingStyle, tshirtSize, photoUrl }
@@ -237,7 +235,7 @@ function normalizeAge(age: any): string | number | null {
     const digits = String(age).match(/\d+/)?.[0]
     n = digits ? parseInt(digits, 10) : null
   }
-  if (n !== null && n >= 15 && n <= 50) return n
+  if (n !== null && n >= 14 && n <= 50) return n
   return 'NA'
 }
 

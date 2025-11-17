@@ -16,32 +16,48 @@ export default function QuizAnswersPage({ params }: { params: { id: string } }) 
   const [answers, setAnswers] = useState<Record<string, number> | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [password, setPassword] = useState('')
+
+  const loadWithPassword = async (pwd: string) => {
+    setLoading(true)
+    setError(null)
+    try {
+      const quizRes = await fetch(`/api/quizzes/${quizId}`, { cache: 'no-store' })
+      const quizJson = await quizRes.json()
+      if (!quizRes.ok) throw new Error(quizJson?.error || 'Failed to load quiz')
+      setQuiz(quizJson as Quiz)
+
+      const ansRes = await fetch(`/api/quizzes/${quizId}/answers?password=${encodeURIComponent(pwd)}`, { cache: 'no-store' })
+      const ansJson = await ansRes.json()
+      if (!ansRes.ok) throw new Error(ansJson?.error || 'Answers not available yet')
+      const map: Record<string, number> = {}
+      for (const a of (ansJson.answers as Array<{ id: string; answer: number }>)) map[a.id] = a.answer
+      setAnswers(map)
+    } catch (e: any) {
+      setError(e?.message ?? 'Unknown error')
+      setAnswers(null)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    const load = async () => {
+    // Do not auto-load answers; require password first
+    const init = async () => {
       setLoading(true)
       setError(null)
       try {
-        const [quizRes, ansRes] = await Promise.all([
-          fetch(`/api/quizzes/${quizId}`, { cache: 'no-store' }),
-          fetch(`/api/quizzes/${quizId}/answers`, { cache: 'no-store' }),
-        ])
+        const quizRes = await fetch(`/api/quizzes/${quizId}`, { cache: 'no-store' })
         const quizJson = await quizRes.json()
         if (!quizRes.ok) throw new Error(quizJson?.error || 'Failed to load quiz')
         setQuiz(quizJson as Quiz)
-
-        const ansJson = await ansRes.json()
-        if (!ansRes.ok) throw new Error(ansJson?.error || 'Answers not available yet')
-        const map: Record<string, number> = {}
-        for (const a of (ansJson.answers as Array<{ id: string; answer: number }>)) map[a.id] = a.answer
-        setAnswers(map)
       } catch (e: any) {
         setError(e?.message ?? 'Unknown error')
       } finally {
         setLoading(false)
       }
     }
-    load()
+    init()
   }, [quizId])
 
   return (
@@ -51,21 +67,57 @@ export default function QuizAnswersPage({ params }: { params: { id: string } }) 
           <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow-lg">Answers — {quizId}</h1>
           <a href={`/quizzes/${quizId}`} className="text-cricket-gold hover:underline">Back to Quiz</a>
         </div>
-        {loading && <div className="text-green-100">Loading answers...</div>}
-        {error && <div className="text-red-200">{error}</div>}
-        {!loading && !error && quiz && answers && (
-          <div className="space-y-4">
-            {quiz.questions.map((q, qi) => {
-              const idx = answers[q.id]
-              const correct = typeof idx === 'number' ? q.options[idx] : ''
-              return (
-                <div key={q.id} className="bg-green-900/30 border border-green-800 rounded-lg p-4">
-                  <div className="text-white font-medium mb-2">Q{qi + 1}. {q.text}</div>
-                  <div className="text-green-100"><span className="text-cricket-gold font-semibold">Correct:</span> {correct}</div>
-                </div>
-              )
-            })}
-          </div>
+        {loading && <div className="text-green-100">Loading...</div>}
+        {error && <div className="text-red-200 mb-3">{error}</div>}
+        {!loading && quiz && (
+          <>
+            <div className="mb-4 flex flex-col md:flex-row md:items-end md:space-x-3 space-y-2 md:space-y-0">
+              <div className="flex-1">
+                <label className="block text-green-200 text-sm mb-1">Password to view answers</label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full rounded-md border border-green-800 bg-green-900/40 text-white px-3 py-2"
+                  placeholder="Enter password"
+                />
+              </div>
+              <button
+                onClick={() => password && loadWithPassword(password)}
+                className="inline-flex items-center justify-center px-4 py-2 rounded-md bg-cricket-gold text-green-950 font-semibold hover:bg-yellow-400 disabled:opacity-60"
+                disabled={!password || loading}
+              >
+                Load Answers
+              </button>
+            </div>
+
+            {answers && (
+              <div className="overflow-x-auto rounded-lg shadow-lg bg-green-900/30 border border-green-800">
+                <table className="min-w-full text-sm">
+                  <thead>
+                    <tr className="bg-cricket-lightgreen text-white">
+                      <th className="px-3 py-2 text-left">#</th>
+                      <th className="px-3 py-2 text-left">Question</th>
+                      <th className="px-3 py-2 text-left">Correct Option</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {quiz.questions.map((q, qi) => {
+                      const idx = answers[q.id]
+                      const correct = typeof idx === 'number' ? q.options[idx] : ''
+                      return (
+                        <tr key={q.id} className={qi % 2 ? 'bg-green-900/30' : 'bg-green-900/10'}>
+                          <td className="px-3 py-2 text-green-100 align-top">{qi + 1}</td>
+                          <td className="px-3 py-2 text-green-100 align-top max-w-xl">{q.text}</td>
+                          <td className="px-3 py-2 text-cricket-gold font-semibold align-top">{correct}</td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </>
         )}
       </div>
     </main>

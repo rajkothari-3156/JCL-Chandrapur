@@ -2,6 +2,8 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Navbar from '@/components/layout/Navbar'
+import SponsorsBar from '@/components/layout/SponsorsBar'
 
 type Quiz = {
   id: string
@@ -125,7 +127,9 @@ export default function QuizRunPage({ params }: { params: { id: string } }) {
   }
 
   return (
-    <main className="min-h-screen p-4 md:p-8">
+    <>
+      <Navbar />
+      <main className="min-h-screen p-4 md:p-8">
       <div className="max-w-3xl mx-auto">
         {loading && <div className="text-green-100">Loading quiz...</div>}
         {error && <div className="text-red-200">{error}</div>}
@@ -188,6 +192,8 @@ export default function QuizRunPage({ params }: { params: { id: string } }) {
           </div>
         )}
       </div>
+      <SponsorsBar />
     </main>
+    </>
   )
 }

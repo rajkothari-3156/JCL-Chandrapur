@@ -3,9 +3,16 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { kv } from '@/lib/kv'
 
-export async function GET(_: Request, { params }: { params: { id: string } }) {
+const ANSWERS_PASSWORD = 'ForClarity@123'
+
+export async function GET(req: Request, { params }: { params: { id: string } }) {
   try {
     const id = params.id
+    const url = new URL(req.url)
+    const password = url.searchParams.get('password') || ''
+    if (password !== ANSWERS_PASSWORD) {
+      return NextResponse.json({ error: 'Invalid password' }, { status: 401 })
+    }
     const quizPath = path.join(process.cwd(), 'public', 'data', 'quizzes', `${id}.json`)
     const text = await fs.readFile(quizPath, 'utf8')
     const quiz = JSON.parse(text)
