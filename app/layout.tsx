@@ -1,6 +1,6 @@
 import './globals.css'
 import type { Metadata } from 'next'
-import { SpeedInsights } from '@vercel/speed-insights/next'
+
 
 export const metadata: Metadata = {
   title: 'JCL Chandrapur | Cricket League Management Platform',
@@ -16,7 +16,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="bg-gradient-to-br from-cricket-green via-cricket-lightgreen to-green-900 min-h-screen">
         {children}
-        <SpeedInsights />
+        
       </body>
     </html>
   )
