@@ -300,6 +300,10 @@ export default function AuctionPage() {
     setState(json.state)
     setActionMsg('Sold saved')
     notify('Sold saved', 'success')
+    // Clear picked state to allow random pick for next player
+    setPicked(null)
+    setSellTeam('')
+    setSellPoints('')
   }
 
   const markUnsold = async () => {
@@ -575,11 +579,17 @@ export default function AuctionPage() {
                   </div>
                   <div className="space-y-1">
                     <div className="text-white text-xl font-bold">{picked ? picked.fullName : '—'}</div>
-                    <div className="text-green-200 text-sm">Age: {picked?.age ?? ''}</div>
+                    <div className="text-green-200 text-sm">Age: {picked?.age ?? ''} {(() => {
+                      const age = picked?.age
+                      const n = typeof age === 'number' ? age : parseInt(String(age ?? ''), 10)
+                      if (Number.isFinite(n)) {
+                        return `• ${(n as number) >= 35 ? '35+' : 'Below 35'}`
+                      }
+                      return ''
+                    })()}</div>
                     <div className="text-green-200 text-sm">Style: {picked?.playingStyle ?? ''}</div>
                     <div className="text-green-200 text-sm">T-shirt: {picked?.tshirtSize ?? ''}</div>
                     <div className="text-green-200 text-sm">Contact: {picked?.contact ?? ''}</div>
-                    <div className="text-green-200 text-sm">Group: {picked?.auctionGroup ?? ''} {picked?.auctionAgeCategory ? `• ${picked.auctionAgeCategory}` : ''}</div>
                     <div className="text-green-200 text-sm">2024 Auction: {picked?.auctionTeam ?? '—'} {typeof picked?.auctionPoints === 'number' ? `• ${picked?.auctionPoints} pts` : ''}</div>
                   </div>
                 </div>
@@ -788,33 +798,49 @@ export default function AuctionPage() {
                     <div className="p-4">
                       {(state?.retentions?.[name] || []).length > 0 && (
                         <div className="mb-3">
-                          <div className="text-white font-medium">Retained Players</div>
-                          <ul className="text-green-200 text-sm list-disc pl-5">
-                            {(state?.retentions?.[name] || []).map((r, i) => (<li key={i}>{r.fullName}</li>))}
-                          </ul>
+                          <div className="text-white font-medium mb-2">Base Players (Retained)</div>
+                          <div className="grid gap-2">
+                            {(state?.retentions?.[name] || []).map((r, i) => {
+                              const regIndex = new Map(regs.map(rr => [norm(rr.fullName), rr]))
+                              const reg = regIndex.get(norm(r.fullName))
+                              const age = typeof reg?.age === 'number' ? reg.age : parseInt(String(reg?.age ?? ''), 10)
+                              const baseFee = Number.isFinite(age) && (age as number) >= 35 ? 1000 : 2500
+                              return (
+                                <div key={i} className="grid grid-cols-[1fr_auto] items-center gap-2 rounded border border-green-700 bg-green-900/20 px-3 py-2">
+                                  <div className="text-green-100 truncate" title={r.fullName}>{r.fullName}</div>
+                                  <div className="text-green-300 text-sm font-medium">{baseFee} pts (base)</div>
+                                </div>
+                              )
+                            })}
+                          </div>
                         </div>
                       )}
-                      {(state?.teams[name]?.players || []).length === 0 && (
+                      {(state?.teams[name]?.players || []).length === 0 && (state?.retentions?.[name] || []).length === 0 && (
                         <div className="text-green-300 text-sm">No players yet.</div>
                       )}
-                      <div className="grid gap-2">
-                        {(state?.teams[name]?.players || []).map((p, i) => (
-                          <div key={i} className="grid grid-cols-[1fr_auto_auto_auto] items-center gap-2 rounded border border-green-800 bg-green-900/40 px-3 py-2">
-                            <div className="text-green-100 truncate" title={p.fullName}>{p.fullName}</div>
-                            <input
-                              type="number"
-                              defaultValue={p.points}
-                              className="w-24 rounded-md border border-green-800 bg-green-900/40 text-white px-2 py-1 text-sm"
-                              onBlur={(e)=>{
-                                const val = parseInt(e.currentTarget.value||'0',10);
-                                if (!isNaN(val) && val !== p.points) updatePoints(name, p.fullName, val)
-                              }}
-                            />
-                            <button onClick={()=>updatePoints(name, p.fullName, parseInt((document.activeElement as HTMLInputElement)?.value || String(p.points), 10) || p.points)} className="px-2 py-1 rounded-md bg-cricket-gold text-black text-sm">Save</button>
-                            <button onClick={()=>removePlayer(p.fullName)} className="px-2 py-1 rounded-md border border-red-700 text-red-300 text-sm">Delete</button>
+                      {(state?.teams[name]?.players || []).length > 0 && (
+                        <div className="mb-3">
+                          <div className="text-white font-medium mb-2">Auctioned Players</div>
+                          <div className="grid gap-2">
+                            {(state?.teams[name]?.players || []).map((p, i) => (
+                              <div key={i} className="grid grid-cols-[1fr_auto_auto_auto] items-center gap-2 rounded border border-green-800 bg-green-900/40 px-3 py-2">
+                                <div className="text-green-100 truncate" title={p.fullName}>{p.fullName}</div>
+                                <input
+                                  type="number"
+                                  defaultValue={p.points}
+                                  className="w-24 rounded-md border border-green-800 bg-green-900/40 text-white px-2 py-1 text-sm"
+                                  onBlur={(e)=>{
+                                    const val = parseInt(e.currentTarget.value||'0',10);
+                                    if (!isNaN(val) && val !== p.points) updatePoints(name, p.fullName, val)
+                                  }}
+                                />
+                                <button onClick={()=>updatePoints(name, p.fullName, parseInt((document.activeElement as HTMLInputElement)?.value || String(p.points), 10) || p.points)} className="px-2 py-1 rounded-md bg-cricket-gold text-black text-sm">Save</button>
+                                <button onClick={()=>removePlayer(p.fullName)} className="px-2 py-1 rounded-md border border-red-700 text-red-300 text-sm">Delete</button>
+                              </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}

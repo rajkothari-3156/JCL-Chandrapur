@@ -1,4 +1,5 @@
-// Lightweight KV with dynamic Upstash import and in-memory fallback
+// Lightweight KV with dynamic Redis import and in-memory fallback
+// Supports both Upstash REST API and standard Redis protocol
 // Used by API routes (e.g., auction state) via kv.get/kv.set
 
 import { promises as fs } from 'fs'
@@ -16,6 +17,26 @@ class MemoryKV implements KV {
   }
   async set(key: string, value: any) {
     this.store.set(key, value)
+  }
+}
+
+class IORedisKV implements KV {
+  private client: any
+  constructor(client: any) {
+    this.client = client
+  }
+  async get(key: string) {
+    const val = await this.client.get(key)
+    if (!val) return null
+    try {
+      return JSON.parse(val)
+    } catch {
+      return val
+    }
+  }
+  async set(key: string, value: any) {
+    const serialized = typeof value === 'string' ? value : JSON.stringify(value)
+    await this.client.set(key, serialized)
   }
 }
 
@@ -51,40 +72,64 @@ class FileKV implements KV {
 }
 
 async function createKV(): Promise<KV> {
+  // Try standard Redis URL first (redis://)
+  const redisUrl = process.env.REDIS_URL
+  if (redisUrl && redisUrl.startsWith('redis://')) {
+    try {
+      const dynamicImport = new Function('m', 'return import(m)') as (m: string) => Promise<any>
+      const IORedis = (await dynamicImport('ioredis')).default
+      const client = new IORedis(redisUrl, {
+        maxRetriesPerRequest: 3,
+        enableReadyCheck: true,
+        lazyConnect: false,
+      })
+      // Test connection
+      await client.ping()
+      console.log('[KV] Using ioredis with standard Redis URL')
+      return new IORedisKV(client)
+    } catch (e) {
+      console.log('[KV] Failed to connect to Redis via ioredis:', e)
+    }
+  }
+
+  // Try Upstash REST API
   try {
     const pkg = '@upstash/redis'
-    // Indirect dynamic import so TS doesn't try to resolve the module
     const dynamicImport = new Function('m', 'return import(m)') as (m: string) => Promise<any>
     const mod = await dynamicImport(pkg)
     const Redis = (mod as any).Redis
     if (Redis) {
       const u1 = process.env.UPSTASH_REDIS_REST_URL
       const t1 = process.env.UPSTASH_REDIS_REST_TOKEN
-      const u2 = process.env.KV_REST_API_URL || process.env.KV_REST_API_URL
-      const t2 = process.env.KV_REST_API_TOKEN || process.env.KV_REST_API_TOKEN
+      const u2 = process.env.KV_REST_API_URL
+      const t2 = process.env.KV_REST_API_TOKEN
+      
       if (typeof Redis.fromEnv === 'function' && u1 && t1) {
+        console.log('[KV] Using Upstash Redis REST API (fromEnv)')
         return Redis.fromEnv()
       }
       const url = u1 || u2
       const token = t1 || t2
       if (url && token) {
+        console.log('[KV] Using Upstash Redis REST API (manual config)')
         return new Redis({ url, token })
       }
     }
-  } catch {
-    // ignore; fall back to memory
+  } catch (e) {
+    console.log('[KV] Failed to initialize Upstash Redis:', e)
   }
+
   // File-backed fallback for local/dev so data persists across hard refreshes and hot reloads
   try {
-    // Prefer a writable temp directory in serverless environments (e.g., Vercel/Netlify/AWS Lambda)
     const isServerless = Boolean(process.env.VERCEL || process.env.NETLIFY || process.env.AWS_REGION || process.env.LAMBDA_TASK_ROOT)
     const baseDir = process.env.KV_FILE_PATH
       ? path.dirname(process.env.KV_FILE_PATH)
       : (isServerless ? (process.env.TMPDIR || '/tmp') : path.join(process.cwd(), '.data'))
     const defaultPath = process.env.KV_FILE_PATH || path.join(baseDir, 'kv.json')
+    console.log('[KV] Using FileKV fallback at:', defaultPath, 'isServerless:', isServerless)
     return new FileKV(defaultPath)
-  } catch {
-    // Final fallback: in-memory (non-persistent)
+  } catch (e) {
+    console.log('[KV] FileKV failed, using MemoryKV:', e)
     return new MemoryKV()
   }
 }
