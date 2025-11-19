@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import Papa from 'papaparse'
 
 type AuctionState = {
   teams: Record<string, { budget: number; players: Array<{ fullName: string; points: number; time: string }> }>
@@ -14,6 +15,14 @@ type AuctionState = {
 type Registration = {
   fullName: string
   age: string | number | null
+  contact: string | null
+  playingStyle: string | null
+  tshirtSize: string | null
+  photoUrl: string | null
+  auctionGroup?: string | null
+  auctionAgeCategory?: string | null
+  auctionPoints?: number | null
+  auctionTeam?: string | null
 }
 
 export default function AuctionTeamsPage() {
@@ -45,7 +54,14 @@ export default function AuctionTeamsPage() {
     }
   }
 
-  useEffect(() => { load() }, [])
+  // Fix refresh issue: reload when component mounts or becomes visible
+  useEffect(() => { 
+    load()
+    // Also reload when window regains focus (fixes tab switching issue)
+    const handleFocus = () => load()
+    window.addEventListener('focus', handleFocus)
+    return () => window.removeEventListener('focus', handleFocus)
+  }, [])
 
   const updatePoints = async (team: string, fullName: string, points: number) => {
     setSaving(`${team}:${fullName}`)
@@ -89,12 +105,93 @@ export default function AuctionTeamsPage() {
     }
   }
 
+  const exportCSV = () => {
+    if (!state || !regs) return
+    
+    const norm = (s: string) => String(s || '').toLowerCase().replace(/\s+/g, ' ').trim()
+    const regIndex = new Map(regs.map(r => [norm(r.fullName), r]))
+    
+    // Collect all players (retained + auctioned)
+    const rows: any[] = []
+    
+    Object.entries(state.teams || {}).forEach(([teamName, teamData]) => {
+      // Add retained players
+      const retentions = state.retentions?.[teamName] || []
+      retentions.forEach((retention: { fullName: string; time: string }) => {
+        const reg = regIndex.get(norm(retention.fullName))
+        const age = typeof reg?.age === 'number' ? reg.age : parseInt(String(reg?.age ?? ''), 10)
+        const baseFee = Number.isFinite(age) && age >= 35 ? 1000 : 2500
+        
+        rows.push({
+          'Team': teamName,
+          'Owner': state.owners?.[teamName]?.name || '',
+          'Owner Type': state.owners?.[teamName]?.playing ? 'Playing' : 'Non-playing',
+          'Player Name': retention.fullName,
+          'Type': 'Base Player (Retained)',
+          'Points': baseFee,
+          'Age': reg?.age ?? '',
+          'Contact': reg?.contact ?? '',
+          'Playing Style': reg?.playingStyle ?? '',
+          'T-shirt Size': reg?.tshirtSize ?? '',
+          '2024 Team': reg?.auctionTeam ?? '',
+          '2024 Points': reg?.auctionPoints ?? '',
+          '2024 Age Category': reg?.auctionAgeCategory ?? '',
+          'Photo URL': reg?.photoUrl ?? '',
+          'Retention Time': retention.time || ''
+        })
+      })
+      
+      // Add auctioned players
+      const players = teamData.players || []
+      players.forEach((player: { fullName: string; points: number; time: string }) => {
+        const reg = regIndex.get(norm(player.fullName))
+        
+        rows.push({
+          'Team': teamName,
+          'Owner': state.owners?.[teamName]?.name || '',
+          'Owner Type': state.owners?.[teamName]?.playing ? 'Playing' : 'Non-playing',
+          'Player Name': player.fullName,
+          'Type': 'Auctioned',
+          'Points': player.points,
+          'Age': reg?.age ?? '',
+          'Contact': reg?.contact ?? '',
+          'Playing Style': reg?.playingStyle ?? '',
+          'T-shirt Size': reg?.tshirtSize ?? '',
+          '2024 Team': reg?.auctionTeam ?? '',
+          '2024 Points': reg?.auctionPoints ?? '',
+          '2024 Age Category': reg?.auctionAgeCategory ?? '',
+          'Photo URL': reg?.photoUrl ?? '',
+          'Auction Time': player.time || ''
+        })
+      })
+    })
+    
+    // Sort by team, then by type (base first), then by points descending
+    rows.sort((a, b) => {
+      if (a.Team !== b.Team) return a.Team.localeCompare(b.Team)
+      if (a.Type !== b.Type) return a.Type === 'Base Player (Retained)' ? -1 : 1
+      return (b.Points || 0) - (a.Points || 0)
+    })
+    
+    const csv = Papa.unparse(rows)
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement('a')
+    const url = URL.createObjectURL(blob)
+    link.setAttribute('href', url)
+    link.setAttribute('download', `jcl-auction-results-${new Date().toISOString().split('T')[0]}.csv`)
+    link.style.visibility = 'hidden'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
   return (
     <main className="min-h-screen p-4 md:p-8">
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex items-center justify-between print:mb-2">
           <h1 className="text-3xl md:text-4xl font-bold text-white drop-shadow-lg">Auction Teams</h1>
           <div className="flex items-center gap-3 print:hidden">
+            <button onClick={exportCSV} className="px-3 py-1.5 rounded-md bg-cricket-gold text-black text-sm font-semibold">Export CSV</button>
             <button onClick={handlePrint} className="px-3 py-1.5 rounded-md border border-green-700 text-green-100 text-sm">Export PDF</button>
             <a className="text-cricket-gold hover:underline" href="/auction">Back to Auction</a>
           </div>

@@ -485,6 +485,12 @@ export default function AuctionPage() {
                 <div className="flex items-center gap-3">
                   <div className="text-green-200 text-sm flex-1">Reset all auction data (teams, owners, retentions, sales). This cannot be undone.</div>
                   <button onClick={async () => {
+                    const password = prompt('Enter admin password to reset all data:')
+                    if (!password) return
+                    if (password !== '8881212') {
+                      notify('Incorrect password', 'error')
+                      return
+                    }
                     if (!confirm('Are you sure you want to reset ALL auction data? This will delete all teams, owners, retentions, and sales. This action cannot be undone!')) return
                     try {
                       const res = await fetch('/api/auction/reset', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ confirm: true }) })
