@@ -118,13 +118,14 @@ export default function AuctionTeamsPage() {
                 }, 0)
                 const spent = s.spent + baseFee
                 const remaining = s.budget - spent
+                const totalPlayers = s.count + (state?.retentions?.[name] || []).length
                 return (
                   <div key={name} className="rounded border border-green-800 p-3 bg-green-900/40">
                     <div className="text-white font-medium">{name}</div>
                     <div className="text-green-200 text-sm">Budget: {s.budget}</div>
                     <div className="text-green-200 text-sm">Spent: {spent}</div>
                     <div className="text-green-200 text-sm">Remaining: {remaining}</div>
-                    <div className="text-green-200 text-sm">Players: {s.count}</div>
+                    <div className="text-green-200 text-sm">Players: {totalPlayers} ({(state?.retentions?.[name] || []).length} base + {s.count} auctioned)</div>
                   </div>
                 )
               })}
@@ -162,37 +163,53 @@ export default function AuctionTeamsPage() {
                 <div className="p-4">
                   {(state?.retentions?.[name] || []).length > 0 && (
                     <div className="mb-3">
-                      <div className="text-white font-medium">Retained Players</div>
-                      <ul className="text-green-200 text-sm list-disc pl-5">
-                        {(state?.retentions?.[name] || []).map((r, i) => (<li key={i}>{r.fullName}</li>))}
-                      </ul>
+                      <div className="text-white font-medium mb-2">Base Players (Retained)</div>
+                      <div className="grid gap-2">
+                        {(state?.retentions?.[name] || []).map((r, i) => {
+                          const regIndex = new Map(regs.map(rr => [String(rr.fullName || '').toLowerCase().replace(/\s+/g,' ').trim(), rr]))
+                          const reg = regIndex.get(String(r.fullName || '').toLowerCase().replace(/\s+/g,' ').trim())
+                          const age = typeof reg?.age === 'number' ? reg.age : parseInt(String(reg?.age ?? ''), 10)
+                          const baseFee = Number.isFinite(age) && (age as number) >= 35 ? 1000 : 2500
+                          return (
+                            <div key={i} className="grid grid-cols-[1fr_auto] items-center gap-2 rounded border border-green-700 bg-green-900/20 px-3 py-2">
+                              <div className="text-green-100 truncate" title={r.fullName}>{r.fullName}</div>
+                              <div className="text-green-300 text-sm font-medium">{baseFee} pts (base)</div>
+                            </div>
+                          )
+                        })}
+                      </div>
                     </div>
                   )}
-                  {(state?.teams[name]?.players || []).length === 0 && (
+                  {(state?.teams[name]?.players || []).length === 0 && (state?.retentions?.[name] || []).length === 0 && (
                     <div className="text-green-300 text-sm">No players yet.</div>
                   )}
-                  <div className="grid gap-2">
-                    {(state?.teams[name]?.players || []).map((p, i) => (
-                      <div key={i} className="grid grid-cols-[1fr_auto_auto_auto] items-center gap-2 rounded border border-green-800 bg-green-900/40 px-3 py-2">
-                        <div className="text-green-100 truncate" title={p.fullName}>{p.fullName}</div>
-                        <input
-                          type="number"
-                          defaultValue={p.points}
-                          className="w-24 rounded-md border border-green-800 bg-green-900/40 text-white px-2 py-1 text-sm"
-                          onBlur={(e)=>{
-                            const val = parseInt(e.currentTarget.value||'0',10);
-                            if (!isNaN(val) && val !== p.points) updatePoints(name, p.fullName, val)
-                          }}
-                        />
-                        <button disabled={saving===`${name}:${p.fullName}`}
-                          onClick={()=>updatePoints(name, p.fullName, parseInt((document.activeElement as HTMLInputElement)?.value || String(p.points), 10) || p.points)}
-                          className="px-2 py-1 rounded-md bg-cricket-gold text-black text-sm disabled:opacity-50">Save</button>
-                        <button disabled={saving===`del:${p.fullName}`}
-                          onClick={()=>removePlayer(p.fullName)}
-                          className="px-2 py-1 rounded-md border border-red-700 text-red-300 text-sm disabled:opacity-50">Delete</button>
+                  {(state?.teams[name]?.players || []).length > 0 && (
+                    <div className="mb-3">
+                      <div className="text-white font-medium mb-2">Auctioned Players</div>
+                      <div className="grid gap-2">
+                        {(state?.teams[name]?.players || []).map((p, i) => (
+                          <div key={i} className="grid grid-cols-[1fr_auto_auto_auto] items-center gap-2 rounded border border-green-800 bg-green-900/40 px-3 py-2">
+                            <div className="text-green-100 truncate" title={p.fullName}>{p.fullName}</div>
+                            <input
+                              type="number"
+                              defaultValue={p.points}
+                              className="w-24 rounded-md border border-green-800 bg-green-900/40 text-white px-2 py-1 text-sm"
+                              onBlur={(e)=>{
+                                const val = parseInt(e.currentTarget.value||'0',10);
+                                if (!isNaN(val) && val !== p.points) updatePoints(name, p.fullName, val)
+                              }}
+                            />
+                            <button disabled={saving===`${name}:${p.fullName}`}
+                              onClick={()=>updatePoints(name, p.fullName, parseInt((document.activeElement as HTMLInputElement)?.value || String(p.points), 10) || p.points)}
+                              className="px-2 py-1 rounded-md bg-cricket-gold text-black text-sm disabled:opacity-50">Save</button>
+                            <button disabled={saving===`del:${p.fullName}`}
+                              onClick={()=>removePlayer(p.fullName)}
+                              className="px-2 py-1 rounded-md border border-red-700 text-red-300 text-sm disabled:opacity-50">Delete</button>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

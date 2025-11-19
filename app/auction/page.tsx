@@ -480,6 +480,25 @@ export default function AuctionPage() {
                 </div>
                 <button onClick={ensureTeams} className="px-4 py-2 rounded-md bg-cricket-gold text-black font-semibold">Save</button>
               </div>
+              <div className="mt-4 pt-4 border-t border-green-800">
+                <div className="text-white font-semibold mb-2">Danger Zone</div>
+                <div className="flex items-center gap-3">
+                  <div className="text-green-200 text-sm flex-1">Reset all auction data (teams, owners, retentions, sales). This cannot be undone.</div>
+                  <button onClick={async () => {
+                    if (!confirm('Are you sure you want to reset ALL auction data? This will delete all teams, owners, retentions, and sales. This action cannot be undone!')) return
+                    try {
+                      const res = await fetch('/api/auction/reset', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ confirm: true }) })
+                      const json = await res.json()
+                      if (!res.ok) { notify(json?.error || 'Failed to reset', 'error'); return }
+                      setState(json.state)
+                      notify('Auction data reset successfully', 'success')
+                      await loadAll()
+                    } catch (e: any) {
+                      notify(e?.message || 'Failed to reset', 'error')
+                    }
+                  }} className="px-4 py-2 rounded-md bg-red-600 text-white font-semibold hover:bg-red-700">Reset All Data</button>
+                </div>
+              </div>
             </div>
             )}
 
