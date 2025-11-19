@@ -76,8 +76,7 @@ async function createKV(): Promise<KV> {
   const redisUrl = process.env.REDIS_URL
   if (redisUrl && redisUrl.startsWith('redis://')) {
     try {
-      const dynamicImport = new Function('m', 'return import(m)') as (m: string) => Promise<any>
-      const IORedis = (await dynamicImport('ioredis')).default
+      const IORedis = (await import('ioredis')).default
       const client = new IORedis(redisUrl, {
         maxRetriesPerRequest: 3,
         enableReadyCheck: true,
@@ -94,10 +93,7 @@ async function createKV(): Promise<KV> {
 
   // Try Upstash REST API
   try {
-    const pkg = '@upstash/redis'
-    const dynamicImport = new Function('m', 'return import(m)') as (m: string) => Promise<any>
-    const mod = await dynamicImport(pkg)
-    const Redis = (mod as any).Redis
+    const { Redis } = await import('@upstash/redis')
     if (Redis) {
       const u1 = process.env.UPSTASH_REDIS_REST_URL
       const t1 = process.env.UPSTASH_REDIS_REST_TOKEN
