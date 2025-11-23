@@ -1,0 +1,127 @@
+{
+  "id": "jcl-quiz-2025-wk3",
+  "title": "JCL Weekly Quiz — Week 3",
+  "durationMinutes": 15,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "mcq",
+      "text": "In the 2024 Final, what was the margin of victory for Power Hitters against Falcon Giants?",
+      "options": [
+        "28 runs",
+        "4 runs",
+        "36 runs",
+        "9 runs"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "q2",
+      "type": "mcq",
+      "text": "In the 2023 Final, how many wickets did KT LIONS win by against TOOFANI JAINS?",
+      "options": [
+        "8 wickets",
+        "9 wickets",
+        "7 wickets",
+        "10 wickets"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "q3",
+      "type": "mcq",
+      "text": "Which team did KT Lions defeat by 45 runs in the 2024 League Matches?",
+      "options": [
+        "Falcon Giants",
+        "SR Rangers",
+        "Toxic 11",
+        "Power Hitters"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "q4",
+      "type": "mcq",
+      "text": "In 2024, who scored the highest individual score of 65 runs for Toxic 11?",
+      "options": [
+        "Jay Baid",
+        "Tarun Jain",
+        "Dr Yashkumar Jain",
+        "Pratik Kothari"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "q5",
+      "type": "mcq",
+      "text": "In 2024, who scored 122 runs with 2 fifties for Gladiators Cricket Club?",
+      "options": [
+        "Adi Doshi",
+        "Sidhu Puglia",
+        "Ojas Pugliya",
+        "Chetan Nandkishor Munot"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "q6",
+      "type": "mcq",
+      "text": "In 2024, which bowler had the best economy rate of 6.00 with 5 wickets?",
+      "options": [
+        "Khush Chopda",
+        "Adi Doshi",
+        "Ankush Puglia",
+        "Manav Banthia"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "q7",
+      "type": "mcq",
+      "text": "What was the highest team score in a 2024 League Match?",
+      "options": [
+        "128/1 by Parshv Panthers",
+        "118/2 by Falcon Giants",
+        "115/1 by KT Lions",
+        "104/4 by Chandralok Warriors"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "q8",
+      "type": "mcq",
+      "text": "In the 2023 Semi Final, what score did TOOFANI JAINS make against JAIN UNITED?",
+      "options": [
+        "104/1",
+        "90/4",
+        "132/0",
+        "96/1"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "q9",
+      "type": "mcq",
+      "text": "In 2024, who is the only left-handed batsman (LHB) in the top 30 run scorers?",
+      "options": [
+        "Aayush Nilesh Puglia",
+        "Tejas Rajesh Jain",
+        "Chetan Zambad",
+        "Manav Banthia"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "q10",
+      "type": "mcq",
+      "text": "In 2024, how many sixes did Akash Surana hit?",
+      "options": [
+        "16",
+        "13",
+        "12",
+        "14"
+      ],
+      "answer": 3
+    }
+  ]
+}
