@@ -67,7 +67,7 @@ export default function StatsPage() {
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-2 drop-shadow-lg">
             Jain Cricket League Leaderboard
           </h1>
-          <p className="text-xl text-green-100">Player Performance Statistics</p>
+          <p className="text-xl text-orange-100">Player Performance Statistics</p>
         </div>
 
         {/* Year Selector */}
@@ -77,7 +77,7 @@ export default function StatsPage() {
             className={`px-8 py-3 rounded-lg font-semibold text-lg transition-all duration-200 ${
               year === '2023'
                 ? 'bg-white text-cricket-green shadow-lg scale-105'
-                : 'bg-cricket-lightgreen text-white hover:bg-green-700'
+                : 'bg-cricket-lightgreen text-white hover:bg-teal-700'
             }`}
           >
             2023 Season
@@ -87,7 +87,7 @@ export default function StatsPage() {
             className={`px-8 py-3 rounded-lg font-semibold text-lg transition-all duration-200 ${
               year === '2024'
                 ? 'bg-white text-cricket-green shadow-lg scale-105'
-                : 'bg-cricket-lightgreen text-white hover:bg-green-700'
+                : 'bg-cricket-lightgreen text-white hover:bg-teal-700'
             }`}
           >
             2024 Season
@@ -122,7 +122,7 @@ export default function StatsPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search player by name..."
-            className="w-full md:w-1/2 px-4 py-3 rounded-lg outline-none border border-white/40 bg-white/90 focus:border-cricket-green shadow"
+            className="w-full md:w-1/2 px-4 py-3 rounded-lg outline-none border border-white/40 bg-white/90 focus:border-cricket-lightgreen shadow"
           />
         </div>
 

@@ -241,7 +241,7 @@ export default function RegistrationsPage() {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-3xl md:text-5xl font-bold text-white mb-2 drop-shadow-lg">JCL Player Registrations</h1>
-          <p className="text-green-100">Live data from Google Sheets</p>
+          <p className="text-orange-100">Live data from Google Sheets</p>
           <div className="mt-4">
             <a
               href="https://forms.gle/nqHc8RjNQcL2JKk76"
@@ -259,7 +259,7 @@ export default function RegistrationsPage() {
             value={search}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
             placeholder="Search by name, style, size"
-            className="w-full md:w-80 rounded-md border border-green-800 bg-green-900/40 text-white placeholder-green-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cricket-gold"
+            className="w-full md:w-80 rounded-md border border-orange-800 bg-orange-900/40 text-white placeholder-orange-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cricket-gold"
           />
           <button
             onClick={handleRefresh}
@@ -268,17 +268,17 @@ export default function RegistrationsPage() {
           >
             {loading ? 'Refreshing...' : 'Refresh'}
           </button>
-          <span className="text-green-100 text-sm">{filtered.length} of {data.length}</span>
+          <span className="text-orange-100 text-sm">{filtered.length} of {data.length}</span>
           {cached !== null && (
-            <span className="text-green-200 text-xs">{cached ? 'served from cache' : 'fresh'}</span>
+            <span className="text-orange-200 text-xs">{cached ? 'served from cache' : 'fresh'}</span>
           )}
           {appended !== null && appended > 0 && (
-            <span className="text-green-200 text-xs">+{appended} new</span>
+            <span className="text-orange-200 text-xs">+{appended} new</span>
           )}
         </div>
 
         {loading && (
-          <div className="text-center text-green-100">Loading...</div>
+          <div className="text-center text-orange-100">Loading...</div>
         )}
         {error && (
           <div className="text-center text-red-200">{error}</div>
@@ -302,8 +302,8 @@ export default function RegistrationsPage() {
               </thead>
               <tbody>
                 {filtered.map((r, i) => (
-                  <tr key={i} className={i % 2 ? 'bg-green-900/30' : 'bg-green-900/10'}>
-                    <td className="px-3 py-2 text-green-100 font-medium">
+                  <tr key={i} className={i % 2 ? 'bg-orange-900/30' : 'bg-orange-900/10'}>
+                    <td className="px-3 py-2 text-orange-100 font-medium">
                       <button
                         className="hover:underline text-cricket-gold"
                         onClick={() => onClickPlayer(r.fullName)}
@@ -312,17 +312,17 @@ export default function RegistrationsPage() {
                         {r.fullName}
                       </button>
                     </td>
-                    <td className="px-3 py-2 text-green-100">{r.auctionTeam ?? ''}</td>
-                    <td className="px-3 py-2 text-green-100">{typeof r.auctionPoints === 'number' ? r.auctionPoints : ''}</td>
-                    <td className="px-3 py-2 text-green-100">{r.age ?? ''}</td>
-                    <td className="px-3 py-2 text-green-100">
+                    <td className="px-3 py-2 text-orange-100">{r.auctionTeam ?? ''}</td>
+                    <td className="px-3 py-2 text-orange-100">{typeof r.auctionPoints === 'number' ? r.auctionPoints : ''}</td>
+                    <td className="px-3 py-2 text-orange-100">{r.age ?? ''}</td>
+                    <td className="px-3 py-2 text-orange-100">
                       {r.contact ? (
                         <a className="text-cricket-gold hover:underline" href={`tel:${r.contact}`}>{r.contact}</a>
                       ) : ''}
                     </td>
-                    <td className="px-3 py-2 text-green-100">{r.playingStyle ?? ''}</td>
-                    <td className="px-3 py-2 text-green-100">{r.tshirtSize ?? ''}</td>
-                    <td className="px-3 py-2 text-green-100">
+                    <td className="px-3 py-2 text-orange-100">{r.playingStyle ?? ''}</td>
+                    <td className="px-3 py-2 text-orange-100">{r.tshirtSize ?? ''}</td>
+                    <td className="px-3 py-2 text-orange-100">
                       {r.photoUrl ? (
                         <button
                           type="button"
@@ -345,7 +345,7 @@ export default function RegistrationsPage() {
                           <img
                             src={driveThumbUrl(r.photoUrl) || ''}
                             alt={r.fullName + ' photo'}
-                            className="h-12 w-12 object-cover rounded-md border border-green-800/50 bg-green-900/40"
+                            className="h-12 w-12 object-cover rounded-md border border-orange-800/50 bg-orange-900/40"
                             onError={(e) => {
                               const img = e.currentTarget as HTMLImageElement
                               console.log('[photo-error]', { name: r.fullName, photoUrl: r.photoUrl, src: img.src, fallback: img.dataset.fallback })
@@ -364,7 +364,7 @@ export default function RegistrationsPage() {
                         <span className="text-xs text-gray-500" title={`No photo URL for ${r.fullName}`}>—</span>
                       )}
                     </td>
-                    <td className="px-3 py-2 text-green-100">{r.timestamp ?? ''}</td>
+                    <td className="px-3 py-2 text-orange-100">{r.timestamp ?? ''}</td>
                   </tr>
                 ))}
               </tbody>
@@ -375,7 +375,7 @@ export default function RegistrationsPage() {
         {/* Player stats modal */}
         <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={selectedName ? `Stats: ${selectedName}` : 'Stats'}>
           {modalLoading && (
-            <div className="text-green-100 p-4">Loading stats...</div>
+            <div className="text-orange-100 p-4">Loading stats...</div>
           )}
           {modalError && (
             <div className="text-red-200 p-4">{modalError}</div>
@@ -387,7 +387,7 @@ export default function RegistrationsPage() {
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`${activeTab === tab ? 'bg-cricket-gold text-black' : 'bg-green-900/40 text-green-100'} px-3 py-1.5 rounded-md border border-green-800`}
+                    className={`${activeTab === tab ? 'bg-cricket-gold text-black' : 'bg-orange-900/40 text-orange-100'} px-3 py-1.5 rounded-md border border-orange-800`}
                   >
                     {tab.toUpperCase()}
                   </button>
@@ -410,12 +410,12 @@ export default function RegistrationsPage() {
 function StatTable({ title, rows }: { title: string; rows: any[] }) {
   return (
     <div className="w-full md:w-1/2 p-2">
-      <div className="bg-green-900/30 rounded-lg overflow-hidden shadow">
+      <div className="bg-orange-900/30 rounded-lg overflow-hidden shadow">
         <div className="bg-cricket-lightgreen text-white px-3 py-2 font-semibold">{title}</div>
         <div className="overflow-x-auto">
           <table className="min-w-full text-sm">
             <thead>
-              <tr className="text-green-200">
+              <tr className="text-orange-200">
                 {/* Build dynamic headers from the first row */}
                 {(() => {
                   if (!rows || rows.length === 0) return (
@@ -435,15 +435,15 @@ function StatTable({ title, rows }: { title: string; rows: any[] }) {
             </thead>
             <tbody>
               {rows.length === 0 && (
-                <tr><td colSpan={6} className="px-3 py-4 text-green-300">No records</td></tr>
+                <tr><td colSpan={6} className="px-3 py-4 text-orange-300">No records</td></tr>
               )}
               {rows.map((row, i) => {
                 const exclude = new Set(['player_id','team_id','team_name'])
                 const keys = Object.keys(row).filter(k => !exclude.has(k))
                 return (
-                  <tr key={i} className={i % 2 ? 'bg-green-900/30' : 'bg-green-900/10'}>
+                  <tr key={i} className={i % 2 ? 'bg-orange-900/30' : 'bg-orange-900/10'}>
                     {keys.map((k) => (
-                      <td key={k} className={`px-3 py-2 text-green-100 ${k.toLowerCase() === 'name' ? '' : 'text-right'}`}>{row[k]}</td>
+                      <td key={k} className={`px-3 py-2 text-orange-100 ${k.toLowerCase() === 'name' ? '' : 'text-right'}`}>{row[k]}</td>
                     ))}
                   </tr>
                 )

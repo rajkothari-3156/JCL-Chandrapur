@@ -39,7 +39,7 @@ export default function MVPLeaderboard({ data, search }: { data: MVPData[]; sear
           {sortedData.map((player, index) => (
             <tr 
               key={index} 
-              className={`border-b hover:bg-green-50 ${index < 3 ? 'bg-yellow-50' : ''}`}
+              className={`border-b hover:bg-orange-50 ${index < 3 ? 'bg-yellow-50' : ''}`}
             >
               <td className="p-3 font-semibold">
                 {index === 0 && '🥇'}

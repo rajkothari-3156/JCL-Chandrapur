@@ -40,7 +40,7 @@ export default function FieldingLeaderboard({ data, search }: { data: FieldingDa
           {sortedData.map((player, index) => (
             <tr 
               key={player.player_id} 
-              className={`border-b hover:bg-green-50 ${index < 3 ? 'bg-yellow-50' : ''}`}
+              className={`border-b hover:bg-orange-50 ${index < 3 ? 'bg-yellow-50' : ''}`}
             >
               <td className="p-3 font-semibold">
                 {index === 0 && '🥇'}

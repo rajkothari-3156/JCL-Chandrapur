@@ -40,7 +40,7 @@ export default function QuizLeaderboardPage({ params }: { params: { id: string }
           <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow-lg">Leaderboard — {quizId}</h1>
           <a href={`/quizzes/${quizId}`} className="text-cricket-gold hover:underline">Back to Quiz</a>
         </div>
-        {loading && <div className="text-green-100">Loading leaderboard...</div>}
+        {loading && <div className="text-orange-100">Loading leaderboard...</div>}
         {error && <div className="text-red-200">{error}</div>}
         {!loading && !error && (
           <div className="overflow-x-auto rounded-lg shadow-lg">
@@ -57,18 +57,18 @@ export default function QuizLeaderboardPage({ params }: { params: { id: string }
               </thead>
               <tbody>
                 {(data?.leaderboard ?? []).map((row, i) => (
-                  <tr key={i} className={i % 2 ? 'bg-green-900/30' : 'bg-green-900/10'}>
-                    <td className="px-3 py-2 text-green-100">{row.rank}</td>
-                    <td className="px-3 py-2 text-green-100">{row.name}</td>
-                    <td className="px-3 py-2 text-green-100">{row.phone}</td>
-                    <td className="px-3 py-2 text-green-100">{row.score}</td>
-                    <td className="px-3 py-2 text-green-100">{fmt(row.durationMs)}</td>
-                    <td className="px-3 py-2 text-green-100">{new Date(row.submittedAt).toLocaleString()}</td>
+                  <tr key={i} className={i % 2 ? 'bg-orange-900/30' : 'bg-orange-900/10'}>
+                    <td className="px-3 py-2 text-orange-100">{row.rank}</td>
+                    <td className="px-3 py-2 text-orange-100">{row.name}</td>
+                    <td className="px-3 py-2 text-orange-100">{row.phone}</td>
+                    <td className="px-3 py-2 text-orange-100">{row.score}</td>
+                    <td className="px-3 py-2 text-orange-100">{fmt(row.durationMs)}</td>
+                    <td className="px-3 py-2 text-orange-100">{new Date(row.submittedAt).toLocaleString()}</td>
                   </tr>
                 ))}
                 {(data?.leaderboard ?? []).length === 0 && (
                   <tr>
-                    <td className="px-3 py-4 text-green-300" colSpan={6}>No submissions yet.</td>
+                    <td className="px-3 py-4 text-orange-300" colSpan={6}>No submissions yet.</td>
                   </tr>
                 )}
               </tbody>

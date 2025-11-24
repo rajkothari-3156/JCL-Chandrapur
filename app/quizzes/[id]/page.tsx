@@ -131,13 +131,13 @@ export default function QuizRunPage({ params }: { params: { id: string } }) {
       <Navbar />
       <main className="min-h-screen p-4 md:p-8">
       <div className="max-w-3xl mx-auto">
-        {loading && <div className="text-green-100">Loading quiz...</div>}
+        {loading && <div className="text-orange-100">Loading quiz...</div>}
         {error && <div className="text-red-200">{error}</div>}
         {!loading && !error && quiz && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow-lg">{quiz.title}</h1>
-              <div className={`px-3 py-1 rounded-md border ${status?.active ? 'border-green-700 text-cricket-gold' : 'border-red-800 text-red-300'}`}>{status?.active ? `Time Left: ${mmss}` : 'Quiz not active'}</div>
+              <div className={`px-3 py-1 rounded-md border ${status?.active ? 'border-orange-700 text-cricket-gold' : 'border-red-800 text-red-300'}`}>{status?.active ? `Time Left: ${mmss}` : 'Quiz not active'}</div>
             </div>
 
             {!status?.active && (
@@ -148,14 +148,14 @@ export default function QuizRunPage({ params }: { params: { id: string } }) {
             )}
 
             {status?.active && (
-              <div className="bg-green-900/30 border border-green-800 rounded-lg p-4 grid gap-3 md:grid-cols-2">
+              <div className="bg-orange-900/30 border border-orange-800 rounded-lg p-4 grid gap-3 md:grid-cols-2">
                 <div>
-                  <label className="block text-green-200 text-sm mb-1">Your Name</label>
-                  <input value={name} onChange={(e)=>setName(e.target.value)} className="w-full rounded-md border border-green-800 bg-green-900/40 text-white px-3 py-2" placeholder="Full name" />
+                  <label className="block text-orange-200 text-sm mb-1">Your Name</label>
+                  <input value={name} onChange={(e)=>setName(e.target.value)} className="w-full rounded-md border border-orange-800 bg-orange-900/40 text-white px-3 py-2" placeholder="Full name" />
                 </div>
                 <div>
-                  <label className="block text-green-200 text-sm mb-1">Phone Number</label>
-                  <input value={phone} onChange={(e)=>setPhone(e.target.value)} className="w-full rounded-md border border-green-800 bg-green-900/40 text-white px-3 py-2" placeholder="Phone" />
+                  <label className="block text-orange-200 text-sm mb-1">Phone Number</label>
+                  <input value={phone} onChange={(e)=>setPhone(e.target.value)} className="w-full rounded-md border border-orange-800 bg-orange-900/40 text-white px-3 py-2" placeholder="Phone" />
                 </div>
               </div>
             )}
@@ -163,15 +163,15 @@ export default function QuizRunPage({ params }: { params: { id: string } }) {
             {status?.active && (
               <div className="space-y-4">
                 {quiz.questions.map((q, qi) => (
-                  <div key={q.id} className="bg-green-900/30 border border-green-800 rounded-lg p-4">
+                  <div key={q.id} className="bg-orange-900/30 border border-orange-800 rounded-lg p-4">
                     <div className="text-white font-medium mb-2">Q{qi+1}. {q.text}</div>
                     <div className="grid gap-2">
                       {q.options.map((opt, idx) => {
                         const picked = answers[q.id] === idx
                         return (
-                          <label key={idx} className={`flex items-center gap-2 p-2 rounded border ${picked ? 'border-cricket-gold bg-green-900/60' : 'border-green-800 hover:bg-green-900/40'}`}>
+                          <label key={idx} className={`flex items-center gap-2 p-2 rounded border ${picked ? 'border-cricket-gold bg-orange-900/60' : 'border-orange-800 hover:bg-orange-900/40'}`}>
                             <input type="radio" name={q.id} checked={picked} onChange={()=>handlePick(q.id, idx)} />
-                            <span className="text-green-100">{opt}</span>
+                            <span className="text-orange-100">{opt}</span>
                           </label>
                         )
                       })}
@@ -185,7 +185,7 @@ export default function QuizRunPage({ params }: { params: { id: string } }) {
               {status?.active && (
                 <button onClick={handleSubmit} disabled={remaining<=0} className="px-4 py-2 rounded-md bg-cricket-gold text-black font-semibold disabled:opacity-50">Submit</button>
               )}
-              {submitMsg && <div className="text-green-100 text-sm">{submitMsg}</div>}
+              {submitMsg && <div className="text-orange-100 text-sm">{submitMsg}</div>}
               <a href={`/quizzes/${quizId}/leaderboard`} className="ml-auto text-cricket-gold hover:underline">View Leaderboard</a>
               <a href={`/quizzes/${quizId}/answers`} className="text-cricket-gold hover:underline">Answers</a>
             </div>

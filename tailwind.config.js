@@ -9,9 +9,9 @@ module.exports = {
     extend: {
       colors: {
         cricket: {
-          green: '#2d5016',
-          lightgreen: '#4a7c2c',
-          gold: '#ffd700',
+          green: '#0f766e',
+          lightgreen: '#14b8a6',
+          gold: '#fbbf24',
         },
       },
     },
