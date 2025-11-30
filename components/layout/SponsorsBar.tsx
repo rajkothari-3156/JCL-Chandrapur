@@ -1,18 +1,19 @@
 'use client'
 
 import Link from 'next/link'
-import { Trophy, Award, UtensilsCrossed, Hotel, Gift, Droplets, Radio, DoorOpen, Users, ExternalLink } from 'lucide-react'
+import { Trophy, Award, UtensilsCrossed, Shirt, Gift, Droplets, UserCheck, DoorOpen, Users, Store, ExternalLink } from 'lucide-react'
 
 export default function SponsorsBar() {
   const sponsorCategories = [
     { label: 'Title Sponsor', icon: Trophy, color: 'yellow' },
+    { label: 'Food Partner', icon: UtensilsCrossed, color: 'orange' },
     { label: 'Co-Sponsor', icon: Award, color: 'green' },
-    { label: 'Food Sponsor', icon: UtensilsCrossed, color: 'orange' },
-    { label: 'Hospitality Sponsor', icon: Hotel, color: 'blue' },
-    { label: 'Presentation Sponsor', icon: Gift, color: 'purple' },
+    { label: 'T-Shirt Sponsor', icon: Shirt, color: 'purple' },
     { label: 'Water Bottle Sponsor', icon: Droplets, color: 'cyan' },
-    { label: 'Media Partner', icon: Radio, color: 'red' },
-    { label: 'Entry Gate Sponsor', icon: DoorOpen, color: 'indigo' },
+    { label: 'Presentation Partner', icon: Gift, color: 'indigo' },
+    { label: 'Entry Gate Partner', icon: DoorOpen, color: 'amber' },
+    { label: 'Product Stall Partner', icon: Store, color: 'teal' },
+    { label: 'Community & FairPlay Partner', icon: UserCheck, color: 'blue' },
     { label: 'Event Partners', icon: Users, color: 'pink' },
   ]
 
@@ -61,8 +62,10 @@ export default function SponsorsBar() {
                 blue: 'border-blue-400 hover:border-blue-500',
                 purple: 'border-purple-400 hover:border-purple-500',
                 cyan: 'border-cyan-400 hover:border-cyan-500',
-                red: 'border-red-400 hover:border-red-500',
                 indigo: 'border-indigo-400 hover:border-indigo-500',
+                yellow: 'border-yellow-400 hover:border-yellow-500',
+                amber: 'border-amber-400 hover:border-amber-500',
+                teal: 'border-teal-400 hover:border-teal-500',
                 pink: 'border-pink-400 hover:border-pink-500',
               }
               const iconColorClasses = {
@@ -71,8 +74,10 @@ export default function SponsorsBar() {
                 blue: 'text-blue-500',
                 purple: 'text-purple-500',
                 cyan: 'text-cyan-500',
-                red: 'text-red-500',
                 indigo: 'text-indigo-500',
+                yellow: 'text-yellow-500',
+                amber: 'text-amber-500',
+                teal: 'text-teal-500',
                 pink: 'text-pink-500',
               }
               

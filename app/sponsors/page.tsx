@@ -70,7 +70,7 @@ export default function SponsorsPage() {
     { 
       label: 'Entry Gate Partner', 
       icon: DoorOpen, 
-      color: 'yellow',
+      color: 'amber',
       description: 'Prominent branding at venue entry points',
       logoPath: '/sponsors/entry-gate-rajesh-jewellers.png',
       name: 'Rajesh Jewellers',
@@ -143,6 +143,7 @@ export default function SponsorsPage() {
                 cyan: 'border-cyan-400',
                 indigo: 'border-indigo-400',
                 yellow: 'border-yellow-400',
+                amber: 'border-amber-400',
                 teal: 'border-teal-400',
               }
               const bgColorClasses = {
@@ -154,6 +155,7 @@ export default function SponsorsPage() {
                 cyan: 'from-cyan-500 to-cyan-700',
                 indigo: 'from-indigo-500 to-indigo-700',
                 yellow: 'from-yellow-400 to-yellow-600',
+                amber: 'from-amber-400 to-amber-600',
                 teal: 'from-teal-500 to-teal-700',
               }
               
