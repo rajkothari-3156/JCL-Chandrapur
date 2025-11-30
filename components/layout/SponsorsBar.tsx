@@ -1,20 +1,20 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { Trophy, Award, UtensilsCrossed, Shirt, Gift, Droplets, UserCheck, DoorOpen, Users, Store, ExternalLink } from 'lucide-react'
 
 export default function SponsorsBar() {
   const sponsorCategories = [
-    { label: 'Title Sponsor', icon: Trophy, color: 'yellow' },
-    { label: 'Food Partner', icon: UtensilsCrossed, color: 'orange' },
-    { label: 'Co-Sponsor', icon: Award, color: 'green' },
-    { label: 'T-Shirt Sponsor', icon: Shirt, color: 'purple' },
-    { label: 'Water Bottle Sponsor', icon: Droplets, color: 'cyan' },
-    { label: 'Community & FairPlay Partner', icon: UserCheck, color: 'blue' },
-    { label: 'Presentation Partner', icon: Gift, color: 'indigo' },
-    { label: 'Entry Gate Partner', icon: DoorOpen, color: 'amber' },
-    { label: 'Product Stall Partner', icon: Store, color: 'teal' },
-    { label: 'Event Partners', icon: Users, color: 'pink' },
+    { label: 'Food Partner', icon: UtensilsCrossed, color: 'orange', logoPath: '/sponsors/food-sponsor-anand-nagri.png', name: 'Anand Nagri Bank Parivar' },
+    { label: 'Co-Sponsor', icon: Award, color: 'green', logoPath: '/sponsors/co-sponsor-bpb.png', name: 'BPB' },
+    { label: 'T-Shirt Sponsor', icon: Shirt, color: 'purple', logoPath: '/sponsors/tshirt-sponsor-guru-ganesh.jpeg', name: 'Guru Ganesh' },
+    { label: 'Water Bottle Sponsor', icon: Droplets, color: 'cyan', logoPath: '/sponsors/water-bottle-jain-trading.png', name: 'Jain Trading Company' },
+    { label: 'Community & FairPlay Partner', icon: UserCheck, color: 'blue', logoPath: '/sponsors/community-fairplay-shri-rahulbabu-puglia.png', name: 'Shri RahulBabu Puglia' },
+    { label: 'Presentation Partner', icon: Gift, color: 'indigo', logoPath: '/sponsors/presentation-praful-traders.png', name: 'Praful Traders' },
+    { label: 'Entry Gate Partner', icon: DoorOpen, color: 'amber', logoPath: '/sponsors/entry-gate-rajesh-jewellers.png', name: 'Rajesh Jewellers' },
+    { label: 'Product Stall Partner', icon: Store, color: 'teal', logoPath: '/sponsors/product-stall-kalptree.png', name: 'Kalptree' },
+    { label: 'Event Partners', icon: Users, color: 'pink', logoPath: null, name: 'Event Partners' },
   ]
 
   return (
@@ -27,34 +27,10 @@ export default function SponsorsBar() {
           </h3>
         </div>
 
-        {/* Title Sponsor - Largest and Most Prominent */}
-        <div className="mb-6">
-          <div className="flex items-center justify-center gap-2 mb-3">
-            <Trophy className="w-5 h-5 text-yellow-400" />
-            <span className="text-yellow-400 font-bold text-sm uppercase tracking-wide">Title Sponsor</span>
-          </div>
-          
-          <Link 
-            href="/sponsors"
-            className="block max-w-lg mx-auto group"
-          >
-            <div className="bg-white rounded-xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border-4 border-yellow-400">
-              <div className="relative h-24 flex items-center justify-center">
-                <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg flex items-center justify-center">
-                  <div className="text-center">
-                    <Trophy className="w-12 h-12 text-yellow-500 mx-auto mb-1" />
-                    <p className="text-lg font-bold text-gray-800">TITLE SPONSOR</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Link>
-        </div>
-
-        {/* All Other Sponsors Grid */}
+        {/* All Sponsors Grid */}
         <div className="mb-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-3 max-w-6xl mx-auto">
-            {sponsorCategories.slice(1).map((category, index) => {
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 max-w-6xl mx-auto">
+            {sponsorCategories.map((category, index) => {
               const Icon = category.icon
               const colorClasses = {
                 green: 'border-green-400 hover:border-green-500',
@@ -89,12 +65,21 @@ export default function SponsorsBar() {
                 >
                   <div className={`bg-white rounded-lg p-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border-2 ${colorClasses[category.color as keyof typeof colorClasses]}`}>
                     <div className="relative h-16 flex items-center justify-center">
-                      <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100 rounded flex items-center justify-center">
-                        <div className="text-center">
-                          <Icon className={`w-6 h-6 ${iconColorClasses[category.color as keyof typeof iconColorClasses]} mx-auto mb-1`} />
-                          <p className="text-[10px] font-semibold text-gray-700 leading-tight">{category.label}</p>
+                      {category.logoPath ? (
+                        <Image
+                          src={category.logoPath}
+                          alt={category.name}
+                          fill
+                          className="object-contain p-1"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100 rounded flex items-center justify-center">
+                          <div className="text-center">
+                            <Icon className={`w-6 h-6 ${iconColorClasses[category.color as keyof typeof iconColorClasses]} mx-auto mb-1`} />
+                            <p className="text-[10px] font-semibold text-gray-700 leading-tight">{category.label}</p>
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                   </div>
                 </Link>
