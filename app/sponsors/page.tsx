@@ -29,7 +29,7 @@ export default function SponsorsPage() {
       description: 'Official food and catering partner for all events',
       logoPath: '/sponsors/food-sponsor-anand-nagri.png',
       name: 'Anand Nagri Bank Parivar',
-      height: 280
+      height: 160
     },
     { 
       label: 'Co-Sponsor', 
@@ -38,7 +38,7 @@ export default function SponsorsPage() {
       description: 'Strategic partnership with prominent brand placement',
       logoPath: '/sponsors/co-sponsor-bpb.png',
       name: 'BPB',
-      height: 240
+      height: 140
     },
     { 
       label: 'T-Shirt Sponsor', 
@@ -47,7 +47,7 @@ export default function SponsorsPage() {
       description: 'Official apparel partner for the tournament',
       logoPath: '/sponsors/tshirt-sponsor-guru-ganesh.jpeg',
       name: 'Guru Ganesh',
-      height: 210
+      height: 140
     },
     { 
       label: 'Water Bottle Sponsor', 
@@ -56,7 +56,7 @@ export default function SponsorsPage() {
       description: 'Official hydration partner for players and audience',
       logoPath: '/sponsors/water-bottle-jain-trading.png',
       name: 'Jain Trading Company',
-      height: 180
+      height: 120
     },
     { 
       label: 'Presentation Partner', 
@@ -65,7 +65,7 @@ export default function SponsorsPage() {
       description: 'Associated with trophy and award presentations',
       logoPath: '/sponsors/presentation-praful-traders.png',
       name: 'Praful Traders',
-      height: 180
+      height: 120
     },
     { 
       label: 'Entry Gate Partner', 
@@ -74,7 +74,7 @@ export default function SponsorsPage() {
       description: 'Prominent branding at venue entry points',
       logoPath: '/sponsors/entry-gate-rajesh-jewellers.png',
       name: 'Rajesh Jewellers',
-      height: 180
+      height: 120
     },
     { 
       label: 'Product Stall Partner', 
@@ -83,7 +83,7 @@ export default function SponsorsPage() {
       description: 'Official product stall and merchandise partner',
       logoPath: '/sponsors/product-stall-kalptree.png',
       name: 'Kalptree',
-      height: 180
+      height: 120
     },
     { 
       label: 'Community & FairPlay Partner', 
@@ -92,7 +92,7 @@ export default function SponsorsPage() {
       description: 'Promoting fair play and community values',
       logoPath: '/sponsors/community-fairplay-shri-rahulbabu-puglia.png',
       name: 'Shri RahulBabu Puglia',
-      height: 240
+      height: 140
     },
     { 
       label: 'Event Partners', 
@@ -111,7 +111,7 @@ export default function SponsorsPage() {
         { name: 'Absolute Healthcare', logoPath: '/sponsors/event-partner-absolute.jpeg' },
         { name: 'Maruti Group Cotton Gining', logoPath: '/sponsors/event-partner-maruti.jpeg' },
       ],
-      height: 140
+      height: 100
     },
   ]
 
