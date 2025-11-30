@@ -1,0 +1,187 @@
+{
+  "id": "jcl-quiz-2025-wk4",
+  "title": "JCL Weekly Quiz — Week 4",
+  "durationMinutes": 15,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "mcq",
+      "text": "Which player was bought for exactly 1400 auction points by Chandralok Warriors?",
+      "options": [
+        "Aditya Jitendra Jogad",
+        "Mahavir Khajanchi",
+        "Naman Bohra",
+        "Raj Kothari"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "q2",
+      "type": "mcq",
+      "text": "In the 2024 Final, what was Power Hitters' winning score against Falcon Giants?",
+      "options": [
+        "91/1",
+        "108/3",
+        "73/3",
+        "115/1"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "q3",
+      "type": "mcq",
+      "text": "Which player has auction points of 1600 and plays for Falcon Giants?",
+      "options": [
+        "Ankush Puglia",
+        "Rushabh Puglia",
+        "Mohit R Modi",
+        "Ashwin Jain"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "q4",
+      "type": "mcq",
+      "text": "In the 2024 League Match, by how many runs did Falcon Giants defeat Chandralok Warriors?",
+      "options": [
+        "36 runs",
+        "38 runs",
+        "45 runs",
+        "19 runs"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "q5",
+      "type": "mcq",
+      "text": "Which player was bought for 1200 auction points by KT Lions?",
+      "options": [
+        "Hiten Khatod",
+        "Adish Banthia",
+        "Ansh Tushar Doshi",
+        "Vivek Jain"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "q6",
+      "type": "mcq",
+      "text": "What was the result when SR Rangers played against Parshav Panthers in the 2024 League Match?",
+      "options": [
+        "SR Rangers won by 5 wickets",
+        "Parshav Panthers won by 18 runs",
+        "SR Rangers won by 5 runs",
+        "Parshav Panthers won by 19 runs"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "q7",
+      "type": "mcq",
+      "text": "Which player has auction points of 1800 and plays for Parshv Panthers?",
+      "options": [
+        "Rushabh Puglia",
+        "Dhawal Pankaj Jain",
+        "Aniket Lunawat",
+        "Shashank Jain"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "q8",
+      "type": "mcq",
+      "text": "In the 2024 League Match between Toxic 11 and SR Rangers, what was SR Rangers' winning score?",
+      "options": [
+        "89/1",
+        "101/3",
+        "91/4",
+        "64/3"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "q9",
+      "type": "mcq",
+      "text": "Which player was bought for 900 auction points?",
+      "options": [
+        "Aadesh Kothari",
+        "Sanskar Jain",
+        "Ajay Kothari",
+        "All of the above"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "q10",
+      "type": "mcq",
+      "text": "What was the closest match result in the 2024 League Matches?",
+      "options": [
+        "Power Hitters won by 1 run vs Chandralok Warriors",
+        "Power Hitters won by 4 runs vs Parshav Panthers",
+        "Toxic 11 won by 9 runs vs Gladiators",
+        "Falcon Giants won by 6 wickets vs KT Lions"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "q11",
+      "type": "mcq",
+      "text": "Which player has auction points of 800 and plays for KT Lions?",
+      "options": [
+        "Pankaj Mutha",
+        "Nilesh Banwat",
+        "Gautam Bhandari",
+        "Chetan Zambad"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "q12",
+      "type": "mcq",
+      "text": "In the 2024 League Match, what was the highest team score?",
+      "options": [
+        "115/1 by KT Lions",
+        "118/2 by Falcon Giants",
+        "108/3 by Power Hitters",
+        "100/4 by Toxic 11"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "q13",
+      "type": "mcq",
+      "text": "Which player was bought for exactly 700 auction points?",
+      "options": [
+        "Aadi Doshi",
+        "Chetan Zambad",
+        "Shantikumar Dugad",
+        "Both A and B"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "q14",
+      "type": "mcq",
+      "text": "What was Chandralok Warriors' winning margin against KT Lions in the 2024 League Match?",
+      "options": [
+        "Won by 8 wickets",
+        "Won by 7 wickets",
+        "Won by 10 wickets",
+        "Won by 1 run"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "q15",
+      "type": "mcq",
+      "text": "Which player has auction points of 1400 and plays for KT Lions?",
+      "options": [
+        "Hiten Khatod",
+        "Naman Bohra",
+        "Aditya Jitendra Jogad",
+        "Mahavir Khajanchi"
+      ],
+      "answer": 1
+    }
+  ]
+}
