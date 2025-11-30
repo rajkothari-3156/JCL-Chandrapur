@@ -38,7 +38,7 @@ export default function SponsorsPage() {
       description: 'Strategic partnership with prominent brand placement',
       logoPath: '/sponsors/co-sponsor-bpb.png',
       name: 'BPB',
-      height: 140
+      height: 200
     },
     { 
       label: 'T-Shirt Sponsor', 
@@ -74,7 +74,7 @@ export default function SponsorsPage() {
       description: 'Prominent branding at venue entry points',
       logoPath: '/sponsors/entry-gate-rajesh-jewellers.png',
       name: 'Rajesh Jewellers',
-      height: 120
+      height: 200
     },
     { 
       label: 'Product Stall Partner', 
@@ -83,7 +83,7 @@ export default function SponsorsPage() {
       description: 'Official product stall and merchandise partner',
       logoPath: '/sponsors/product-stall-kalptree.png',
       name: 'Kalptree',
-      height: 120
+      height: 200
     },
     { 
       label: 'Community & FairPlay Partner', 
@@ -92,7 +92,7 @@ export default function SponsorsPage() {
       description: 'Promoting fair play and community values',
       logoPath: '/sponsors/community-fairplay-shri-rahulbabu-puglia.png',
       name: 'Shri RahulBabu Puglia',
-      height: 140
+      height: 200
     },
     { 
       label: 'Event Partners', 
