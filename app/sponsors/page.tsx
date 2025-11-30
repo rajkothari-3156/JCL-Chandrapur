@@ -59,6 +59,15 @@ export default function SponsorsPage() {
       height: 200
     },
     { 
+      label: 'Community & FairPlay Partner', 
+      icon: UserCheck, 
+      color: 'blue',
+      description: 'Promoting fair play and community values',
+      logoPath: '/sponsors/community-fairplay-shri-rahulbabu-puglia.png',
+      name: 'Shri RahulBabu Puglia',
+      height: 200
+    },
+    { 
       label: 'Presentation Partner', 
       icon: Gift, 
       color: 'indigo',
@@ -83,15 +92,6 @@ export default function SponsorsPage() {
       description: 'Official product stall and merchandise partner',
       logoPath: '/sponsors/product-stall-kalptree.png',
       name: 'Kalptree',
-      height: 200
-    },
-    { 
-      label: 'Community & FairPlay Partner', 
-      icon: UserCheck, 
-      color: 'blue',
-      description: 'Promoting fair play and community values',
-      logoPath: '/sponsors/community-fairplay-shri-rahulbabu-puglia.png',
-      name: 'Shri RahulBabu Puglia',
       height: 200
     },
     { 

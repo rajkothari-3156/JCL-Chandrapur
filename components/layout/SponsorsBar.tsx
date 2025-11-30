@@ -10,10 +10,10 @@ export default function SponsorsBar() {
     { label: 'Co-Sponsor', icon: Award, color: 'green' },
     { label: 'T-Shirt Sponsor', icon: Shirt, color: 'purple' },
     { label: 'Water Bottle Sponsor', icon: Droplets, color: 'cyan' },
+    { label: 'Community & FairPlay Partner', icon: UserCheck, color: 'blue' },
     { label: 'Presentation Partner', icon: Gift, color: 'indigo' },
     { label: 'Entry Gate Partner', icon: DoorOpen, color: 'amber' },
     { label: 'Product Stall Partner', icon: Store, color: 'teal' },
-    { label: 'Community & FairPlay Partner', icon: UserCheck, color: 'blue' },
     { label: 'Event Partners', icon: Users, color: 'pink' },
   ]
 
