@@ -95,6 +95,15 @@ export default function SponsorsPage() {
       height: 200
     },
     { 
+      label: 'Media Partner', 
+      icon: Radio, 
+      color: 'red',
+      description: 'Official media and publicity partner',
+      logoPath: '/sponsors/media-partner-arihant.png',
+      name: 'Arihant Furniture',
+      height: 200
+    },
+    { 
       label: 'Event Partners', 
       icon: Users, 
       color: 'pink',
