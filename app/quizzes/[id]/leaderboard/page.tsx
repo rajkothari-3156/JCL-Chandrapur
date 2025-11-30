@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import SponsorsBar from '@/components/layout/SponsorsBar'
 
 export default function QuizLeaderboardPage({ params }: { params: { id: string } }) {
   const quizId = params.id
@@ -76,6 +77,7 @@ export default function QuizLeaderboardPage({ params }: { params: { id: string }
           </div>
         )}
       </div>
+      <SponsorsBar />
     </main>
   )
 }

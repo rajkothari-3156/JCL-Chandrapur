@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { Trophy, Award, UtensilsCrossed, Shirt, Gift, Droplets, UserCheck, DoorOpen, Users, Store, ExternalLink } from 'lucide-react'
+import { Trophy, Award, UtensilsCrossed, Shirt, Gift, Droplets, UserCheck, DoorOpen, Users, Store, Radio, ExternalLink } from 'lucide-react'
 
 export default function SponsorsBar() {
   const sponsorCategories = [
@@ -14,6 +14,7 @@ export default function SponsorsBar() {
     { label: 'Presentation Partner', icon: Gift, color: 'indigo', logoPath: '/sponsors/presentation-praful-traders.png', name: 'Praful Traders' },
     { label: 'Entry Gate Partner', icon: DoorOpen, color: 'amber', logoPath: '/sponsors/entry-gate-rajesh-jewellers.png', name: 'Rajesh Jewellers' },
     { label: 'Product Stall Partner', icon: Store, color: 'teal', logoPath: '/sponsors/product-stall-kalptree.png', name: 'Kalptree' },
+    { label: 'Media Partner', icon: Radio, color: 'red', logoPath: '/sponsors/media-partner-arihant.png', name: 'Arihant Furniture' },
     { label: 'Event Partners', icon: Users, color: 'pink', logoPath: null, name: 'Event Partners' },
   ]
 
@@ -29,7 +30,7 @@ export default function SponsorsBar() {
 
         {/* All Sponsors Grid */}
         <div className="mb-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 max-w-6xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-5 gap-3 max-w-6xl mx-auto">
             {sponsorCategories.map((category, index) => {
               const Icon = category.icon
               const colorClasses = {
@@ -43,6 +44,7 @@ export default function SponsorsBar() {
                 amber: 'border-amber-400 hover:border-amber-500',
                 teal: 'border-teal-400 hover:border-teal-500',
                 pink: 'border-pink-400 hover:border-pink-500',
+                red: 'border-red-400 hover:border-red-500',
               }
               const iconColorClasses = {
                 green: 'text-green-500',
@@ -55,6 +57,7 @@ export default function SponsorsBar() {
                 amber: 'text-amber-500',
                 teal: 'text-teal-500',
                 pink: 'text-pink-500',
+                red: 'text-red-500',
               }
               
               return (

@@ -154,6 +154,7 @@ export default function SponsorsPage() {
                 yellow: 'border-yellow-400',
                 amber: 'border-amber-400',
                 teal: 'border-teal-400',
+                red: 'border-red-400',
               }
               const bgColorClasses = {
                 green: 'from-green-500 to-green-700',
@@ -166,6 +167,7 @@ export default function SponsorsPage() {
                 yellow: 'from-yellow-400 to-yellow-600',
                 amber: 'from-amber-400 to-amber-600',
                 teal: 'from-teal-500 to-teal-700',
+                red: 'from-red-500 to-red-700',
               }
               
               return (
