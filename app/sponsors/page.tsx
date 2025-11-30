@@ -90,9 +90,9 @@ export default function SponsorsPage() {
       icon: UserCheck, 
       color: 'blue',
       description: 'Promoting fair play and community values',
-      logoPath: '/sponsors/community-fairplay-rahul-bhaiyya.png',
+      logoPath: '/sponsors/community-fairplay-shri-rahulbabu-puglia.png',
       name: 'Shri RahulBabu Puglia',
-      height: 180
+      height: 240
     },
     { 
       label: 'Event Partners', 
