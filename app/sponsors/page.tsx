@@ -2,7 +2,7 @@
 
 import Navbar from '@/components/layout/Navbar'
 import Image from 'next/image'
-import { Award, Trophy, Heart, UtensilsCrossed, Shirt, Users, Droplets, Gift, DoorOpen, Store, UserCheck } from 'lucide-react'
+import { Award, Trophy, Heart, UtensilsCrossed, Shirt, Users, Droplets, Gift, DoorOpen, Store, UserCheck, Radio } from 'lucide-react'
 
 interface Partner {
   name: string
@@ -105,11 +105,11 @@ export default function SponsorsPage() {
         { name: 'Kanak Jewels', logoPath: '/sponsors/event-partner-kanak-jewels.png' },
         { name: 'Sumit Jewellers', logoPath: '/sponsors/event-partner-sumit-jewellers.png' },
         { name: 'Chanda Plastics', logoPath: '/sponsors/event-partner-chanda-plastics.jpeg' },
-        { name: 'Dhansiddh Earthmovers', logoPath: '/sponsors/event-partner-dhansiddh.jpeg' },
+        { name: 'Maruti Group Cotton Gining', logoPath: '/sponsors/event-partner-maruti.jpeg' },
         { name: 'Giriraj Marketing', logoPath: '/sponsors/event-partner-giriraj.png' },
         { name: 'Ramdev Readymade', logoPath: '/sponsors/event-partner-ramdev.jpeg' },
         { name: 'Absolute Healthcare', logoPath: '/sponsors/event-partner-absolute.jpeg' },
-        { name: 'Maruti Group Cotton Gining', logoPath: '/sponsors/event-partner-maruti.jpeg' },
+        { name: 'Dhansiddh Earthmovers', logoPath: '/sponsors/event-partner-dhansiddh.jpeg' },
       ],
       height: 100
     },
