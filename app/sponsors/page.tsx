@@ -56,7 +56,7 @@ export default function SponsorsPage() {
       description: 'Official hydration partner for players and audience',
       logoPath: '/sponsors/water-bottle-jain-trading.png',
       name: 'Jain Trading Company',
-      height: 120
+      height: 200
     },
     { 
       label: 'Presentation Partner', 
@@ -65,7 +65,7 @@ export default function SponsorsPage() {
       description: 'Associated with trophy and award presentations',
       logoPath: '/sponsors/presentation-praful-traders.png',
       name: 'Praful Traders',
-      height: 120
+      height: 200
     },
     { 
       label: 'Entry Gate Partner', 
@@ -166,6 +166,14 @@ export default function SponsorsPage() {
                       <span className="text-white font-bold text-lg uppercase">
                         {category.label}
                       </span>
+                      {!category.partners && category.name && (
+                        <>
+                          <span className="text-white mx-2">•</span>
+                          <span className="text-white font-bold text-lg">
+                            {category.name}
+                          </span>
+                        </>
+                      )}
                     </div>
                     <p className="text-green-200 mt-2 text-sm">{category.description}</p>
                   </div>
@@ -175,16 +183,18 @@ export default function SponsorsPage() {
                     // Multiple Event Partners
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
                       {category.partners.map((partner, pIndex) => (
-                        <div key={pIndex} className={`bg-white rounded-xl p-6 shadow-xl border-2 ${borderColorClasses[category.color as keyof typeof borderColorClasses]}`}>
-                          <div className="relative flex items-center justify-center" style={{ height: `${category.height}px` }}>
-                            <Image
-                              src={partner.logoPath}
-                              alt={partner.name}
-                              fill
-                              className="object-contain p-2"
-                            />
+                        <div key={pIndex}>
+                          <div className={`bg-white rounded-xl p-6 shadow-xl border-2 ${borderColorClasses[category.color as keyof typeof borderColorClasses]}`}>
+                            <div className="relative flex items-center justify-center" style={{ height: `${category.height}px` }}>
+                              <Image
+                                src={partner.logoPath}
+                                alt={partner.name}
+                                fill
+                                className="object-contain p-2"
+                              />
+                            </div>
                           </div>
-                          <p className="text-center text-gray-700 font-semibold mt-3 text-sm">{partner.name}</p>
+                          <p className="text-center text-green-100 font-semibold mt-3 text-sm">{partner.name}</p>
                         </div>
                       ))}
                     </div>
@@ -200,7 +210,6 @@ export default function SponsorsPage() {
                             className="object-contain p-4"
                           />
                         </div>
-                        <p className="text-center text-gray-800 font-bold mt-4 text-xl">{category.name}</p>
                       </div>
                     </div>
                   )}
