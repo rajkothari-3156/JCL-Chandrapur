@@ -1,72 +1,117 @@
 'use client'
 
 import Navbar from '@/components/layout/Navbar'
-import { Award, Trophy, Heart, UtensilsCrossed, Hotel, Gift, Droplets, Radio, DoorOpen, Users } from 'lucide-react'
+import Image from 'next/image'
+import { Award, Trophy, Heart, UtensilsCrossed, Shirt, Users, Droplets, Gift, DoorOpen, Store, UserCheck } from 'lucide-react'
+
+interface Partner {
+  name: string
+  logoPath: string
+}
+
+interface SponsorCategory {
+  label: string
+  icon: any
+  color: string
+  description: string
+  height: number
+  logoPath?: string
+  name?: string
+  partners?: Partner[]
+}
 
 export default function SponsorsPage() {
-  const sponsorCategories = [
+  const sponsorCategories: SponsorCategory[] = [
     { 
-      label: 'Title Sponsor', 
-      icon: Trophy, 
-      color: 'yellow',
-      description: 'Premium visibility across all platforms and events',
-      logoSize: '800x400px'
+      label: 'Food Partner', 
+      icon: UtensilsCrossed, 
+      color: 'orange',
+      description: 'Official food and catering partner for all events',
+      logoPath: '/sponsors/food-sponsor-anand-nagri.png',
+      name: 'Anand Nagri Bank Parivar',
+      height: 280
     },
     { 
       label: 'Co-Sponsor', 
       icon: Award, 
       color: 'green',
       description: 'Strategic partnership with prominent brand placement',
-      logoSize: '600x300px'
+      logoPath: '/sponsors/co-sponsor-bpb.png',
+      name: 'BPB',
+      height: 240
     },
     { 
-      label: 'Food Sponsor', 
-      icon: UtensilsCrossed, 
-      color: 'orange',
-      description: 'Official food and catering partner for all events',
-      logoSize: '500x250px'
-    },
-    { 
-      label: 'Hospitality Sponsor', 
-      icon: Hotel, 
-      color: 'blue',
-      description: 'Providing comfort and hospitality services',
-      logoSize: '500x250px'
-    },
-    { 
-      label: 'Presentation Sponsor', 
-      icon: Gift, 
+      label: 'T-Shirt Sponsor', 
+      icon: Shirt, 
       color: 'purple',
-      description: 'Associated with trophy and award presentations',
-      logoSize: '500x250px'
+      description: 'Official apparel partner for the tournament',
+      logoPath: '/sponsors/tshirt-sponsor-guru-ganesh.jpeg',
+      name: 'Guru Ganesh',
+      height: 210
     },
     { 
       label: 'Water Bottle Sponsor', 
       icon: Droplets, 
       color: 'cyan',
       description: 'Official hydration partner for players and audience',
-      logoSize: '500x250px'
+      logoPath: '/sponsors/water-bottle-jain-trading.png',
+      name: 'Jain Trading Company',
+      height: 180
     },
     { 
-      label: 'Media Partner', 
-      icon: Radio, 
-      color: 'red',
-      description: 'Official media coverage and promotion partner',
-      logoSize: '500x250px'
-    },
-    { 
-      label: 'Entry Gate Sponsor', 
-      icon: DoorOpen, 
+      label: 'Presentation Partner', 
+      icon: Gift, 
       color: 'indigo',
+      description: 'Associated with trophy and award presentations',
+      logoPath: '/sponsors/presentation-praful-traders.png',
+      name: 'Praful Traders',
+      height: 180
+    },
+    { 
+      label: 'Entry Gate Partner', 
+      icon: DoorOpen, 
+      color: 'yellow',
       description: 'Prominent branding at venue entry points',
-      logoSize: '500x250px'
+      logoPath: '/sponsors/entry-gate-rajesh-jewellers.png',
+      name: 'Rajesh Jewellers',
+      height: 180
+    },
+    { 
+      label: 'Product Stall Partner', 
+      icon: Store, 
+      color: 'teal',
+      description: 'Official product stall and merchandise partner',
+      logoPath: '/sponsors/product-stall-kalptree.png',
+      name: 'Kalptree',
+      height: 180
+    },
+    { 
+      label: 'Community & FairPlay Partner', 
+      icon: UserCheck, 
+      color: 'blue',
+      description: 'Promoting fair play and community values',
+      logoPath: '/sponsors/community-fairplay-rahul-bhaiyya.png',
+      name: 'Shri RahulBabu Puglia',
+      height: 180
     },
     { 
       label: 'Event Partners', 
       icon: Users, 
       color: 'pink',
       description: 'Supporting partners for successful event execution',
-      logoSize: '400x200px'
+      partners: [
+        { name: 'Active Tribe', logoPath: '/sponsors/event-partner-active-tribe.png' },
+        { name: 'Alankar Imitation Jewellery', logoPath: '/sponsors/event-partner-alankar.png' },
+        { name: 'Kanak Jewels', logoPath: '/sponsors/event-partner-kanak-jewels.png' },
+        { name: 'Sumit Jewellers', logoPath: '/sponsors/event-partner-sumit-jewellers.png' },
+        { name: 'Chanda Plastics', logoPath: '/sponsors/event-partner-chanda-plastics.jpeg' },
+        { name: 'Dhansiddh Earthmovers', logoPath: '/sponsors/event-partner-dhansiddh.jpeg' },
+        { name: 'Giriraj Marketing', logoPath: '/sponsors/event-partner-giriraj.png' },
+        { name: 'Ramdev Readymade', logoPath: '/sponsors/event-partner-ramdev.jpeg' },
+        { name: 'Absolute Healthcare', logoPath: '/sponsors/event-partner-absolute.jpeg' },
+        { name: 'Maruti Group Cotton Gining', logoPath: '/sponsors/event-partner-maruti.jpeg' },
+      ],
+      height: 140
     },
   ]
 
@@ -89,85 +134,76 @@ export default function SponsorsPage() {
           <div className="space-y-12 mb-12">
             {sponsorCategories.map((category, index) => {
               const Icon = category.icon
-              const isTitle = category.label === 'Title Sponsor'
               const borderColorClasses = {
-                yellow: 'border-yellow-400',
                 green: 'border-green-400',
                 orange: 'border-orange-400',
                 blue: 'border-blue-400',
                 purple: 'border-purple-400',
-                cyan: 'border-cyan-400',
-                red: 'border-red-400',
-                indigo: 'border-indigo-400',
                 pink: 'border-pink-400',
+                cyan: 'border-cyan-400',
+                indigo: 'border-indigo-400',
+                yellow: 'border-yellow-400',
+                teal: 'border-teal-400',
               }
               const bgColorClasses = {
-                yellow: 'from-yellow-400 to-yellow-600',
                 green: 'from-green-500 to-green-700',
                 orange: 'from-orange-500 to-orange-700',
                 blue: 'from-blue-500 to-blue-700',
                 purple: 'from-purple-500 to-purple-700',
-                cyan: 'from-cyan-500 to-cyan-700',
-                red: 'from-red-500 to-red-700',
-                indigo: 'from-indigo-500 to-indigo-700',
                 pink: 'from-pink-500 to-pink-700',
-              }
-              const iconColorClasses = {
-                yellow: 'text-yellow-500',
-                green: 'text-green-500',
-                orange: 'text-orange-500',
-                blue: 'text-blue-500',
-                purple: 'text-purple-500',
-                cyan: 'text-cyan-500',
-                red: 'text-red-500',
-                indigo: 'text-indigo-500',
-                pink: 'text-pink-500',
+                cyan: 'from-cyan-500 to-cyan-700',
+                indigo: 'from-indigo-500 to-indigo-700',
+                yellow: 'from-yellow-400 to-yellow-600',
+                teal: 'from-teal-500 to-teal-700',
               }
               
               return (
-                <div key={index} className={isTitle ? 'mb-16' : ''}>
+                <div key={index}>
                   {/* Category Header */}
                   <div className="text-center mb-6">
                     <div className={`inline-flex items-center gap-2 bg-gradient-to-r ${bgColorClasses[category.color as keyof typeof bgColorClasses]} px-6 py-3 rounded-lg shadow-lg`}>
-                      <Icon className={`w-6 h-6 ${category.color === 'yellow' ? 'text-green-900' : 'text-white'}`} />
-                      <span className={`${category.color === 'yellow' ? 'text-green-900' : 'text-white'} font-bold text-lg uppercase`}>
+                      <Icon className="w-6 h-6 text-white" />
+                      <span className="text-white font-bold text-lg uppercase">
                         {category.label}
                       </span>
                     </div>
                     <p className="text-green-200 mt-2 text-sm">{category.description}</p>
                   </div>
                   
-                  {/* Logo Card */}
-                  <div className={`${isTitle ? 'max-w-4xl' : 'max-w-2xl'} mx-auto`}>
-                    <div className={`bg-white rounded-2xl p-8 shadow-2xl border-4 ${borderColorClasses[category.color as keyof typeof borderColorClasses]}`}>
-                      {/* Logo Placeholder */}
-                      <div className={`relative ${isTitle ? 'h-64' : 'h-48'} bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex items-center justify-center mb-4 border-2 border-dashed border-gray-300`}>
-                        <div className="text-center">
-                          <Icon className={`${isTitle ? 'w-24 h-24' : 'w-16 h-16'} ${iconColorClasses[category.color as keyof typeof iconColorClasses]} mx-auto mb-3`} />
-                          <p className={`${isTitle ? 'text-3xl' : 'text-2xl'} font-bold text-gray-800 mb-2 uppercase`}>
-                            {category.label}
-                          </p>
-                          <p className="text-gray-500 text-sm">Logo Size: {category.logoSize}</p>
-                          <p className="text-gray-400 text-xs mt-1">PNG/SVG with transparent background</p>
-                        </div>
-                      </div>
-                      
-                      {/* Benefits */}
-                      {isTitle && (
-                        <div className="text-center space-y-2 mt-6">
-                          <h3 className="text-xl font-bold text-gray-800">Premium Visibility Package</h3>
-                          <div className="grid md:grid-cols-2 gap-2 text-gray-600 text-sm max-w-xl mx-auto">
-                            <div>✓ Logo on all website pages</div>
-                            <div>✓ Venue banner placement</div>
-                            <div>✓ Social media features</div>
-                            <div>✓ Press release mentions</div>
-                            <div>✓ Official merchandise branding</div>
-                            <div>✓ Live streaming credits</div>
+                  {/* Logo Card(s) */}
+                  {category.partners ? (
+                    // Multiple Event Partners
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                      {category.partners.map((partner, pIndex) => (
+                        <div key={pIndex} className={`bg-white rounded-xl p-6 shadow-xl border-2 ${borderColorClasses[category.color as keyof typeof borderColorClasses]}`}>
+                          <div className="relative flex items-center justify-center" style={{ height: `${category.height}px` }}>
+                            <Image
+                              src={partner.logoPath}
+                              alt={partner.name}
+                              fill
+                              className="object-contain p-2"
+                            />
                           </div>
+                          <p className="text-center text-gray-700 font-semibold mt-3 text-sm">{partner.name}</p>
                         </div>
-                      )}
+                      ))}
                     </div>
-                  </div>
+                  ) : (
+                    // Single Sponsor
+                    <div className="max-w-3xl mx-auto">
+                      <div className={`bg-white rounded-2xl p-8 shadow-2xl border-4 ${borderColorClasses[category.color as keyof typeof borderColorClasses]}`}>
+                        <div className="relative flex items-center justify-center" style={{ height: `${category.height}px` }}>
+                          <Image
+                            src={category.logoPath!}
+                            alt={category.name!}
+                            fill
+                            className="object-contain p-4"
+                          />
+                        </div>
+                        <p className="text-center text-gray-800 font-bold mt-4 text-xl">{category.name}</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )
             })}
