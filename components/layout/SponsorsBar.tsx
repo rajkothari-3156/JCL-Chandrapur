@@ -2,19 +2,20 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { Trophy, Award, UtensilsCrossed, Shirt, Gift, Droplets, UserCheck, DoorOpen, Users, Store, Radio, ExternalLink } from 'lucide-react'
+import { Trophy, Award, UtensilsCrossed, Shirt, Gift, Droplets, UserCheck, DoorOpen, Users, Store, Radio, ExternalLink, Home } from 'lucide-react'
 
 export default function SponsorsBar() {
   const sponsorCategories = [
     { label: 'Food Partner', icon: UtensilsCrossed, color: 'orange', logoPath: '/sponsors/food-sponsor-anand-nagri.png', name: 'Anand Nagri Bank Parivar' },
     { label: 'Co-Sponsor', icon: Award, color: 'green', logoPath: '/sponsors/co-sponsor-bpb.png', name: 'BPB' },
+    { label: 'Hospitality Partner', icon: Home, color: 'emerald', logoPath: '/sponsors/hospitality-partner-chandralok.png', name: 'Chandralok Creations' },
     { label: 'T-Shirt Sponsor', icon: Shirt, color: 'purple', logoPath: '/sponsors/tshirt-sponsor-guru-ganesh.jpeg', name: 'Guru Ganesh' },
     { label: 'Water Bottle Sponsor', icon: Droplets, color: 'cyan', logoPath: '/sponsors/water-bottle-jain-trading.png', name: 'Jain Trading Company' },
     { label: 'Community & FairPlay Partner', icon: UserCheck, color: 'blue', logoPath: '/sponsors/community-fairplay-shri-rahulbabu-puglia.png', name: 'Shri RahulBabu Puglia' },
     { label: 'Presentation Partner', icon: Gift, color: 'indigo', logoPath: '/sponsors/presentation-praful-traders.png', name: 'Praful Traders' },
     { label: 'Entry Gate Partner', icon: DoorOpen, color: 'amber', logoPath: '/sponsors/entry-gate-rajesh-jewellers.png', name: 'Rajesh Jewellers' },
     { label: 'Product Stall Partner', icon: Store, color: 'teal', logoPath: '/sponsors/product-stall-kalptree.png', name: 'Kalptree' },
-    { label: 'Media Partner', icon: Radio, color: 'red', logoPath: '/sponsors/media-partner-arihant.png', name: 'Arihant Furniture' },
+    { label: 'Media Partner', icon: Radio, color: 'red', logoPath: '/sponsors/media-partner-arihant-new.jpg', name: 'Arihant Furniture' },
     { label: 'Event Partners', icon: Users, color: 'pink', logoPath: null, name: 'Event Partners' },
   ]
 
@@ -45,6 +46,7 @@ export default function SponsorsBar() {
                 teal: 'border-teal-400 hover:border-teal-500',
                 pink: 'border-pink-400 hover:border-pink-500',
                 red: 'border-red-400 hover:border-red-500',
+                emerald: 'border-emerald-400 hover:border-emerald-500',
               }
               const iconColorClasses = {
                 green: 'text-green-500',
@@ -58,6 +60,7 @@ export default function SponsorsBar() {
                 teal: 'text-teal-500',
                 pink: 'text-pink-500',
                 red: 'text-red-500',
+                emerald: 'text-emerald-500',
               }
               
               return (
