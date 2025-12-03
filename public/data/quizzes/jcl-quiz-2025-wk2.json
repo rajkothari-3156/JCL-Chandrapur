@@ -21,7 +21,7 @@
       "text": "In the 2024 season, who hit the most sixes?",
       "options": [
         "Akash Surana",
-        "Shashank Sanjay Jain",
+        "Shashank Jain",
         "Siddharth Jain",
         "Nirav Bohra"
       ],
@@ -32,7 +32,7 @@
       "type": "mcq",
       "text": "In the 2024 season, which bowler took the most wickets?",
       "options": [
-        "Adi Doshi",
+        "Aadi Doshi",
         "Khush Chopda",
         "Ankush Puglia",
         "Ankush Jain"
@@ -58,7 +58,7 @@
       "options": [
         "Siddharth Jain",
         "Aayush Nilesh Puglia",
-        "Shashank Sanjay Jain",
+        "Shashank Jain",
         "Ankush Puglia"
       ],
       "answer": 0
@@ -70,8 +70,8 @@
       "options": [
         "Nirav Bohra",
         "Siddharth Jain",
-        "Shashank Sanjay Jain",
-        "Madhur Pugliya"
+        "Shashank Jain",
+        "Madhur Ritesh Pugliya"
       ],
       "answer": 0
     },
@@ -93,7 +93,7 @@
       "text": "In the 2023 season, which player has the highest total fielding dismissals?",
       "options": [
         "Nirav Bohra",
-        "Madhur Pugliya",
+        "Madhur Ritesh Pugliya",
         "Yogesh Chordiya",
         "Sachin Jain"
       ],
@@ -105,9 +105,9 @@
       "text": "In the 2023 season, who has the highest MVP total?",
       "options": [
         "Nirav Bohra",
-        "Madhur pugliya",
+        "Madhur Ritesh Pugliya",
         "Siddharth Jain",
-        "Shashank Sanjay Jain"
+        "Shashank Jain"
       ],
       "answer": 0
     },

@@ -16,7 +16,7 @@ player_id,name,team_id,team_name,total_match,catches,caught_behind,run_outs,assi
 19501490,Sumit P Lunawat,8474848,SR Rangers,3,1,0,1,0,0,0,1,2
 19519973,Sushil Puglia,8474845,Power Hitters,5,0,1,0,1,1,0,1,2
 19537796,Ankush Puglia,8474843,Falcon Giants,5,1,0,1,0,0,0,1,2
-25738533,Rajiv Khajanchi,8474845,Power Hitters,5,1,0,1,0,0,0,1,2
+25738533,Rajiv Khajanchi (RK),8474845,Power Hitters,5,1,0,1,0,0,0,1,2
 25729700,Harsh R Chordia,8474846,Toxic 11,1,1,0,0,0,0,0,1,1
 25749964,Priyanshu Khajanchi,8474844,Chandralok Warriors,3,0,0,1,0,0,0,0,1
 6439642,Tarun Jain,8474846,Toxic 11,3,1,0,0,0,0,0,1,1
@@ -26,10 +26,10 @@ player_id,name,team_id,team_name,total_match,catches,caught_behind,run_outs,assi
 19502345,Chirayuraj Singhvi,8474842,KT Lions,3,1,0,0,0,0,0,1,1
 18468424,Nirav Bohra,8474842,KT Lions,3,0,0,1,1,0,0,0,1
 34995022,Ankit P Jain,8474844,Chandralok Warriors,3,0,0,1,1,0,0,0,1
-14855845,Adi Doshi,8474847,Gladiators Cricket Club,3,0,0,1,0,0,0,0,1
+14855845,Aadi Doshi,8474847,Gladiators Cricket Club,3,0,0,1,0,0,0,0,1
 19500771,Pratik Kothari,8474846,Toxic 11,3,1,0,0,0,0,0,1,1
 4178393,Rushabh Puglia,8474843,Falcon Giants,3,0,0,1,0,0,0,0,1
-19500313,Madhur Pugliya,8474844,Chandralok Warriors,3,1,0,0,1,0,0,1,1
+19500313,Madhur Ritesh Pugliya,8474844,Chandralok Warriors,3,1,0,0,1,0,0,1,1
 19500407,Ojas Pugliya,8474847,Gladiators Cricket Club,3,1,0,0,0,0,0,1,1
 19500483,Namanchandulal Bohra,8474842,KT Lions,3,0,0,1,0,0,0,0,1
 24510507,Ankush Jain,8474846,Toxic 11,3,1,0,0,0,0,0,1,1
@@ -37,7 +37,7 @@ player_id,name,team_id,team_name,total_match,catches,caught_behind,run_outs,assi
 34554343,Rishabh Jain,8474849,Parshav Panthers,4,0,0,1,0,0,0,0,1
 4672124,Dhawal Pankaj Jain,8474849,Parshav Panthers,4,1,0,0,0,0,0,1,1
 19519863,Saurabh Jain,8474849,Parshav Panthers,4,0,0,1,0,0,0,0,1
-19507137,Shashank Sanjay Jain,8474849,Parshav Panthers,4,0,0,1,0,0,0,0,1
+19507137,Shashank Jain,8474849,Parshav Panthers,4,0,0,1,0,0,0,0,1
 24510656,Sanskar Jain,8474849,Parshav Panthers,4,0,0,1,1,0,0,0,1
 19519957,Shanti Dugad,8474845,Power Hitters,5,1,0,0,0,0,0,1,1
 19502632,Harsh Baid,8474843,Falcon Giants,5,1,0,0,0,0,0,1,1
@@ -49,7 +49,7 @@ player_id,name,team_id,team_name,total_match,catches,caught_behind,run_outs,assi
 19502819,Ajay Kothari,8474847,Gladiators Cricket Club,1,0,0,0,0,0,0,0,0
 24510510,Aditya Jain,8474849,Parshav Panthers,1,0,0,0,0,0,0,0,0
 19502387,Harsh Daga,8474844,Chandralok Warriors,1,0,0,0,0,0,0,0,0
-19524649,Piyush Jain,8474844,Chandralok Warriors,1,0,0,0,0,0,0,0,0
+19524649,Piyush Ashok Jain,8474844,Chandralok Warriors,1,0,0,0,0,0,0,0,0
 34994708,Suyash Kothari,8474844,Chandralok Warriors,1,0,0,0,0,0,0,0,0
 19500479,Narendra Bohra,8474842,KT Lions,1,0,0,0,0,0,0,0,0
 19508120,Tanish Rajesh Chordiya,8474842,KT Lions,2,0,0,0,0,0,0,0,0
@@ -58,7 +58,7 @@ player_id,name,team_id,team_name,total_match,catches,caught_behind,run_outs,assi
 17150580,Pratham Dugad,8474848,SR Rangers,2,0,0,0,0,0,0,0,0
 19537791,Rishabh Saklecha,8474848,SR Rangers,2,0,0,0,0,0,0,0,0
 34993729,Rahul Gandhi,8474846,Toxic 11,2,0,0,0,0,0,0,0,0
-19501771,Tejas Rajesh Jain,8474847,Gladiators Cricket Club,2,0,0,0,0,0,0,0,0
+19501771,TEJAS RAJESH JI JAIN,8474847,Gladiators Cricket Club,2,0,0,0,0,0,0,0,0
 19503423,Vansh Shaha,8474843,Falcon Giants,2,0,0,0,0,0,0,0,0
 25730976,Aadesh Kothari,8474842,KT Lions,3,0,0,0,0,0,0,0,0
 34997069,Rahul Khatod,8474846,Toxic 11,3,0,0,0,0,0,0,0,0
@@ -74,7 +74,7 @@ player_id,name,team_id,team_name,total_match,catches,caught_behind,run_outs,assi
 19513925,Rahul Kothari,8474848,SR Rangers,4,0,0,0,0,0,0,0,0
 19513542,Aalekh Gandhi,8474848,SR Rangers,4,0,0,0,1,0,0,0,0
 34554511,Varun Jain,8474849,Parshav Panthers,4,0,0,0,0,0,0,0,0
-19468485,Palash Singhvi,8474848,SR Rangers,4,0,0,0,0,0,0,0,0
+19468485,Palash Manojraj Singhvi,8474848,SR Rangers,4,0,0,0,0,0,0,0,0
 24510923,Ashwin Jain,8474848,SR Rangers,4,0,0,0,0,0,0,0,0
 3551413,Bunty Jain,8474849,Parshav Panthers,4,0,0,0,0,0,0,0,0
 25743254,Adish Banthia,8474845,Power Hitters,5,0,0,0,0,0,0,0,0

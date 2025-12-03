@@ -4,7 +4,7 @@ player_id,name,team_id,team_name,total_match,innings,total_wickets,balls,highest
 24510923,Ashwin Jain,5662311,SR RANGERS,3,3,4,24,3,8.75,6.00,0,8.75,35,-,4.0,12
 18468424,Nirav Bohra,5662292,K T LIONS,5,5,3,60,1,5.70,20.00,0,19,57,Right-arm Off Break,10.0,26
 25751625,Saurabh Jain,5662319,TOOFANI JAINS,5,5,3,60,2,6.80,20.00,0,22.67,68,-,10.0,33
-19500313,Madhur Pugliya,5662300,JAIN UNITED,4,4,3,42,2,8.43,14.00,0,19.67,59,Right-arm medium,7.0,19
+19500313,Madhur Ritesh Pugliya,5662300,JAIN UNITED,4,4,3,42,2,8.43,14.00,0,19.67,59,Right-arm medium,7.0,19
 25738768,Moksh Mahavir Meher,5662292,K T LIONS,5,4,3,24,2,13.75,8.00,0,18.33,55,Right-arm medium,4.0,7
 25730976,Aadesh Kothari,5662311,SR RANGERS,3,3,2,36,1,6.33,18.00,0,19,38,-,6.0,21
 19529455,Pranay Pugliya,5662316,ACLESHWAR KI ANDHI,3,3,2,24,1,7.25,12.00,0,14.5,29,Right-arm fast,4.0,11
@@ -23,21 +23,21 @@ player_id,name,team_id,team_name,total_match,innings,total_wickets,balls,highest
 1649800,Akash Surana,5662323,THE MARVEL PLAYERS,3,1,1,6,1,8.00,6.00,0,8,8,Right-arm Off Break,1.0,3
 21510122,Siddesh,5662316,ACLESHWAR KI ANDHI,3,1,1,6,1,10.00,6.00,0,10,10,Right-arm fast,1.0,1
 19468485,Palashraj Singhvi,5662305,ROYAL RAJWADA,4,4,1,30,1,10.00,30.00,0,50,50,None,5.0,13
-19524649,Piyush Jain,5662281,POWER HITTERS,3,3,1,30,1,10.00,30.00,0,50,50,Right-arm fast,5.0,16
+19524649,Piyush Ashok Jain,5662281,POWER HITTERS,3,3,1,30,1,10.00,30.00,0,50,50,Right-arm fast,5.0,16
 19537792,Siddhant Puglia,5662316,ACLESHWAR KI ANDHI,3,3,1,30,1,10.40,30.00,0,52,52,Right-arm fast,5.0,14
 19529463,Sajan Jain,5662311,SR RANGERS,3,3,1,18,1,10.67,18.00,0,32,32,Right-arm medium,3.0,5
 18296299,Viplove,5662305,ROYAL RAJWADA,4,2,1,6,1,11.00,6.00,0,11,11,Right-arm Leg Break,1.0,2
 3568650,Vivek Jain,5662319,TOOFANI JAINS,5,5,1,26,1,11.08,26.00,0,48,48,-,4.2,7
 19500771,Pratik Kothari,5662311,SR RANGERS,3,3,1,24,1,11.75,24.00,0,47,47,Right-arm medium,4.0,11
-19501771,Tejas Rajesh Jain,5662316,ACLESHWAR KI ANDHI,3,2,1,12,1,12.00,12.00,0,24,24,Right-arm medium,2.0,3
+19501771,TEJAS RAJESH JI JAIN,5662316,ACLESHWAR KI ANDHI,3,2,1,12,1,12.00,12.00,0,24,24,Right-arm medium,2.0,3
 19519980,Roshan Jain,5662323,THE MARVEL PLAYERS,3,2,1,12,1,12.00,12.00,0,24,24,-,2.0,6
 6439642,Tarun Jain,5662300,JAIN UNITED,4,3,1,18,1,12.33,18.00,0,37,37,-,3.0,6
 25736186,Siddharth Kothari,5662292,K T LIONS,5,2,1,12,1,13.00,12.00,0,26,26,Right-arm medium,2.0,4
 4136380,Sandip Jain,5662311,SR RANGERS,3,3,1,18,1,13.00,18.00,0,39,39,Right-arm medium,3.0,8
 19503043,Hiten Khatod,5662281,POWER HITTERS,3,3,1,18,1,13.00,18.00,0,39,39,Right-arm Leg Break,3.0,6
 25731077,Soham Khajanchi,5662305,ROYAL RAJWADA,4,4,1,36,1,13.17,36.00,0,79,79,-,6.0,12
-19507137,Shashank Sanjay Jain,5662319,TOOFANI JAINS,5,4,1,24,1,13.25,24.00,0,53,53,Right-arm Leg Break,4.0,9
-25738533,Rajiv Khajanchi,5662316,ACLESHWAR KI ANDHI,3,2,1,12,1,13.50,12.00,0,27,27,Right-arm medium,2.0,5
+19507137,Shashank Jain,5662319,TOOFANI JAINS,5,4,1,24,1,13.25,24.00,0,53,53,Right-arm Leg Break,4.0,9
+25738533,Rajiv Khajanchi (RK),5662316,ACLESHWAR KI ANDHI,3,2,1,12,1,13.50,12.00,0,27,27,Right-arm medium,2.0,5
 18334200,Ankush Jain,5662319,TOOFANI JAINS,5,5,1,42,1,13.57,42.00,0,95,95,Right-arm medium,7.0,18
 19500483,Namanchandulal Bohra,5662292,K T LIONS,5,3,1,18,1,13.67,18.00,0,41,41,Right-arm Leg Break,3.0,6
 25745246,Ashish Khajanchi,5662316,ACLESHWAR KI ANDHI,3,3,1,18,1,13.67,18.00,0,41,41,Right-arm medium,3.0,6
@@ -71,7 +71,7 @@ player_id,name,team_id,team_name,total_match,innings,total_wickets,balls,highest
 4178393,Rushabh Puglia,5662281,POWER HITTERS,1,0,,,,0.00,0.00,0,0,0,Right-arm medium,0.0,0
 4672124,Dhawal Pankaj Jain,5662319,TOOFANI JAINS,5,0,,,,0.00,0.00,0,0,0,Right-arm Off Break,0.0,0
 8840700,Deepak Jain,5662311,SR RANGERS,3,0,,,,0.00,0.00,0,0,0,Right-arm medium,0.0,0
-14855845,Adi Doshi,5662305,ROYAL RAJWADA,3,0,,,,0.00,0.00,0,0,0,Right-arm fast,0.0,0
+14855845,Aadi Doshi,5662305,ROYAL RAJWADA,3,0,,,,0.00,0.00,0,0,0,Right-arm fast,0.0,0
 14858474,Tushar Doshi,5662305,ROYAL RAJWADA,2,0,,,,0.00,0.00,0,0,0,Right-arm fast,0.0,0
 19500479,Narendra Bohra,5662292,K T LIONS,5,0,,,,0.00,0.00,0,0,0,-,0.0,0
 19500494,Rohit Bothra,5662300,JAIN UNITED,4,0,,,,0.00,0.00,0,0,0,Right-arm Leg Break,0.0,0
@@ -93,7 +93,7 @@ player_id,name,team_id,team_name,total_match,innings,total_wickets,balls,highest
 19519974,Tushar Bohra,5662319,TOOFANI JAINS,2,0,,,,0.00,0.00,0,0,0,Right-arm medium,0.0,0
 19520050,Gautam Bhandari,5662292,K T LIONS,2,0,,,,0.00,0.00,0,0,0,-,0.0,0
 19524478,Kushal Daga,5662323,THE MARVEL PLAYERS,3,0,,,,0.00,0.00,0,0,0,-,0.0,0
-19524576,Raja Parakh,5662311,SR RANGERS,2,0,,,,0.00,0.00,0,0,0,-,0.0,0
+19524576,Dveependra Parakh,5662311,SR RANGERS,2,0,,,,0.00,0.00,0,0,0,-,0.0,0
 19526349,Rupesh Dugad,5662323,THE MARVEL PLAYERS,2,0,,,,0.00,0.00,0,0,0,-,0.0,0
 19527344,Parshv Khajanchi,5662305,ROYAL RAJWADA,3,0,,,,0.00,0.00,0,0,0,-,0.0,0
 19537796,Ankush Puglia,5662316,ACLESHWAR KI ANDHI,1,0,,,,0.00,0.00,0,0,0,Right-arm medium,0.0,0
