@@ -2,7 +2,7 @@
 
 import Navbar from '@/components/layout/Navbar'
 import Image from 'next/image'
-import { Award, Trophy, Heart, UtensilsCrossed, Shirt, Users, Droplets, Gift, DoorOpen, Store, UserCheck, Radio } from 'lucide-react'
+import { Award, Trophy, Heart, UtensilsCrossed, Shirt, Users, Droplets, Gift, DoorOpen, Store, UserCheck, Radio, Home } from 'lucide-react'
 
 interface Partner {
   name: string
@@ -39,6 +39,15 @@ export default function SponsorsPage() {
       logoPath: '/sponsors/co-sponsor-bpb.png',
       name: 'BPB',
       height: 200
+    },
+    { 
+      label: 'Hospitality Partner', 
+      icon: Home, 
+      color: 'emerald',
+      description: 'Official hospitality and guest services partner',
+      logoPath: '/sponsors/hospitality-partner-chandralok.png',
+      name: 'Chandralok Creations',
+      height: 160
     },
     { 
       label: 'T-Shirt Sponsor', 
@@ -99,7 +108,7 @@ export default function SponsorsPage() {
       icon: Radio, 
       color: 'red',
       description: 'Official media and publicity partner',
-      logoPath: '/sponsors/media-partner-arihant.png',
+      logoPath: '/sponsors/media-partner-arihant-new.jpg',
       name: 'Arihant Furniture',
       height: 200
     },
@@ -110,7 +119,7 @@ export default function SponsorsPage() {
       description: 'Supporting partners for successful event execution',
       partners: [
         { name: 'Active Tribe', logoPath: '/sponsors/event-partner-active-tribe.png' },
-        { name: 'Alankar Imitation Jewellery', logoPath: '/sponsors/event-partner-alankar.png' },
+        { name: 'Alankar Imitation Jewellery', logoPath: '/sponsors/event-partner-alankar-new.jpg' },
         { name: 'Kanak Jewels', logoPath: '/sponsors/event-partner-kanak-jewels.png' },
         { name: 'Sumit Jewellers', logoPath: '/sponsors/event-partner-sumit-jewellers.png' },
         { name: 'Chanda Plastics', logoPath: '/sponsors/event-partner-chanda-plastics.jpeg' },
@@ -155,6 +164,7 @@ export default function SponsorsPage() {
                 amber: 'border-amber-400',
                 teal: 'border-teal-400',
                 red: 'border-red-400',
+                emerald: 'border-emerald-400',
               }
               const bgColorClasses = {
                 green: 'from-green-500 to-green-700',
@@ -168,6 +178,7 @@ export default function SponsorsPage() {
                 amber: 'from-amber-400 to-amber-600',
                 teal: 'from-teal-500 to-teal-700',
                 red: 'from-red-500 to-red-700',
+                emerald: 'from-emerald-500 to-emerald-700',
               }
               
               return (
