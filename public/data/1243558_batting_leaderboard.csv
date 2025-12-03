@@ -1,11 +1,11 @@
 player_id,name,team_id,team_name,total_match,innings,total_runs,highest_run,average,not_out,strike_rate,ball_faced,batting_hand,4s,6s,50s,100s
 19500206,Aayush Nilesh Puglia,8474845,Power Hitters,5,5,146,52,48.67,2,153.68,95,RHB,1,16,2,0
-24510219,Siddarth Jain,8474849,Parshav Panthers,4,4,145,64,72.50,2,181.25,80,-,2,16,1,0
+24510219,Siddharth Jain,8474849,Parshav Panthers,4,4,145,64,72.50,2,181.25,80,-,2,16,1,0
 19537792,Sidhu Puglia,8474847,Gladiators Cricket Club,3,3,122,57,61.00,1,162.67,75,RHB,2,13,2,0
 18468424,Nirav Bohra,8474842,KT Lions,3,3,115,100,57.50,1,250.00,46,RHB,3,13,0,1
 19507137,Shashank Sanjay Jain,8474849,Parshav Panthers,4,4,112,55,56.00,2,155.56,72,RHB,1,12,1,0
 1649800,Akash Surana,8474845,Power Hitters,5,5,107,58,35.67,2,187.72,57,RHB,0,14,1,0
-2065452,Dr Pranay Gandhi,8474845,Power Hitters,5,5,105,45,21.00,0,129.63,81,RHB,0,4,0,0
+2065452,Dr. Pranay Gandhi,8474845,Power Hitters,5,5,105,45,21.00,0,129.63,81,RHB,0,4,0,0
 6439642,Tarun Jain,8474846,Toxic 11,3,3,94,65,47.00,1,223.81,42,-,0,11,1,0
 4178393,Rushabh Puglia,8474843,Falcon Giants,3,3,84,41,-,3,152.73,55,RHB,3,7,0,0
 30093714,Yash,8474843,Falcon Giants,5,5,80,30,16.00,0,129.03,62,RHB,1,8,0,0
@@ -34,7 +34,7 @@ player_id,name,team_id,team_name,total_match,innings,total_runs,highest_run,aver
 25730976,Aadesh Kothari,8474842,KT Lions,3,2,10,8,10.00,1,62.50,16,-,1,0,0,0
 19508120,Tanish Rajesh Chordiya,8474842,KT Lions,2,2,9,9,4.50,0,90.00,10,-,0,1,0,0
 19520051,Hemantraj Singhvi,8474842,KT Lions,3,2,9,9,9.00,1,75.00,12,RHB,0,1,0,0
-19519967,Mayur Bhandari,8474844,Chandralok Warriors,3,1,8,8,-,1,160.00,5,RHB,0,1,0,0
+19519967,Mayur yogeshkumar Bhandari,8474844,Chandralok Warriors,3,1,8,8,-,1,160.00,5,RHB,0,1,0,0
 19503230,Chetan Nandkishor Munot,8474847,Gladiators Cricket Club,3,2,8,7,8.00,1,57.14,14,RHB,0,0,0,0
 19500407,Ojas Pugliya,8474847,Gladiators Cricket Club,3,3,8,4,4.00,1,66.67,12,RHB,0,0,0,0
 19500741,Piyush Dugad,8474842,KT Lions,3,3,8,8,2.67,0,61.54,13,-,0,0,0,0

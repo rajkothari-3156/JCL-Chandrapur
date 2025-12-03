@@ -22,21 +22,21 @@
       "id": "q3",
       "type": "mcq",
       "text": "Who had the highest total runs in 2024?",
-      "options": ["Aayush Nilesh Puglia", "Siddarth Jain", "Sidhu Puglia", "Nirav Bohra"],
+      "options": ["Aayush Nilesh Puglia", "Siddharth Jain", "Sidhu Puglia", "Nirav Bohra"],
       "answer": 0
     },
     {
       "id": "q4",
       "type": "mcq",
       "text": "Who had the highest total runs in 2023?",
-      "options": ["Nirav Bohra", "Siddarth Jain", "Shashank Sanjay Jain", "Mohit Modi"],
+      "options": ["Nirav Bohra", "Siddharth Jain", "Shashank Sanjay Jain", "Mohit Modi"],
       "answer": 0
     },
     {
       "id": "q5",
       "type": "mcq",
       "text": "Who scored a 100 in 2024 batting leaderboard?",
-      "options": ["Nirav Bohra", "Siddarth Jain", "Rushabh Puglia", "Shashank Sanjay Jain"],
+      "options": ["Nirav Bohra", "Siddharth Jain", "Rushabh Puglia", "Shashank Sanjay Jain"],
       "answer": 0
     },
     {
@@ -63,7 +63,7 @@
     {
       "id": "q9",
       "type": "mcq",
-      "text": "How many sixes did Siddarth Jain hit in 2023?",
+      "text": "How many sixes did Siddharth Jain hit in 2023?",
       "options": ["10", "15", "20", "25"],
       "answer": 3
     },
@@ -71,7 +71,7 @@
       "id": "q10",
       "type": "mcq",
       "text": "Who had a strike rate of 250.00 in 2024?",
-      "options": ["Nirav Bohra", "Siddarth Jain", "Rushabh Puglia", "Shashank Sanjay Jain"],
+      "options": ["Nirav Bohra", "Siddharth Jain", "Rushabh Puglia", "Shashank Sanjay Jain"],
       "answer": 0
     }
   ]
