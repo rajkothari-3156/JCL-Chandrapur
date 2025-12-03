@@ -41,15 +41,6 @@ export default function SponsorsPage() {
       height: 200
     },
     { 
-      label: 'Hospitality Partner', 
-      icon: Home, 
-      color: 'emerald',
-      description: 'Official hospitality and guest services partner',
-      logoPath: '/sponsors/hospitality-partner-chandralok.png',
-      name: 'Chandralok Creations',
-      height: 160
-    },
-    { 
       label: 'T-Shirt Sponsor', 
       icon: Shirt, 
       color: 'purple',
@@ -102,6 +93,15 @@ export default function SponsorsPage() {
       logoPath: '/sponsors/product-stall-kalptree.png',
       name: 'Kalptree',
       height: 200
+    },
+    { 
+      label: 'Hospitality Partner', 
+      icon: Home, 
+      color: 'emerald',
+      description: 'Official hospitality and guest services partner',
+      logoPath: '/sponsors/hospitality-partner-chandralok.png',
+      name: 'Chandralok Creations',
+      height: 160
     },
     { 
       label: 'Media Partner', 
