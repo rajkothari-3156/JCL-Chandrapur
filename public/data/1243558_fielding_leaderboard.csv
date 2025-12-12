@@ -4,7 +4,7 @@ player_id,name,team_id,team_name,total_match,catches,caught_behind,run_outs,assi
 19501201,Jay Baid,8474846,Toxic 11,3,1,0,2,0,0,0,1,3
 22431815,Raj Kothari,8474844,Chandralok Warriors,3,1,0,2,0,0,0,1,3
 18368798,Aditya Jogad,8474844,Chandralok Warriors,3,0,0,2,0,1,0,0,3
-19506123,Ansh Tushar Doshi,8474848,SR Rangers,4,2,0,1,0,0,0,2,3
+19506123,Ansh Doshi,8474848,SR Rangers,4,2,0,1,0,0,0,2,3
 19500636,Aniket Lunawat,8474848,SR Rangers,4,2,0,1,1,0,0,2,3
 1649800,Akash Surana,8474845,Power Hitters,5,2,0,1,0,0,0,2,3
 19501074,Mohit Modi,8474845,Power Hitters,5,2,0,1,0,0,0,2,3
@@ -12,7 +12,7 @@ player_id,name,team_id,team_name,total_match,catches,caught_behind,run_outs,assi
 19514122,Nilesh Banwat,8474846,Toxic 11,3,0,1,1,0,0,0,1,2
 19524579,Chetan Zambad,8474846,Toxic 11,3,2,0,0,0,0,0,2,2
 19537792,Siddhant Puglia,8474847,Gladiators Cricket Club,3,1,0,1,0,0,0,1,2
-4136380,Sandip Jain,8474847,Gladiators Cricket Club,3,1,1,0,0,0,0,2,2
+4136380,Sandip Shantilalji Jain,8474847,Gladiators Cricket Club,3,1,1,0,0,0,0,2,2
 19501490,Sumit P Lunawat,8474848,SR Rangers,3,1,0,1,0,0,0,1,2
 19519973,Sushil Puglia,8474845,Power Hitters,5,0,1,0,1,1,0,1,2
 19537796,Ankush Puglia,8474843,Falcon Giants,5,1,0,1,0,0,0,1,2
@@ -39,7 +39,7 @@ player_id,name,team_id,team_name,total_match,catches,caught_behind,run_outs,assi
 19519863,Saurabh Jain,8474849,Parshav Panthers,4,0,0,1,0,0,0,0,1
 19507137,Shashank Jain,8474849,Parshav Panthers,4,0,0,1,0,0,0,0,1
 24510656,Sanskar Jain,8474849,Parshav Panthers,4,0,0,1,1,0,0,0,1
-19519957,Shanti Dugad,8474845,Power Hitters,5,1,0,0,0,0,0,1,1
+19519957,Shantikumar Shubhash Ji Dugad,8474845,Power Hitters,5,1,0,0,0,0,0,1,1
 19502632,Harsh Baid,8474843,Falcon Giants,5,1,0,0,0,0,0,1,1
 19505004,Siddarth Chopda,8474843,Falcon Giants,5,0,0,1,1,0,0,0,1
 35016227,Khush Siddarth Chopda,8474843,Falcon Giants,5,0,0,1,1,0,0,0,1
@@ -65,8 +65,8 @@ player_id,name,team_id,team_name,total_match,catches,caught_behind,run_outs,assi
 1740460,Pankaj Mutha,8474842,KT Lions,3,0,0,0,0,0,0,0,0
 25756680,Nirmal Bhandari,8474844,Chandralok Warriors,3,0,0,0,0,0,0,0,0
 23693726,Mahavir Khajanchi,8474844,Chandralok Warriors,3,0,0,0,1,0,0,0,0
-9877497,Dr Yashkumar Jain,8474846,Toxic 11,3,0,0,0,0,0,0,0,0
-19500741,Piyush Dugad,8474842,KT Lions,3,0,0,0,0,0,0,0,0
+9877497,Dr Dr. Yash jain,8474846,Toxic 11,3,0,0,0,0,0,0,0,0
+19500741,Piyush Dilipkumarji Dugad,8474842,KT Lions,3,0,0,0,0,0,0,0,0
 19503043,Hiten Khatod,8474842,KT Lions,3,0,0,0,0,0,0,0,0
 19503230,Chetan Nandkishor Munot,8474847,Gladiators Cricket Club,3,0,0,0,0,0,0,0,0
 19519967,Mayur yogeshkumar Bhandari,8474844,Chandralok Warriors,3,0,0,0,0,0,0,0,0
