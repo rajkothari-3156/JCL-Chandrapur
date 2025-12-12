@@ -1,12 +1,14 @@
 import { NextResponse } from 'next/server'
+import { GET as getRegistrations } from '../route'
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/registrations`, { cache: 'no-store' })
-    const json = await res.json()
+    // Call the main registrations API directly
+    const response = await getRegistrations(req)
+    const json = await response.json()
     
-    if (!res.ok) {
-      return NextResponse.json({ error: json?.error || 'Failed to load registrations' }, { status: res.status })
+    if (!response.ok) {
+      return NextResponse.json({ error: json?.error || 'Failed to load registrations' }, { status: response.status })
     }
     
     const data = json.data || []
@@ -16,7 +18,7 @@ export async function GET() {
       serialNumber: index + 1
     }))
     
-    return NextResponse.json({ data: withSerialNumbers, count: withSerialNumbers.length })
+    return NextResponse.json({ data: withSerialNumbers, count: withSerialNumbers.length, cached: json.cached, appended: json.appended })
   } catch (err: any) {
     return NextResponse.json(
       { error: 'Failed to fetch sorted registrations', details: err?.message ?? String(err) },
