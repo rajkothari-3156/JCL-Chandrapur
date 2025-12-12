@@ -19,9 +19,10 @@ async function readState() {
     const owners: Record<string, { name: string; playing: boolean }> = base.owners || {}
     const retentions: Record<string, Array<{ fullName: string; time: string }>> = base.retentions || {}
     const unsold: Array<{ fullName: string; time: string; rounds?: number; unassigned?: boolean }> = base.unsold || []
-    return { teams, sold, owners, retentions, unsold }
+    const currentPick: { fullName: string; time: string } | null = base.currentPick || null
+    return { teams, sold, owners, retentions, unsold, currentPick }
   } catch {
-    return { teams: {}, sold: {} as Record<string, { team: string; points: number; time: string }>, owners: {}, retentions: {}, unsold: [] as Array<{ fullName: string; time: string; rounds?: number; unassigned?: boolean }> } 
+    return { teams: {}, sold: {} as Record<string, { team: string; points: number; time: string }>, owners: {}, retentions: {}, unsold: [] as Array<{ fullName: string; time: string; rounds?: number; unassigned?: boolean }>, currentPick: null } 
   }
 }
 
@@ -73,6 +74,8 @@ export async function POST(req: Request) {
       state.sold[key] = { team, points, time }
       // ensure unsold list removes this player if present
       state.unsold = (state.unsold || []).filter(u => normName(u.fullName) !== key)
+      // clear current pick after sale
+      state.currentPick = null
       await writeState(state)
       return NextResponse.json({ ok: true, state })
     }
@@ -196,6 +199,8 @@ export async function POST(req: Request) {
         const rounds = Math.max(1, Number(existing.rounds || 1)) + 1
         state.unsold[idx] = { ...existing, rounds, time: new Date().toISOString() }
       }
+      // clear current pick after marking unsold
+      state.currentPick = null
       await writeState(state)
       return NextResponse.json({ ok: true, state })
     }
@@ -218,8 +223,22 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true, state })
     }
 
+    if (action === 'setCurrentPick') {
+      const fullName = String(body.fullName || '').trim()
+      if (!fullName) return NextResponse.json({ error: 'fullName required' }, { status: 400 })
+      state.currentPick = { fullName, time: new Date().toISOString() }
+      await writeState(state)
+      return NextResponse.json({ ok: true, state })
+    }
+
+    if (action === 'clearCurrentPick') {
+      state.currentPick = null
+      await writeState(state)
+      return NextResponse.json({ ok: true, state })
+    }
+
     if (action === 'reset') {
-      const empty = { teams: {}, sold: {} as Record<string, { team: string; points: number; time: string }>, owners: {}, retentions: {}, unsold: [] as Array<{ fullName: string; time: string }>} 
+      const empty = { teams: {}, sold: {} as Record<string, { team: string; points: number; time: string }>, owners: {}, retentions: {}, unsold: [] as Array<{ fullName: string; time: string }>, currentPick: null } 
       await writeState(empty)
       return NextResponse.json({ ok: true, state: empty })
     }

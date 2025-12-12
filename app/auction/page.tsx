@@ -16,6 +16,7 @@ type Registration = {
   auctionAgeCategory?: string | null
   auctionPoints?: number | null
   auctionTeam?: string | null
+  serialNumber?: number
 }
 
 type AuctionState = {
@@ -117,7 +118,7 @@ export default function AuctionPage() {
     setError(null)
     try {
       const [rRes, sRes] = await Promise.all([
-        fetch('/api/registrations', { cache: 'no-store' }),
+        fetch('/api/registrations/sorted', { cache: 'no-store' }),
         fetch('/api/auction/state', { cache: 'no-store' }),
       ])
       const rJson = await rRes.json()
@@ -228,7 +229,7 @@ export default function AuctionPage() {
     .filter(u => !u.unassigned)
     .map(u => u.fullName), [state])
 
-  const startRandomPick = () => {
+  const startRandomPick = async () => {
     if (pickedAnimating) { setActionMsg('Random pick already in progress'); return }
     if (picked) { setActionMsg('Finish action on current player (sell or mark unsold) before picking next'); return }
     let pool = useUnsoldPool ? regs.filter(r => unsoldQueue.includes(r.fullName)) : unsold
@@ -252,12 +253,23 @@ export default function AuctionPage() {
     const duration = 2500
     const tick = 80
     const start = Date.now()
+    let finalPick: Registration | null = null
     const timer = setInterval(() => {
       const idx = Math.floor(Math.random() * pool.length)
-      setPicked(pool[idx])
+      const player = pool[idx]
+      setPicked(player)
+      finalPick = player
       if (Date.now() - start > duration) {
         clearInterval(timer)
         setPickedAnimating(false)
+        // Send the final pick to the API so OBS page can display it
+        if (finalPick) {
+          fetch('/api/auction/state', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'setCurrentPick', fullName: finalPick.fullName })
+          }).catch(err => console.error('Failed to set current pick:', err))
+        }
       }
     }, tick)
   }
@@ -604,6 +616,7 @@ export default function AuctionPage() {
                   </div>
                   <div className="space-y-1">
                     <div className="text-white text-xl font-bold">{picked ? picked.fullName : '—'}</div>
+                    <div className="text-green-200 text-sm">Serial #: {picked?.serialNumber ?? '—'}</div>
                     <div className="text-green-200 text-sm">Age: {picked?.age ?? ''} {(() => {
                       const age = picked?.age
                       const n = typeof age === 'number' ? age : parseInt(String(age ?? ''), 10)
@@ -794,6 +807,67 @@ export default function AuctionPage() {
               <div className="mt-3 flex items-center gap-3">
                 <div className="text-green-200 text-sm">Unsold Queue: {unsoldQueue.length}</div>
                 <button onClick={clearUnsold} className="px-3 py-1.5 rounded-md border border-green-800 text-green-100 text-sm">Clear Unsold</button>
+                <button onClick={() => {
+                  const printWindow = window.open('', '_blank')
+                  if (!printWindow) { notify('Please allow popups to download PDF', 'error'); return }
+                  
+                  const regIndex = new Map(regs.map(r => [norm(r.fullName), r]))
+                  let html = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                      <title>JCL 2025 Teams & Players</title>
+                      <style>
+                        body { font-family: Arial, sans-serif; padding: 20px; }
+                        h1 { text-align: center; color: #2d5016; margin-bottom: 30px; }
+                        .team { page-break-inside: avoid; margin-bottom: 30px; }
+                        .team-header { background: #4a7c2f; color: white; padding: 10px; font-size: 18px; font-weight: bold; margin-bottom: 10px; }
+                        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+                        th { background: #6b9d47; color: white; padding: 8px; text-align: left; border: 1px solid #ddd; }
+                        td { padding: 8px; border: 1px solid #ddd; }
+                        tr:nth-child(even) { background: #f9f9f9; }
+                        .retained { background: #e8f5e9 !important; }
+                        .owner-info { font-size: 14px; color: #555; margin-bottom: 10px; padding: 5px 10px; background: #f0f0f0; }
+                        @media print {
+                          .team { page-break-inside: avoid; }
+                        }
+                      </style>
+                    </head>
+                    <body>
+                      <h1>JCL 2025 - Teams & Players</h1>
+                  `
+                  
+                  Object.entries(state?.teams || {}).forEach(([teamName, teamData]) => {
+                    const owner = state?.owners?.[teamName]
+                    const retentions = state?.retentions?.[teamName] || []
+                    const players = teamData.players || []
+                    
+                    html += `<div class="team">`
+                    html += `<div class="team-header">${teamName}</div>`
+                    if (owner?.name) {
+                      html += `<div class="owner-info">Owner: ${owner.name} ${owner.playing ? '(Playing)' : '(Non-playing)'}</div>`
+                    }
+                    html += `<table><thead><tr><th>Player Name</th><th>Contact</th><th>T-Shirt Size</th><th>Type</th></tr></thead><tbody>`
+                    
+                    retentions.forEach(r => {
+                      const reg = regIndex.get(norm(r.fullName))
+                      html += `<tr class="retained"><td>${r.fullName}</td><td>${reg?.contact || '—'}</td><td>${reg?.tshirtSize || '—'}</td><td>Retained</td></tr>`
+                    })
+                    
+                    players.forEach(p => {
+                      const reg = regIndex.get(norm(p.fullName))
+                      html += `<tr><td>${p.fullName}</td><td>${reg?.contact || '—'}</td><td>${reg?.tshirtSize || '—'}</td><td>Auctioned (${p.points} pts)</td></tr>`
+                    })
+                    
+                    html += `</tbody></table></div>`
+                  })
+                  
+                  html += `</body></html>`
+                  printWindow.document.write(html)
+                  printWindow.document.close()
+                  printWindow.focus()
+                  setTimeout(() => printWindow.print(), 250)
+                }} className="px-3 py-1.5 rounded-md bg-blue-600 text-white text-sm font-semibold">Download Teams PDF</button>
               </div>
 
               <div className="mt-6 grid md:grid-cols-2 gap-4">

@@ -9,6 +9,7 @@ type AuctionState = {
   owners?: Record<string, { name: string; playing: boolean }>
   retentions?: Record<string, Array<{ fullName: string; time: string }>>
   unsold?: Array<{ fullName: string; time: string; rounds?: number; unassigned?: boolean }>
+  currentPick?: { fullName: string; time: string } | null
 }
 
 type Registration = {
@@ -30,7 +31,6 @@ export default function AuctionOBSPage() {
   const [regs, setRegs] = useState<Registration[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [currentPlayer, setCurrentPlayer] = useState<string>('')
   const [previousPlayer, setPreviousPlayer] = useState<{ name: string; team: string; points: number } | null>(null)
 
   const norm = (s: string) => String(s || '').toLowerCase().replace(/\s+/g, ' ').trim()
@@ -78,6 +78,7 @@ export default function AuctionOBSPage() {
     return reg
   }
 
+  const currentPlayer = state?.currentPick?.fullName || ''
   const currentPlayerInfo = currentPlayer ? getPlayerInfo(currentPlayer) : null
 
   return (
@@ -133,19 +134,7 @@ export default function AuctionOBSPage() {
                   </>
                 ) : (
                   <div className="text-white text-4xl">
-                    <input
-                      type="text"
-                      value={currentPlayer}
-                      onChange={(e) => setCurrentPlayer(e.target.value)}
-                      placeholder="Enter player name..."
-                      className="w-full bg-white/20 border-2 border-yellow-400 rounded-lg px-6 py-4 text-center text-white placeholder-white/60 focus:outline-none focus:ring-4 focus:ring-yellow-300"
-                      list="playerList"
-                    />
-                    <datalist id="playerList">
-                      {regs.map(r => (
-                        <option key={r.fullName} value={r.fullName} />
-                      ))}
-                    </datalist>
+                    Waiting for random pick...
                   </div>
                 )}
               </div>
@@ -234,7 +223,18 @@ export default function AuctionOBSPage() {
                     Refresh Now
                   </button>
                   <button
-                    onClick={() => setCurrentPlayer('')}
+                    onClick={async () => {
+                      try {
+                        await fetch('/api/auction/state', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ action: 'clearCurrentPick' })
+                        })
+                        await load()
+                      } catch (err) {
+                        console.error('Failed to clear current pick:', err)
+                      }
+                    }}
                     className="px-4 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 transition"
                   >
                     Clear Current
