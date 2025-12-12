@@ -23,6 +23,15 @@ interface SponsorCategory {
 export default function SponsorsPage() {
   const sponsorCategories: SponsorCategory[] = [
     { 
+      label: 'Title Sponsor', 
+      icon: Trophy, 
+      color: 'yellow',
+      description: 'Proud title sponsor of JCL Chandrapur 2025',
+      logoPath: '/sponsors/title-sponsor-hands-of-mahaveer.png',
+      name: 'Hands of Mahaveer',
+      height: 220
+    },
+    { 
       label: 'Food Partner', 
       icon: UtensilsCrossed, 
       color: 'orange',
@@ -120,14 +129,11 @@ export default function SponsorsPage() {
       partners: [
         { name: 'Active Tribe', logoPath: '/sponsors/event-partner-active-tribe.png' },
         { name: 'Alankar Imitation Jewellery', logoPath: '/sponsors/event-partner-alankar-new.jpg' },
-        { name: 'Kanak Jewels', logoPath: '/sponsors/event-partner-kanak-jewels.png' },
         { name: 'Sumit Jewellers', logoPath: '/sponsors/event-partner-sumit-jewellers.png' },
         { name: 'Chanda Plastics', logoPath: '/sponsors/event-partner-chanda-plastics.jpeg' },
         { name: 'Maruti Group Cotton Gining', logoPath: '/sponsors/event-partner-maruti.jpeg' },
         { name: 'Giriraj Marketing', logoPath: '/sponsors/event-partner-giriraj.png' },
-        { name: 'Ramdev Readymade', logoPath: '/sponsors/event-partner-ramdev.jpeg' },
         { name: 'Absolute Healthcare', logoPath: '/sponsors/event-partner-absolute.jpeg' },
-        { name: 'Dhansiddh Earthmovers', logoPath: '/sponsors/event-partner-dhansiddh.jpeg' },
       ],
       height: 100
     },
