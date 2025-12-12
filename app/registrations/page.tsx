@@ -154,54 +154,110 @@ export default function RegistrationsPage() {
       .includes(search.toLowerCase())
   )
 
-  const downloadPDF = async () => {
+  const downloadCSV = async () => {
     try {
-      // Dynamic import for client-side only
-      const jsPDF = (await import('jspdf')).default
-      await import('jspdf-autotable')
+      // Ensure stats data is loaded
+      await ensureAuxData()
       
-      const doc = new jsPDF()
-      
-      doc.setFontSize(18)
-      doc.text('JCL Player Registrations', 14, 20)
-      doc.setFontSize(11)
-      doc.text(`Total Players: ${sortedData.length}`, 14, 28)
-      doc.text(`Generated: ${new Date().toLocaleDateString()}`, 14, 34)
-      
-      const tableData = sortedData.map(r => [
-        String(r.serialNumber || ''),
-        String(r.fullName || ''),
-        String(r.age ?? ''),
-        String(r.contact ?? ''),
-        String(r.playingStyle ?? ''),
-        String(r.tshirtSize ?? ''),
-        String(r.auctionTeam ?? '')
-      ])
-      
-      ;(doc as any).autoTable({
-        startY: 40,
-        head: [['#', 'Name', 'Age', 'Contact', 'Playing Style', 'T-shirt Size', 'Auction Team']],
-        body: tableData,
-        styles: { fontSize: 7, cellPadding: 1.5 },
-        headStyles: { fillColor: [34, 139, 34], textColor: 255, fontSize: 8 },
-        alternateRowStyles: { fillColor: [245, 245, 245] },
-        margin: { top: 40, left: 10, right: 10 },
-        columnStyles: {
-          0: { cellWidth: 10 },
-          1: { cellWidth: 45 },
-          2: { cellWidth: 15 },
-          3: { cellWidth: 30 },
-          4: { cellWidth: 35 },
-          5: { cellWidth: 20 },
-          6: { cellWidth: 35 }
+      const csvData = sortedData.map(r => {
+        const normSel = normalizeName(r.fullName)
+        
+        // Get mapped names for this player
+        const map = mapping || {}
+        const m2423 = map.jcl_2024_to_2023 || {}
+        const m2324 = map.jcl_2023_to_2024 || {}
+        const regTo24 = map.reg_to_2024 || {}
+        const regTo23 = map.reg_to_2023 || {}
+        
+        const keys2024 = Object.keys(m2423 || {})
+        const key2024 = keys2024.find(k => normalizeName(k) === normSel)
+        const mapped23Candidates: string[] = key2024 ? (m2423[key2024] || []) : []
+        
+        const keys2023 = Object.keys(m2324 || {})
+        const key2023 = keys2023.find(k => normalizeName(k) === normSel)
+        const mapped24Candidates: string[] = key2023 ? (m2324[key2023] || []) : []
+        
+        const reg24Keys = Object.keys(regTo24)
+        const regKey24 = reg24Keys.find(k => normalizeName(k) === normSel)
+        const regMapped24: string[] = regKey24 ? (regTo24[regKey24] || []) : []
+        
+        const reg23Keys = Object.keys(regTo23)
+        const regKey23 = reg23Keys.find(k => normalizeName(k) === normSel)
+        const regMapped23: string[] = regKey23 ? (regTo23[regKey23] || []) : []
+        
+        const names24 = [r.fullName, ...mapped24Candidates, ...regMapped24].map(normalizeName)
+        const names23 = [r.fullName, ...mapped23Candidates, ...regMapped23].map(normalizeName)
+        
+        // Get stats for 2024 and 2023
+        const batting2024 = (stats2024.batting || []).find((s: any) => names24.includes(normalizeName(s.name || s.Name || '')))
+        const bowling2024 = (stats2024.bowling || []).find((s: any) => names24.includes(normalizeName(s.name || s.Name || '')))
+        const fielding2024 = (stats2024.fielding || []).find((s: any) => names24.includes(normalizeName(s.name || s.Name || '')))
+        
+        const batting2023 = (stats2023.batting || []).find((s: any) => names23.includes(normalizeName(s.name || s.Name || '')))
+        const bowling2023 = (stats2023.bowling || []).find((s: any) => names23.includes(normalizeName(s.name || s.Name || '')))
+        const fielding2023 = (stats2023.fielding || []).find((s: any) => names23.includes(normalizeName(s.name || s.Name || '')))
+        
+        return {
+          'Serial #': r.serialNumber || '',
+          'Name': r.fullName || '',
+          'Age': r.age ?? '',
+          'Contact': r.contact ?? '',
+          'Playing Style': r.playingStyle ?? '',
+          'T-shirt Size': r.tshirtSize ?? '',
+          'Auction Team': r.auctionTeam ?? '',
+          'Auction Points': r.auctionPoints ?? '',
+          // 2024 Batting Stats
+          '2024 Innings': batting2024?.innings || batting2024?.Innings || '',
+          '2024 Runs': batting2024?.total_runs || batting2024?.['Total Runs'] || '',
+          '2024 Avg': batting2024?.average || batting2024?.Average || '',
+          '2024 SR': batting2024?.strike_rate || batting2024?.['Strike Rate'] || '',
+          '2024 Highest': batting2024?.highest_run || batting2024?.['Highest Run'] || '',
+          // 2024 Bowling Stats
+          '2024 Wickets': bowling2024?.total_wickets || bowling2024?.['Total Wickets'] || '',
+          '2024 Overs': bowling2024?.overs || bowling2024?.Overs || '',
+          '2024 Economy': bowling2024?.economy || bowling2024?.Economy || '',
+          '2024 Best Bowling': bowling2024?.highest_wicket || bowling2024?.['Best Bowling'] || '',
+          // 2024 Fielding Stats
+          '2024 Catches': fielding2024?.catches || fielding2024?.Catches || '',
+          '2024 Stumpings': fielding2024?.stumpings || fielding2024?.Stumpings || '',
+          '2024 Run Outs': fielding2024?.run_outs || fielding2024?.['Run Outs'] || '',
+          // 2023 Batting Stats
+          '2023 Innings': batting2023?.innings || batting2023?.Innings || '',
+          '2023 Runs': batting2023?.total_runs || batting2023?.['Total Runs'] || '',
+          '2023 Avg': batting2023?.average || batting2023?.Average || '',
+          '2023 SR': batting2023?.strike_rate || batting2023?.['Strike Rate'] || '',
+          '2023 Highest': batting2023?.highest_run || batting2023?.['Highest Run'] || '',
+          // 2023 Bowling Stats
+          '2023 Wickets': bowling2023?.total_wickets || bowling2023?.['Total Wickets'] || '',
+          '2023 Overs': bowling2023?.overs || bowling2023?.Overs || '',
+          '2023 Economy': bowling2023?.economy || bowling2023?.Economy || '',
+          '2023 Best Bowling': bowling2023?.highest_wicket || bowling2023?.['Best Bowling'] || '',
+          // 2023 Fielding Stats
+          '2023 Catches': fielding2023?.catches || fielding2023?.Catches || '',
+          '2023 Stumpings': fielding2023?.stumpings || fielding2023?.Stumpings || '',
+          '2023 Run Outs': fielding2023?.run_outs || fielding2023?.['Run Outs'] || ''
         }
       })
       
-      doc.save(`jcl-registrations-${new Date().toISOString().split('T')[0]}.pdf`)
-    } catch (error) {
-      console.error('PDF generation error:', error)
-      alert('Failed to generate PDF. Please check the console for details.')
+      const csv = Papa.unparse(csvData)
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+      const link = document.createElement('a')
+      const url = URL.createObjectURL(blob)
+      link.setAttribute('href', url)
+      link.setAttribute('download', `jcl-registrations-with-stats-${new Date().toISOString().split('T')[0]}.csv`)
+      link.style.visibility = 'hidden'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+    } catch (error: any) {
+      console.error('CSV generation error:', error)
+      alert(`Failed to generate CSV: ${error?.message || 'Unknown error'}`)
     }
+  }
+
+  const downloadPDF = () => {
+    // Use browser's print functionality to save as PDF
+    window.print()
   }
 
   const normalizeName = (name: string) => name.toLowerCase().replace(/\s+/g, ' ').trim()
@@ -339,11 +395,18 @@ export default function RegistrationsPage() {
             {loading ? 'Refreshing...' : 'Refresh'}
           </button>
           <button
-            onClick={downloadPDF}
+            onClick={downloadCSV}
             disabled={loading || data.length === 0}
             className="px-3 py-2 rounded-md bg-green-600 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Download PDF
+            Download CSV
+          </button>
+          <button
+            onClick={downloadPDF}
+            disabled={loading || data.length === 0}
+            className="px-3 py-2 rounded-md bg-blue-600 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Print/PDF
           </button>
           <span className="text-orange-100 text-sm">{filtered.length} of {data.length}</span>
           {cached !== null && (
