@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from 'react'
 import Papa from 'papaparse'
+import jsPDF from 'jspdf'
+import 'jspdf-autotable'
 
 type AuctionState = {
   teams: Record<string, { budget: number; players: Array<{ fullName: string; points: number; time: string }> }>
@@ -185,6 +187,74 @@ export default function AuctionTeamsPage() {
     document.body.removeChild(link)
   }
 
+  const downloadPlayerTeamPDF = () => {
+    if (!state || !regs) return
+    
+    const doc = new jsPDF()
+    const norm = (s: string) => String(s || '').toLowerCase().replace(/\s+/g, ' ').trim()
+    const regIndex = new Map(regs.map(r => [norm(r.fullName), r]))
+    
+    doc.setFontSize(16)
+    doc.text('JCL Auction - Final Player & Team List', 14, 20)
+    doc.setFontSize(10)
+    doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 28)
+    
+    const tableData: any[] = []
+    
+    Object.entries(state.teams || {}).forEach(([teamName, teamData]) => {
+      // Add retained players
+      const retentions = state.retentions?.[teamName] || []
+      retentions.forEach((retention: { fullName: string; time: string }) => {
+        const reg = regIndex.get(norm(retention.fullName))
+        const age = typeof reg?.age === 'number' ? reg.age : parseInt(String(reg?.age ?? ''), 10)
+        const baseFee = Number.isFinite(age) && age >= 35 ? 1000 : 2500
+        
+        tableData.push([
+          teamName,
+          retention.fullName,
+          'Base',
+          baseFee,
+          reg?.contact ?? '',
+          reg?.tshirtSize ?? ''
+        ])
+      })
+      
+      // Add auctioned players
+      const players = teamData.players || []
+      players.forEach((player: { fullName: string; points: number; time: string }) => {
+        const reg = regIndex.get(norm(player.fullName))
+        
+        tableData.push([
+          teamName,
+          player.fullName,
+          'Auctioned',
+          player.points,
+          reg?.contact ?? '',
+          reg?.tshirtSize ?? ''
+        ])
+      })
+    })
+    
+    ;(doc as any).autoTable({
+      startY: 35,
+      head: [['Team', 'Player Name', 'Type', 'Points', 'Phone', 'T-shirt Size']],
+      body: tableData,
+      styles: { fontSize: 8, cellPadding: 2 },
+      headStyles: { fillColor: [34, 139, 34], textColor: 255 },
+      alternateRowStyles: { fillColor: [245, 245, 245] },
+      columnStyles: {
+        0: { cellWidth: 35 },
+        1: { cellWidth: 45 },
+        2: { cellWidth: 25 },
+        3: { cellWidth: 20 },
+        4: { cellWidth: 30 },
+        5: { cellWidth: 25 }
+      }
+    })
+    
+    doc.save(`jcl-player-team-list-${new Date().toISOString().split('T')[0]}.pdf`)
+  }
+
   return (
     <main className="min-h-screen p-4 md:p-8">
       <div className="max-w-6xl mx-auto space-y-6">
@@ -192,7 +262,8 @@ export default function AuctionTeamsPage() {
           <h1 className="text-3xl md:text-4xl font-bold text-white drop-shadow-lg">Auction Teams</h1>
           <div className="flex items-center gap-3 print:hidden">
             <button onClick={exportCSV} className="px-3 py-1.5 rounded-md bg-cricket-gold text-black text-sm font-semibold">Export CSV</button>
-            <button onClick={handlePrint} className="px-3 py-1.5 rounded-md border border-green-700 text-green-100 text-sm">Export PDF</button>
+            <button onClick={downloadPlayerTeamPDF} className="px-3 py-1.5 rounded-md bg-green-600 text-white text-sm font-semibold">Download Player List PDF</button>
+            <button onClick={handlePrint} className="px-3 py-1.5 rounded-md border border-green-700 text-green-100 text-sm">Print View</button>
             <a className="text-cricket-gold hover:underline" href="/auction">Back to Auction</a>
           </div>
         </div>

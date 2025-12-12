@@ -12,6 +12,8 @@
     "@upstash/redis": "^1.35.6",
     "googleapis": "^130.0.0",
     "ioredis": "^5.8.2",
+    "jspdf": "^3.0.4",
+    "jspdf-autotable": "^5.0.2",
     "lucide-react": "^0.263.1",
     "next": "^14.2.5",
     "papaparse": "^5.4.1",

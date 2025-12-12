@@ -4,6 +4,8 @@ import React, { useEffect, useMemo, useState } from 'react'
 import Papa from 'papaparse'
 import Navbar from '@/components/layout/Navbar'
 import SponsorsBar from '@/components/layout/SponsorsBar'
+import jsPDF from 'jspdf'
+import 'jspdf-autotable'
 
 type Registration = {
   timestamp: string | null
@@ -17,6 +19,7 @@ type Registration = {
   auctionAgeCategory?: string | null
   auctionPoints?: number | null
   auctionTeam?: string | null
+  serialNumber?: number
 }
 
 export default function RegistrationsPage() {
@@ -126,13 +129,53 @@ export default function RegistrationsPage() {
     })()
   }
 
-  const filtered = data.filter((r: Registration) =>
+  // Create alphabetically sorted list with serial numbers
+  const sortedData = useMemo(() => {
+    const sorted = [...data].sort((a, b) => a.fullName.localeCompare(b.fullName))
+    return sorted.map((player, index) => ({
+      ...player,
+      serialNumber: index + 1
+    }))
+  }, [data])
+
+  const filtered = sortedData.filter((r: Registration) =>
     [r.fullName, r.playingStyle, r.tshirtSize]
       .filter(Boolean)
       .join(' ')
       .toLowerCase()
       .includes(search.toLowerCase())
   )
+
+  const downloadPDF = () => {
+    const doc = new jsPDF()
+    
+    doc.setFontSize(18)
+    doc.text('JCL Player Registrations', 14, 20)
+    doc.setFontSize(11)
+    doc.text(`Total Players: ${sortedData.length}`, 14, 28)
+    doc.text(`Generated: ${new Date().toLocaleDateString()}`, 14, 34)
+    
+    const tableData = sortedData.map(r => [
+      r.serialNumber || '',
+      r.fullName,
+      r.age ?? '',
+      r.contact ?? '',
+      r.playingStyle ?? '',
+      r.tshirtSize ?? ''
+    ])
+    
+    ;(doc as any).autoTable({
+      startY: 40,
+      head: [['#', 'Name', 'Age', 'Contact', 'Playing Style', 'T-shirt Size']],
+      body: tableData,
+      styles: { fontSize: 8, cellPadding: 2 },
+      headStyles: { fillColor: [34, 139, 34], textColor: 255 },
+      alternateRowStyles: { fillColor: [245, 245, 245] },
+      margin: { top: 40 }
+    })
+    
+    doc.save(`jcl-registrations-${new Date().toISOString().split('T')[0]}.pdf`)
+  }
 
   const normalizeName = (name: string) => name.toLowerCase().replace(/\s+/g, ' ').trim()
 
@@ -254,7 +297,7 @@ export default function RegistrationsPage() {
           </div>
         </div>
 
-        <div className="mb-4 flex items-center gap-3">
+        <div className="mb-4 flex items-center gap-3 flex-wrap">
           <input
             value={search}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
@@ -267,6 +310,13 @@ export default function RegistrationsPage() {
             className="px-3 py-2 rounded-md bg-cricket-gold text-black font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Refreshing...' : 'Refresh'}
+          </button>
+          <button
+            onClick={downloadPDF}
+            disabled={loading || data.length === 0}
+            className="px-3 py-2 rounded-md bg-green-600 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Download PDF
           </button>
           <span className="text-orange-100 text-sm">{filtered.length} of {data.length}</span>
           {cached !== null && (
@@ -289,6 +339,7 @@ export default function RegistrationsPage() {
             <table className="min-w-full text-sm">
               <thead>
                 <tr className="bg-cricket-lightgreen text-white">
+                  <th className="px-3 py-2 text-left">#</th>
                   <th className="px-3 py-2 text-left">Name</th>
                   <th className="px-3 py-2 text-left">Auction Team</th>
                   <th className="px-3 py-2 text-left">Auction Points</th>
@@ -303,6 +354,7 @@ export default function RegistrationsPage() {
               <tbody>
                 {filtered.map((r, i) => (
                   <tr key={i} className={i % 2 ? 'bg-orange-900/30' : 'bg-orange-900/10'}>
+                    <td className="px-3 py-2 text-orange-100">{r.serialNumber}</td>
                     <td className="px-3 py-2 text-orange-100 font-medium">
                       <button
                         className="hover:underline text-cricket-gold"
