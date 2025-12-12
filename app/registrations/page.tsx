@@ -156,14 +156,22 @@ export default function RegistrationsPage() {
 
   const downloadCSV = async () => {
     try {
-      // Ensure stats data is loaded
-      await ensureAuxData()
+      // Load stats data directly and get the actual data
+      const loadedStats = await loadStatsForCSV()
+      
+      console.log('[CSV Export] Stats loaded:', {
+        batting2024Count: loadedStats.stats2024.batting?.length || 0,
+        bowling2024Count: loadedStats.stats2024.bowling?.length || 0,
+        batting2023Count: loadedStats.stats2023.batting?.length || 0,
+        bowling2023Count: loadedStats.stats2023.bowling?.length || 0,
+        hasMappings: !!loadedStats.mapping
+      })
       
       const csvData = sortedData.map(r => {
         const normSel = normalizeName(r.fullName)
         
         // Get mapped names for this player
-        const map = mapping || {}
+        const map = loadedStats.mapping || {}
         const m2423 = map.jcl_2024_to_2023 || {}
         const m2324 = map.jcl_2023_to_2024 || {}
         const regTo24 = map.reg_to_2024 || {}
@@ -189,13 +197,13 @@ export default function RegistrationsPage() {
         const names23 = [r.fullName, ...mapped23Candidates, ...regMapped23].map(normalizeName)
         
         // Get stats for 2024 and 2023
-        const batting2024 = (stats2024.batting || []).find((s: any) => names24.includes(normalizeName(s.name || s.Name || '')))
-        const bowling2024 = (stats2024.bowling || []).find((s: any) => names24.includes(normalizeName(s.name || s.Name || '')))
-        const fielding2024 = (stats2024.fielding || []).find((s: any) => names24.includes(normalizeName(s.name || s.Name || '')))
+        const batting2024 = (loadedStats.stats2024.batting || []).find((s: any) => names24.includes(normalizeName(s.name || s.Name || '')))
+        const bowling2024 = (loadedStats.stats2024.bowling || []).find((s: any) => names24.includes(normalizeName(s.name || s.Name || '')))
+        const fielding2024 = (loadedStats.stats2024.fielding || []).find((s: any) => names24.includes(normalizeName(s.name || s.Name || '')))
         
-        const batting2023 = (stats2023.batting || []).find((s: any) => names23.includes(normalizeName(s.name || s.Name || '')))
-        const bowling2023 = (stats2023.bowling || []).find((s: any) => names23.includes(normalizeName(s.name || s.Name || '')))
-        const fielding2023 = (stats2023.fielding || []).find((s: any) => names23.includes(normalizeName(s.name || s.Name || '')))
+        const batting2023 = (loadedStats.stats2023.batting || []).find((s: any) => names23.includes(normalizeName(s.name || s.Name || '')))
+        const bowling2023 = (loadedStats.stats2023.bowling || []).find((s: any) => names23.includes(normalizeName(s.name || s.Name || '')))
+        const fielding2023 = (loadedStats.stats2023.fielding || []).find((s: any) => names23.includes(normalizeName(s.name || s.Name || '')))
         
         return {
           'Serial #': r.serialNumber || '',
@@ -231,6 +239,70 @@ export default function RegistrationsPage() {
   }
 
   const normalizeName = (name: string) => name.toLowerCase().replace(/\s+/g, ' ').trim()
+
+  // Load stats data for CSV export - returns the actual data instead of relying on state
+  const loadStatsForCSV = async () => {
+    const loadCsv = async (path: string) => {
+      const text = await (await fetch(path, { cache: 'no-store' })).text()
+      const parsed = Papa.parse(text, { header: true, skipEmptyLines: true })
+      return (parsed.data as any[])
+    }
+
+    // Load mapping
+    let loadedMapping = mapping
+    if (!loadedMapping) {
+      try {
+        const res = await fetch('/data/name_mapping.json', { cache: 'no-store' })
+        if (res.ok) {
+          loadedMapping = await res.json()
+          setMapping(loadedMapping)
+        } else {
+          loadedMapping = {}
+        }
+      } catch {
+        loadedMapping = {}
+      }
+    }
+
+    // Load all stats categories
+    const categories = ['batting', 'bowling', 'fielding', 'mvp'] as const
+    const loaded2024: Record<string, any[]> = { ...stats2024 }
+    const loaded2023: Record<string, any[]> = { ...stats2023 }
+
+    const loaders: Array<Promise<void>> = []
+    for (const cat of categories) {
+      if (!loaded2024[cat]) {
+        loaders.push(
+          loadCsv(`/data/1243558_${cat}_leaderboard.csv`).then(rows => {
+            loaded2024[cat] = rows
+            setStats2024(prev => ({ ...prev, [cat]: rows }))
+          }).catch(() => {
+            loaded2024[cat] = []
+            setStats2024(prev => ({ ...prev, [cat]: [] }))
+          })
+        )
+      }
+      if (!loaded2023[cat]) {
+        loaders.push(
+          loadCsv(`/data/840910_${cat}_leaderboard.csv`).then(rows => {
+            loaded2023[cat] = rows
+            setStats2023(prev => ({ ...prev, [cat]: rows }))
+          }).catch(() => {
+            loaded2023[cat] = []
+            setStats2023(prev => ({ ...prev, [cat]: [] }))
+          })
+        )
+      }
+    }
+    
+    if (loaders.length) await Promise.allSettled(loaders)
+
+    return {
+      mapping: loadedMapping,
+      stats2024: loaded2024,
+      stats2023: loaded2023
+    }
+  }
 
   // Lazy-load mapping and CSVs once when a player is first opened
   const ensureAuxData = async () => {
