@@ -46,7 +46,7 @@ export default function RegistrationsPage() {
   const [panning, setPanning] = useState<boolean>(false)
   const [last, setLast] = useState<{ x: number; y: number } | null>(null)
 
-  // Google Drive helpers: extract file id and build reliable URLs
+  // Photo URL helpers: support Google Drive and direct URLs (like SurveyHeart)
   const extractDriveId = (url: string): string | null => {
     if (!url) return null
     try {
@@ -66,13 +66,23 @@ export default function RegistrationsPage() {
     }
   }
 
+  const isGoogleDrive = (url: string): boolean => {
+    return url.includes('drive.google.com')
+  }
+
   const driveThumbUrl = (url: string): string => {
+    if (!url) return ''
+    // If it's not a Google Drive URL, return as-is (e.g., SurveyHeart S3 URLs)
+    if (!isGoogleDrive(url)) return url
     const id = extractDriveId(url)
     // Use Drive's thumbnail endpoint when we have an id; fall back to original
     return id ? `https://drive.google.com/thumbnail?id=${id}&sz=w200` : url
   }
 
   const driveViewUrl = (url: string): string => {
+    if (!url) return ''
+    // If it's not a Google Drive URL, return as-is
+    if (!isGoogleDrive(url)) return url
     const id = extractDriveId(url)
     return id ? `https://drive.google.com/uc?export=view&id=${id}` : url
   }
@@ -147,34 +157,49 @@ export default function RegistrationsPage() {
   )
 
   const downloadPDF = () => {
-    const doc = new jsPDF()
-    
-    doc.setFontSize(18)
-    doc.text('JCL Player Registrations', 14, 20)
-    doc.setFontSize(11)
-    doc.text(`Total Players: ${sortedData.length}`, 14, 28)
-    doc.text(`Generated: ${new Date().toLocaleDateString()}`, 14, 34)
-    
-    const tableData = sortedData.map(r => [
-      r.serialNumber || '',
-      r.fullName,
-      r.age ?? '',
-      r.contact ?? '',
-      r.playingStyle ?? '',
-      r.tshirtSize ?? ''
-    ])
-    
-    ;(doc as any).autoTable({
-      startY: 40,
-      head: [['#', 'Name', 'Age', 'Contact', 'Playing Style', 'T-shirt Size']],
-      body: tableData,
-      styles: { fontSize: 8, cellPadding: 2 },
-      headStyles: { fillColor: [34, 139, 34], textColor: 255 },
-      alternateRowStyles: { fillColor: [245, 245, 245] },
-      margin: { top: 40 }
-    })
-    
-    doc.save(`jcl-registrations-${new Date().toISOString().split('T')[0]}.pdf`)
+    try {
+      const doc = new jsPDF()
+      
+      doc.setFontSize(18)
+      doc.text('JCL Player Registrations', 14, 20)
+      doc.setFontSize(11)
+      doc.text(`Total Players: ${sortedData.length}`, 14, 28)
+      doc.text(`Generated: ${new Date().toLocaleDateString()}`, 14, 34)
+      
+      const tableData = sortedData.map(r => [
+        String(r.serialNumber || ''),
+        String(r.fullName || ''),
+        String(r.age ?? ''),
+        String(r.contact ?? ''),
+        String(r.playingStyle ?? ''),
+        String(r.tshirtSize ?? ''),
+        String(r.auctionTeam ?? '')
+      ])
+      
+      ;(doc as any).autoTable({
+        startY: 40,
+        head: [['#', 'Name', 'Age', 'Contact', 'Playing Style', 'T-shirt Size', 'Auction Team']],
+        body: tableData,
+        styles: { fontSize: 7, cellPadding: 1.5 },
+        headStyles: { fillColor: [34, 139, 34], textColor: 255, fontSize: 8 },
+        alternateRowStyles: { fillColor: [245, 245, 245] },
+        margin: { top: 40, left: 10, right: 10 },
+        columnStyles: {
+          0: { cellWidth: 10 },
+          1: { cellWidth: 45 },
+          2: { cellWidth: 15 },
+          3: { cellWidth: 30 },
+          4: { cellWidth: 35 },
+          5: { cellWidth: 20 },
+          6: { cellWidth: 35 }
+        }
+      })
+      
+      doc.save(`jcl-registrations-${new Date().toISOString().split('T')[0]}.pdf`)
+    } catch (error) {
+      console.error('PDF generation error:', error)
+      alert('Failed to generate PDF. Please try again.')
+    }
   }
 
   const normalizeName = (name: string) => name.toLowerCase().replace(/\s+/g, ' ').trim()
@@ -398,15 +423,21 @@ export default function RegistrationsPage() {
                             src={driveThumbUrl(r.photoUrl) || ''}
                             alt={r.fullName + ' photo'}
                             className="h-12 w-12 object-cover rounded-md border border-orange-800/50 bg-orange-900/40"
+                            loading="lazy"
                             onError={(e) => {
                               const img = e.currentTarget as HTMLImageElement
                               console.log('[photo-error]', { name: r.fullName, photoUrl: r.photoUrl, src: img.src, fallback: img.dataset.fallback })
-                              // Fallback to view URL once, then hide if still failing
-                              if (img.dataset.fallback !== '1') {
+                              // For Google Drive, try the view URL; for others, just hide
+                              if (img.dataset.fallback !== '1' && isGoogleDrive(r.photoUrl || '')) {
                                 img.dataset.fallback = '1'
                                 img.src = driveViewUrl(r.photoUrl || '') || ''
                               } else {
+                                // Show placeholder icon instead of hiding
                                 img.style.display = 'none'
+                                const parent = img.parentElement
+                                if (parent) {
+                                  parent.innerHTML = '<div class="h-12 w-12 flex items-center justify-center bg-orange-900/40 rounded-md border border-orange-800/50 text-orange-400 text-xs">No Photo</div>'
+                                }
                               }
                             }}
                           />
