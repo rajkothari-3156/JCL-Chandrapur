@@ -4,8 +4,6 @@ import React, { useEffect, useMemo, useState } from 'react'
 import Papa from 'papaparse'
 import Navbar from '@/components/layout/Navbar'
 import SponsorsBar from '@/components/layout/SponsorsBar'
-import jsPDF from 'jspdf'
-import 'jspdf-autotable'
 
 type Registration = {
   timestamp: string | null
@@ -156,8 +154,12 @@ export default function RegistrationsPage() {
       .includes(search.toLowerCase())
   )
 
-  const downloadPDF = () => {
+  const downloadPDF = async () => {
     try {
+      // Dynamic import for client-side only
+      const jsPDF = (await import('jspdf')).default
+      await import('jspdf-autotable')
+      
       const doc = new jsPDF()
       
       doc.setFontSize(18)
@@ -198,7 +200,7 @@ export default function RegistrationsPage() {
       doc.save(`jcl-registrations-${new Date().toISOString().split('T')[0]}.pdf`)
     } catch (error) {
       console.error('PDF generation error:', error)
-      alert('Failed to generate PDF. Please try again.')
+      alert('Failed to generate PDF. Please check the console for details.')
     }
   }
 
