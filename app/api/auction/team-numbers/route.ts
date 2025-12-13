@@ -12,7 +12,7 @@ type TeamNumberAssignment = {
 async function getTeamNumbers(): Promise<TeamNumberAssignment> {
   const data = await kv.get(TEAM_NUMBERS_KEY)
   if (data) {
-    return JSON.parse(data as string)
+    return typeof data === 'string' ? JSON.parse(data) : data
   }
   
   return {
@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Auction state not found' }, { status: 400 })
       }
 
-      const state = JSON.parse(auctionState as string)
+      const state = typeof auctionState === 'string' ? JSON.parse(auctionState) : auctionState
       const teams = Object.keys(state.teams || {})
 
       if (teams.length !== 8) {

@@ -43,7 +43,7 @@ function shuffleArray<T>(array: T[]): T[] {
 async function getPracticeSchedule(): Promise<PracticeSchedule> {
   const data = await kv.get(PRACTICE_SCHEDULE_KEY)
   if (data) {
-    return JSON.parse(data as string)
+    return typeof data === 'string' ? JSON.parse(data) : data
   }
   
   return {
@@ -153,7 +153,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Team numbers not assigned yet' }, { status: 400 })
       }
 
-      const teamNumbers = JSON.parse(teamNumbersData as string)
+      const teamNumbers = typeof teamNumbersData === 'string' ? JSON.parse(teamNumbersData) : teamNumbersData
       const { groupA, groupB, teamNumbers: numbers } = teamNumbers
 
       if (!groupA || !groupB || groupA.length !== 4 || groupB.length !== 4) {
