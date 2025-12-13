@@ -28,7 +28,10 @@ const DAYS = [
 ]
 
 const TIME_SLOTS = [
-  '08:00 PM', '09:00 PM', '10:00 PM', '11:00 PM', '12:00 AM',
+  '08:00 PM - 09:00 PM',
+  '09:00 PM - 10:00 PM',
+  '10:00 PM - 11:00 PM',
+  '11:00 PM - 12:00 AM',
 ]
 
 function shuffleArray<T>(array: T[]): T[] {
@@ -60,72 +63,66 @@ async function savePracticeSchedule(data: PracticeSchedule) {
 
 function generateSchedule(groupA: string[], groupB: string[]): Match[] {
   const matches: Match[] = []
-  const teamSchedule: Record<string, { day: string; time: string }[]> = {}
+  const teamSchedule: Record<string, Set<string>> = {} // Track which days each team has played
   const globalTimeSlots: Record<string, Set<string>> = {} // Track used time slots per day globally
   
   // Initialize team schedules and global time slot tracking
   const allTeams = [...groupA, ...groupB]
   allTeams.forEach(team => {
-    teamSchedule[team] = []
+    teamSchedule[team] = new Set()
   })
   
   DAYS.forEach(day => {
     globalTimeSlots[day.date] = new Set()
   })
 
-  // For each team in Group A, schedule 4 matches against 4 teams from Group B
+  // Create all possible matchups between Group A and Group B
+  const allMatchups: Array<{ teamA: string; teamB: string }> = []
   groupA.forEach(teamA => {
-    // Shuffle Group B teams to randomize opponents
-    const shuffledGroupB = shuffleArray(groupB)
+    groupB.forEach(teamB => {
+      allMatchups.push({ teamA, teamB })
+    })
+  })
+  
+  // Shuffle matchups for randomness
+  const shuffledMatchups = shuffleArray(allMatchups)
+  
+  // Schedule matches day by day, ensuring each team plays max 1 match per day
+  DAYS.forEach(day => {
+    const teamsPlayedToday = new Set<string>()
     
-    // Each team plays 4 matches (one per day)
-    DAYS.forEach((day, dayIdx) => {
-      const opponent = shuffledGroupB[dayIdx]
-      
-      // Find available time slot for both teams on this day
-      let timeSlot = ''
-      const usedTimesTeamA = teamSchedule[teamA]
-        .filter(s => s.day === day.date)
-        .map(s => s.time)
-      const usedTimesTeamB = teamSchedule[opponent]
-        .filter(s => s.day === day.date)
-        .map(s => s.time)
-      const usedTimesThisDay = [...usedTimesTeamA, ...usedTimesTeamB]
-      
-      // Find a time slot that:
-      // 1. Neither team is using on this day
-      // 2. The time slot is not already used globally on this day
-      const availableSlots = TIME_SLOTS.filter(slot => 
-        !usedTimesThisDay.includes(slot) && !globalTimeSlots[day.date].has(slot)
-      )
-      
-      if (availableSlots.length > 0) {
-        timeSlot = availableSlots[0] // Take first available slot for consistency
-      } else {
-        // If no slots available, reuse slots (shouldn't happen with 5 slots and 4 teams per group)
-        const fallbackSlots = TIME_SLOTS.filter(slot => !usedTimesThisDay.includes(slot))
-        if (fallbackSlots.length > 0) {
-          timeSlot = fallbackSlots[0]
-        } else {
-          timeSlot = TIME_SLOTS[0]
+    // Try to schedule matches for this day
+    for (const matchup of shuffledMatchups) {
+      // Check if both teams are available today (haven't played yet today)
+      if (!teamsPlayedToday.has(matchup.teamA) && !teamsPlayedToday.has(matchup.teamB)) {
+        // Check if both teams haven't played on this specific day before
+        if (!teamSchedule[matchup.teamA].has(day.date) && !teamSchedule[matchup.teamB].has(day.date)) {
+          // Find available time slot
+          const availableSlots = TIME_SLOTS.filter(slot => !globalTimeSlots[day.date].has(slot))
+          
+          if (availableSlots.length > 0) {
+            const timeSlot = availableSlots[0]
+            
+            // Schedule the match
+            matches.push({
+              id: `${matchup.teamA}-${matchup.teamB}-${day.date}`,
+              teamA: matchup.teamA,
+              teamB: matchup.teamB,
+              date: day.date,
+              time: timeSlot,
+              day: day.day,
+            })
+            
+            // Mark teams as played today and on this date
+            teamsPlayedToday.add(matchup.teamA)
+            teamsPlayedToday.add(matchup.teamB)
+            teamSchedule[matchup.teamA].add(day.date)
+            teamSchedule[matchup.teamB].add(day.date)
+            globalTimeSlots[day.date].add(timeSlot)
+          }
         }
       }
-      
-      // Record the match
-      matches.push({
-        id: `${teamA}-${opponent}-${day.date}`,
-        teamA,
-        teamB: opponent,
-        date: day.date,
-        time: timeSlot,
-        day: day.day,
-      })
-      
-      // Update team schedules and global time slot tracking
-      teamSchedule[teamA].push({ day: day.date, time: timeSlot })
-      teamSchedule[opponent].push({ day: day.date, time: timeSlot })
-      globalTimeSlots[day.date].add(timeSlot)
-    })
+    }
   })
   
   return matches
