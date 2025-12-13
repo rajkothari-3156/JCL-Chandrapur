@@ -14,7 +14,7 @@ async function readState() {
   try {
     const json = (await kv.get(STATE_KEY)) as any | null
     const base = json || {}
-    const teams: Record<string, { budget: number; players: Array<{ fullName: string; points: number; time: string }> }> = base.teams || {}
+    const teams: Record<string, { budget: number; players: Array<{ fullName: string; points: number; time: string }>; reserveWallet?: number; floatingWallet?: number }> = base.teams || {}
     const sold: Record<string, { team: string; points: number; time: string }> = base.sold || {}
     const owners: Record<string, { name: string; playing: boolean }> = base.owners || {}
     const retentions: Record<string, Array<{ fullName: string; time: string }>> = base.retentions || {}
@@ -30,6 +30,14 @@ async function writeState(state: any) {
   await kv.set(STATE_KEY, state)
 }
 
+function calculateWallets(team: string, state: any) {
+  const retentionCount = (state.retentions?.[team] || []).length
+  const reserveWallet = retentionCount === 2 ? 900 : retentionCount === 1 ? 1000 : 1100
+  const totalBudget = state.teams[team]?.budget || 0
+  const floatingWallet = totalBudget - reserveWallet
+  return { reserveWallet, floatingWallet }
+}
+
 export async function GET() {
   try {
     const state = await readState()
@@ -40,7 +48,24 @@ export async function GET() {
         Object.entries(state.teams).map(([name, t]) => {
           const spent = (t.players || []).reduce((acc, p) => acc + (p.points || 0), 0)
           const remaining = (t.budget || 0) - spent
-          return [name, { budget: t.budget || 0, spent, remaining, count: (t.players || []).length }]
+          const wallets = calculateWallets(name, state)
+          const playerCount = (t.players || []).length
+          const reserveUsed = Math.min(playerCount * 100, wallets.reserveWallet)
+          const floatingUsed = spent - reserveUsed
+          const reserveRemaining = wallets.reserveWallet - reserveUsed
+          const floatingRemaining = wallets.floatingWallet - floatingUsed
+          return [name, { 
+            budget: t.budget || 0, 
+            spent, 
+            remaining, 
+            count: playerCount,
+            reserveWallet: wallets.reserveWallet,
+            floatingWallet: wallets.floatingWallet,
+            reserveUsed,
+            floatingUsed,
+            reserveRemaining,
+            floatingRemaining
+          }]
         })
       ),
     }
@@ -70,6 +95,31 @@ export async function POST(req: Request) {
       if (state.sold[key]) {
         return NextResponse.json({ error: 'Player already sold' }, { status: 409 })
       }
+      
+      // Calculate wallet constraints
+      const wallets = calculateWallets(team, state)
+      const currentPlayers = (state.teams[team].players || []).length
+      const reserveUsed = Math.min(currentPlayers * 100, wallets.reserveWallet)
+      const floatingUsed = (state.teams[team].players || []).reduce((acc, p) => acc + (p.points || 0), 0) - reserveUsed
+      const reserveRemaining = wallets.reserveWallet - reserveUsed
+      const floatingRemaining = wallets.floatingWallet - floatingUsed
+      
+      // Validate purchase: need 100 from reserve and (points - 100) from floating
+      const reserveNeeded = 100
+      const floatingNeeded = Math.max(0, points - 100)
+      
+      if (reserveNeeded > reserveRemaining) {
+        return NextResponse.json({ 
+          error: `Insufficient reserve wallet. Need ${reserveNeeded}, have ${reserveRemaining}. Must maintain minimum capacity for 11 players.` 
+        }, { status: 400 })
+      }
+      
+      if (floatingNeeded > floatingRemaining) {
+        return NextResponse.json({ 
+          error: `Insufficient floating wallet. Need ${floatingNeeded}, have ${floatingRemaining}.` 
+        }, { status: 400 })
+      }
+      
       state.teams[team].players.push({ fullName, points, time })
       state.sold[key] = { team, points, time }
       // ensure unsold list removes this player if present
