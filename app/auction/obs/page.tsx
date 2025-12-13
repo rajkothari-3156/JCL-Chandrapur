@@ -26,12 +26,40 @@ type Registration = {
   serialNumber?: number
 }
 
+// Google Drive helpers
+const extractDriveId = (url: string): string | null => {
+  if (!url) return null
+  try {
+    const m1 = url.match(/drive\.google\.com\/file\/d\/([^/]+)/)
+    if (m1 && m1[1]) return m1[1]
+    const u = new URL(url)
+    const id = u.searchParams.get('id')
+    if (id) return id
+    const m2 = url.match(/[?&]id=([^&]+)/)
+    if (m2 && m2[1]) return m2[1]
+    return null
+  } catch {
+    return null
+  }
+}
+
+const driveThumbUrl = (url: string): string => {
+  const id = extractDriveId(url)
+  return id ? `https://drive.google.com/thumbnail?id=${id}&sz=w400` : url
+}
+
+const driveViewUrl = (url: string): string => {
+  const id = extractDriveId(url)
+  return id ? `https://drive.google.com/uc?export=view&id=${id}` : url
+}
+
 export default function AuctionOBSPage() {
   const [state, setState] = useState<AuctionState | null>(null)
   const [regs, setRegs] = useState<Registration[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [previousPlayer, setPreviousPlayer] = useState<{ name: string; team: string; points: number } | null>(null)
+  const [imgLoaded, setImgLoaded] = useState(false)
 
   const norm = (s: string) => String(s || '').toLowerCase().replace(/\s+/g, ' ').trim()
 
@@ -81,6 +109,10 @@ export default function AuctionOBSPage() {
   const currentPlayer = state?.currentPick?.fullName || ''
   const currentPlayerInfo = currentPlayer ? getPlayerInfo(currentPlayer) : null
 
+  useEffect(() => {
+    setImgLoaded(false)
+  }, [currentPlayer])
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-950 via-green-900 to-black p-8">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -108,9 +140,31 @@ export default function AuctionOBSPage() {
                 </div>
                 {currentPlayer ? (
                   <>
-                    <div className="text-white text-6xl font-bold mb-4 drop-shadow-lg">
-                      {currentPlayer}
+                    <div className="flex flex-col md:flex-row items-center justify-center gap-8 mb-6">
+                      {/* Player Photo */}
+                      {currentPlayerInfo?.photoUrl ? (
+                        <div className="w-64 h-64 bg-black/30 rounded-xl flex items-center justify-center overflow-hidden border-4 border-yellow-400 shadow-2xl">
+                          <img
+                            src={driveViewUrl(currentPlayerInfo.photoUrl)}
+                            alt={currentPlayer}
+                            onLoad={() => setImgLoaded(true)}
+                            className={`max-w-full max-h-full object-contain transition-opacity duration-500 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-64 h-64 bg-black/30 rounded-xl flex items-center justify-center border-4 border-yellow-400">
+                          <div className="text-yellow-200 text-lg">No Photo</div>
+                        </div>
+                      )}
+                      
+                      {/* Player Name */}
+                      <div className="flex-1">
+                        <div className="text-white text-6xl font-bold drop-shadow-lg">
+                          {currentPlayer}
+                        </div>
+                      </div>
                     </div>
+                    
                     {currentPlayerInfo && (
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 text-white">
                         <div className="bg-black/30 rounded-lg p-4">
