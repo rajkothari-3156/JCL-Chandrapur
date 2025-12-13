@@ -60,6 +60,7 @@ export default function AuctionOBSPage() {
   const [error, setError] = useState<string | null>(null)
   const [previousPlayer, setPreviousPlayer] = useState<{ name: string; team: string; points: number } | null>(null)
   const [imgLoaded, setImgLoaded] = useState(false)
+  const [imgError, setImgError] = useState(false)
 
   const norm = (s: string) => String(s || '').toLowerCase().replace(/\s+/g, ' ').trim()
 
@@ -111,6 +112,7 @@ export default function AuctionOBSPage() {
 
   useEffect(() => {
     setImgLoaded(false)
+    setImgError(false)
   }, [currentPlayer])
 
   return (
@@ -142,18 +144,30 @@ export default function AuctionOBSPage() {
                   <>
                     <div className="flex flex-col md:flex-row items-center justify-center gap-8 mb-6">
                       {/* Player Photo */}
-                      {currentPlayerInfo?.photoUrl ? (
-                        <div className="w-64 h-64 bg-black/30 rounded-xl flex items-center justify-center overflow-hidden border-4 border-yellow-400 shadow-2xl">
+                      {currentPlayerInfo?.photoUrl && !imgError ? (
+                        <div className="w-64 h-64 bg-black/30 rounded-xl flex items-center justify-center overflow-hidden border-4 border-yellow-400 shadow-2xl relative">
                           <img
-                            src={driveViewUrl(currentPlayerInfo.photoUrl)}
+                            src={driveThumbUrl(currentPlayerInfo.photoUrl)}
                             alt={currentPlayer}
                             onLoad={() => setImgLoaded(true)}
+                            onError={(e) => {
+                              console.error('Failed to load thumbnail, trying view URL:', currentPlayerInfo?.photoUrl)
+                              const img = e.target as HTMLImageElement
+                              if (img.src.includes('thumbnail') && currentPlayerInfo?.photoUrl) {
+                                img.src = driveViewUrl(currentPlayerInfo.photoUrl)
+                              } else {
+                                setImgError(true)
+                              }
+                            }}
                             className={`max-w-full max-h-full object-contain transition-opacity duration-500 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
                           />
+                          {!imgLoaded && !imgError && (
+                            <div className="absolute text-yellow-200 text-sm">Loading...</div>
+                          )}
                         </div>
                       ) : (
                         <div className="w-64 h-64 bg-black/30 rounded-xl flex items-center justify-center border-4 border-yellow-400">
-                          <div className="text-yellow-200 text-lg">No Photo</div>
+                          <div className="text-yellow-200 text-lg">{imgError ? 'Photo Load Failed' : 'No Photo'}</div>
                         </div>
                       )}
                       
