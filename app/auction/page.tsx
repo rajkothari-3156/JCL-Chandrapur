@@ -633,8 +633,6 @@ export default function AuctionPage() {
                       )
                     })()}
                     <div className="text-green-200 text-sm">Style: {picked?.playingStyle ?? ''}</div>
-                    <div className="text-green-200 text-sm">T-shirt: {picked?.tshirtSize ?? ''}</div>
-                    <div className="text-green-200 text-sm">Contact: {picked?.contact ?? ''}</div>
                     <div className="text-green-200 text-sm">2024 Auction: {picked?.auctionTeam ?? '—'} {typeof picked?.auctionPoints === 'number' ? `• ${picked?.auctionPoints} pts` : ''}</div>
                   </div>
                 </div>
