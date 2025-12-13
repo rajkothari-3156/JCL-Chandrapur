@@ -6,6 +6,7 @@ const COLOR_AUCTION_KEY = 'jcl:color_auction'
 type ColorAuction = {
   colors: Record<string, { owner: string; bidAmount: number } | null>
   owners: string[]
+  ownerTeams: Record<string, string>
 }
 
 async function getColorAuction(): Promise<ColorAuction> {
@@ -14,18 +15,24 @@ async function getColorAuction(): Promise<ColorAuction> {
     return JSON.parse(data as string)
   }
   
-  // Initialize with default owners from auction state
-  const auctionState = await kv.get('jcl:auction_state')
-  let owners: string[] = []
-  
-  if (auctionState) {
-    const state = JSON.parse(auctionState as string)
-    owners = Object.keys(state.summary || {})
+  // Fixed team-to-owner mapping
+  const ownerTeams: Record<string, string> = {
+    'Piyush Dugad': 'Rajwada Royals',
+    'Mayur Bhandari': 'Chandralok Warriors',
+    'Siddhant Puglia': 'Dhansiddh Earthmovers',
+    'Madhur Pugliya': 'Jain United',
+    'Nirav Bohra': 'KT Lions',
+    'Vaibhav Jain': 'Parshv Panthers',
+    'Manav Banthia': 'Falcon Giants',
+    'Jay Baid': 'Dominant Demons',
   }
+  
+  const owners = Object.keys(ownerTeams)
   
   return {
     colors: {},
     owners,
+    ownerTeams,
   }
 }
 
@@ -48,16 +55,21 @@ export async function POST(req: NextRequest) {
     const { action, color, owner, bidAmount } = body
 
     if (action === 'reset') {
-      // Reset the color auction
-      const auctionState = await kv.get('jcl:auction_state')
-      let owners: string[] = []
-      
-      if (auctionState) {
-        const state = JSON.parse(auctionState as string)
-        owners = Object.keys(state.summary || {})
+      // Reset the color auction with fixed team-to-owner mapping
+      const ownerTeams: Record<string, string> = {
+        'Piyush Dugad': 'Rajwada Royals',
+        'Mayur Bhandari': 'Chandralok Warriors',
+        'Siddhant Puglia': 'Dhansiddh Earthmovers',
+        'Madhur Pugliya': 'Jain United',
+        'Nirav Bohra': 'KT Lions',
+        'Vaibhav Jain': 'Parshv Panthers',
+        'Manav Banthia': 'Falcon Giants',
+        'Jay Baid': 'Dominant Demons',
       }
       
-      await saveColorAuction({ colors: {}, owners })
+      const owners = Object.keys(ownerTeams)
+      
+      await saveColorAuction({ colors: {}, owners, ownerTeams })
       return NextResponse.json({ success: true })
     }
 

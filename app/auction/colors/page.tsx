@@ -12,22 +12,18 @@ type ColorOption = {
 type ColorAuction = {
   colors: Record<string, { owner: string; bidAmount: number } | null>
   owners: string[]
+  ownerTeams: Record<string, string>
 }
 
 const AVAILABLE_COLORS: ColorOption[] = [
   { name: 'Orange', hex: '#FF6B35', textColor: '#000000' },
   { name: 'Yellow', hex: '#FFD23F', textColor: '#000000' },
-  { name: 'Sky Blue', hex: '#87CEEB', textColor: '#000000' },
   { name: 'Royal Blue', hex: '#0047AB', textColor: '#FFFFFF' },
-  { name: 'Navy Blue', hex: '#001F3F', textColor: '#FFFFFF' },
   { name: 'Red', hex: '#DC143C', textColor: '#FFFFFF' },
   { name: 'Black', hex: '#000000', textColor: '#FFFFFF' },
   { name: 'White', hex: '#FFFFFF', textColor: '#000000' },
-  { name: 'Dark Grey', hex: '#4A4A4A', textColor: '#FFFFFF' },
   { name: 'Grey', hex: '#808080', textColor: '#FFFFFF' },
   { name: 'Dark Green', hex: '#006400', textColor: '#FFFFFF' },
-  { name: 'Lime Green', hex: '#32CD32', textColor: '#000000' },
-  { name: 'Maroon', hex: '#800000', textColor: '#FFFFFF' },
 ]
 
 export default function ColorAuctionPage() {
@@ -316,15 +312,17 @@ export default function ColorAuctionPage() {
               </div>
 
               <div>
-                <label className="text-green-200 text-sm mb-2 block">Owner</label>
+                <label className="text-green-200 text-sm mb-2 block">Team Owner</label>
                 <select
                   value={bidOwner}
                   onChange={(e) => setBidOwner(e.target.value)}
                   className="w-full px-4 py-2 rounded-lg bg-green-950 border border-green-700 text-white"
                 >
-                  <option value="">Select Owner</option>
+                  <option value="">Select Team Owner</option>
                   {state?.owners.map(owner => (
-                    <option key={owner} value={owner}>{owner}</option>
+                    <option key={owner} value={owner}>
+                      {owner} {state?.ownerTeams?.[owner] ? `(${state.ownerTeams[owner]})` : ''}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -414,6 +412,7 @@ export default function ColorAuctionPage() {
               <thead>
                 <tr className="border-b border-green-700">
                   <th className="text-left text-green-200 py-2 px-4">Color</th>
+                  <th className="text-left text-green-200 py-2 px-4">Team Name</th>
                   <th className="text-left text-green-200 py-2 px-4">Owner</th>
                   <th className="text-left text-green-200 py-2 px-4">Bid Amount</th>
                 </tr>
@@ -421,13 +420,14 @@ export default function ColorAuctionPage() {
               <tbody>
                 {soldColors.length === 0 ? (
                   <tr>
-                    <td colSpan={3} className="text-center text-green-300 py-8">
+                    <td colSpan={4} className="text-center text-green-300 py-8">
                       No colors sold yet
                     </td>
                   </tr>
                 ) : (
                   soldColors.map(([colorName, data]) => {
                     const colorInfo = AVAILABLE_COLORS.find(c => c.name === colorName)
+                    const teamName = data?.owner ? state?.ownerTeams?.[data.owner] : null
                     return (
                       <tr key={colorName} className="border-b border-green-800">
                         <td className="py-3 px-4">
@@ -439,6 +439,7 @@ export default function ColorAuctionPage() {
                             <span className="text-white font-semibold">{colorName}</span>
                           </div>
                         </td>
+                        <td className="text-white font-semibold py-3 px-4">{teamName || '—'}</td>
                         <td className="text-white py-3 px-4">{data?.owner}</td>
                         <td className="text-cricket-gold font-bold py-3 px-4">
                           {data?.bidAmount === 0 ? 'Random Pick' : `₹${data?.bidAmount}`}
