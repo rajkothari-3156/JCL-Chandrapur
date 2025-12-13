@@ -55,98 +55,73 @@ async function saveGroupStageSchedule(data: GroupStageSchedule) {
   await kv.set(GROUP_STAGE_SCHEDULE_KEY, JSON.stringify(data))
 }
 
-function generateGroupStageMatches(teams: string[]): Match[] {
+function generateGroupStageSchedule(groupA: string[], groupB: string[], teamNumbers: Record<string, number>): Match[] {
   const matches: Match[] = []
-  const n = teams.length
   
-  // Round-robin: each team plays every other team once
-  for (let i = 0; i < n; i++) {
-    for (let j = i + 1; j < n; j++) {
+  // Create team number to name mapping
+  const teamNumberToName: Record<number, string> = {}
+  Object.entries(teamNumbers).forEach(([name, num]) => {
+    teamNumberToName[num] = name
+  })
+  
+  // Fixed master schedule for tournament matches
+  // Day 1 - Friday, Dec 26
+  const day1Schedule = [
+    { matchNumber: 1, group: 'A', teamANum: 1, teamBNum: 2 },
+    { matchNumber: 2, group: 'B', teamANum: 5, teamBNum: 6 },
+    { matchNumber: 3, group: 'A', teamANum: 3, teamBNum: 4 },
+    { matchNumber: 4, group: 'B', teamANum: 7, teamBNum: 8 },
+    { matchNumber: 5, group: 'A', teamANum: 1, teamBNum: 3 },
+    { matchNumber: 6, group: 'B', teamANum: 5, teamBNum: 7 },
+  ]
+  
+  // Day 2 - Saturday, Dec 27
+  const day2Schedule = [
+    { matchNumber: 7, group: 'A', teamANum: 2, teamBNum: 4 },
+    { matchNumber: 8, group: 'B', teamANum: 6, teamBNum: 8 },
+    { matchNumber: 9, group: 'A', teamANum: 1, teamBNum: 4 },
+    { matchNumber: 10, group: 'B', teamANum: 5, teamBNum: 8 },
+    { matchNumber: 11, group: 'A', teamANum: 2, teamBNum: 3 },
+    { matchNumber: 12, group: 'B', teamANum: 6, teamBNum: 7 },
+  ]
+  
+  // Create matches for Day 1
+  day1Schedule.forEach(slot => {
+    const teamA = teamNumberToName[slot.teamANum]
+    const teamB = teamNumberToName[slot.teamBNum]
+    
+    if (teamA && teamB) {
       matches.push({
-        id: `${teams[i]}-${teams[j]}`,
-        teamA: teams[i],
-        teamB: teams[j],
-        date: '',
-        time: '',
-        day: '',
-      })
-    }
-  }
-  
-  return shuffleArray(matches)
-}
-
-function assignSchedule(matches: Match[]): Match[] {
-  const scheduled: Match[] = []
-  const teamLastMatchIndex: Record<string, number> = {}
-  
-  matches.forEach(match => {
-    teamLastMatchIndex[match.teamA] = -2 // Initialize with -2 so first match at index 0 is not consecutive
-    teamLastMatchIndex[match.teamB] = -2
-  })
-  
-  let currentMatchIndex = 0
-  const unscheduled = [...matches]
-  
-  while (unscheduled.length > 0) {
-    let matchScheduled = false
-    
-    // Try to find a match where neither team played in the immediately previous match
-    for (let i = 0; i < unscheduled.length; i++) {
-      const match = unscheduled[i]
-      const teamALastIndex = teamLastMatchIndex[match.teamA]
-      const teamBLastIndex = teamLastMatchIndex[match.teamB]
-      
-      // Check if neither team played in the previous match (prevent consecutive matches)
-      if (teamALastIndex !== currentMatchIndex - 1 && teamBLastIndex !== currentMatchIndex - 1) {
-        // Schedule this match
-        scheduled.push({
-          ...match,
-          date: '', // Will be assigned later based on match sequence
-          time: START_TIME,
-          day: '',
-          matchNumber: currentMatchIndex + 1,
-        })
-        
-        // Update last match index for both teams
-        teamLastMatchIndex[match.teamA] = currentMatchIndex
-        teamLastMatchIndex[match.teamB] = currentMatchIndex
-        
-        // Remove from unscheduled
-        unscheduled.splice(i, 1)
-        currentMatchIndex++
-        matchScheduled = true
-        break
-      }
-    }
-    
-    // If no match could be scheduled without consecutive play, just schedule the first one
-    if (!matchScheduled && unscheduled.length > 0) {
-      const match = unscheduled[0]
-      scheduled.push({
-        ...match,
-        date: '',
+        id: `${teamA}-${teamB}-day1`,
+        teamA,
+        teamB,
+        date: DAYS[0].date,
         time: START_TIME,
-        day: '',
-        matchNumber: currentMatchIndex + 1,
+        day: DAYS[0].day,
+        matchNumber: slot.matchNumber,
       })
-      teamLastMatchIndex[match.teamA] = currentMatchIndex
-      teamLastMatchIndex[match.teamB] = currentMatchIndex
-      unscheduled.splice(0, 1)
-      currentMatchIndex++
     }
-  }
-  
-  // Assign dates to matches (distribute across days)
-  const matchesPerDay = Math.ceil(scheduled.length / DAYS.length)
-  scheduled.forEach((match, index) => {
-    const dayIndex = Math.floor(index / matchesPerDay)
-    const day = DAYS[Math.min(dayIndex, DAYS.length - 1)]
-    match.date = day.date
-    match.day = day.day
   })
   
-  return scheduled
+  // Create matches for Day 2
+  day2Schedule.forEach(slot => {
+    const teamA = teamNumberToName[slot.teamANum]
+    const teamB = teamNumberToName[slot.teamBNum]
+    
+    if (teamA && teamB) {
+      matches.push({
+        id: `${teamA}-${teamB}-day2`,
+        teamA,
+        teamB,
+        date: DAYS[1].date,
+        time: START_TIME,
+        day: DAYS[1].day,
+        matchNumber: slot.matchNumber,
+      })
+    }
+  })
+  
+  return matches
 }
 
 export async function GET() {
@@ -182,15 +157,8 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Invalid group configuration' }, { status: 400 })
       }
 
-      // Generate matches for each group
-      const groupAMatches = generateGroupStageMatches(groupA)
-      const groupBMatches = generateGroupStageMatches(groupB)
-      
-      // Assign schedule
-      const scheduledGroupA = assignSchedule(groupAMatches)
-      const scheduledGroupB = assignSchedule(groupBMatches)
-      
-      const allMatches = [...scheduledGroupA, ...scheduledGroupB]
+      // Generate matches using fixed master schedule
+      const allMatches = generateGroupStageSchedule(groupA, groupB, numbers)
 
       const data: GroupStageSchedule = {
         matches: allMatches,
