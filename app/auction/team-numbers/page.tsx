@@ -465,7 +465,10 @@ export default function TeamNumbersPage() {
           {activeTab === 'groupstage' && (
             <div>
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-white">Group Stage Match Schedule</h2>
+                <div>
+                  <h2 className="text-2xl font-bold text-white">Group Stage Match Schedule</h2>
+                  <p className="text-green-300 text-sm mt-1">All matches start at 6:30 PM • Sequential order on single turf</p>
+                </div>
                 <button
                   onClick={handleGenerateGroupStageSchedule}
                   disabled={generatingGroupStage}
@@ -504,7 +507,6 @@ export default function TeamNumbersPage() {
                                 </div>
                               </div>
                               <div className="text-right">
-                                <div className="text-cricket-gold font-bold">{match.time}</div>
                                 <div className="text-blue-300 text-sm">{match.day}, {match.date}</div>
                               </div>
                             </div>
@@ -534,7 +536,6 @@ export default function TeamNumbersPage() {
                                 </div>
                               </div>
                               <div className="text-right">
-                                <div className="text-cricket-gold font-bold">{match.time}</div>
                                 <div className="text-orange-300 text-sm">{match.day}, {match.date}</div>
                               </div>
                             </div>

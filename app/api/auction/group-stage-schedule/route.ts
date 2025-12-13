@@ -24,15 +24,9 @@ type GroupStageSchedule = {
 const DAYS = [
   { date: '2025-12-26', day: 'Friday' },
   { date: '2025-12-27', day: 'Saturday' },
-  { date: '2025-12-28', day: 'Sunday' },
-  { date: '2025-12-29', day: 'Monday' },
-  { date: '2025-12-30', day: 'Tuesday' },
-  { date: '2025-12-31', day: 'Wednesday' },
 ]
 
-const TIME_SLOTS = [
-  '08:00 PM', '09:00 PM', '10:00 PM', '11:00 PM', '12:00 AM',
-]
+const START_TIME = '06:30 PM'
 
 function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array]
@@ -84,80 +78,73 @@ function generateGroupStageMatches(teams: string[]): Match[] {
 
 function assignSchedule(matches: Match[]): Match[] {
   const scheduled: Match[] = []
-  const teamSchedule: Record<string, Array<{ date: string; time: string; timeIndex: number }>> = {}
+  const teamLastMatchIndex: Record<string, number> = {}
   
   matches.forEach(match => {
-    if (!teamSchedule[match.teamA]) teamSchedule[match.teamA] = []
-    if (!teamSchedule[match.teamB]) teamSchedule[match.teamB] = []
+    teamLastMatchIndex[match.teamA] = -2 // Initialize with -2 so first match at index 0 is not consecutive
+    teamLastMatchIndex[match.teamB] = -2
   })
   
-  let dayIndex = 0
-  let timeIndex = 0
+  let currentMatchIndex = 0
+  const unscheduled = [...matches]
   
-  for (const match of matches) {
-    // Find next available slot where neither team is playing or has played consecutively
-    let found = false
-    let attempts = 0
-    const maxAttempts = DAYS.length * TIME_SLOTS.length * 2
+  while (unscheduled.length > 0) {
+    let matchScheduled = false
     
-    while (!found && attempts < maxAttempts) {
-      const day = DAYS[dayIndex % DAYS.length]
-      const time = TIME_SLOTS[timeIndex % TIME_SLOTS.length]
-      const slot = `${day.date}-${time}`
-      const currentTimeIndex = dayIndex * TIME_SLOTS.length + timeIndex
+    // Try to find a match where neither team played in the immediately previous match
+    for (let i = 0; i < unscheduled.length; i++) {
+      const match = unscheduled[i]
+      const teamALastIndex = teamLastMatchIndex[match.teamA]
+      const teamBLastIndex = teamLastMatchIndex[match.teamB]
       
-      // Check if either team is already playing in this slot
-      const teamABusy = teamSchedule[match.teamA].some(s => s.date === day.date && s.time === time)
-      const teamBBusy = teamSchedule[match.teamB].some(s => s.date === day.date && s.time === time)
-      
-      // Check if either team played in the immediately previous slot (consecutive match prevention)
-      const teamALastMatch = teamSchedule[match.teamA][teamSchedule[match.teamA].length - 1]
-      const teamBLastMatch = teamSchedule[match.teamB][teamSchedule[match.teamB].length - 1]
-      const teamAConsecutive = teamALastMatch && teamALastMatch.timeIndex === currentTimeIndex - 1
-      const teamBConsecutive = teamBLastMatch && teamBLastMatch.timeIndex === currentTimeIndex - 1
-      
-      if (!teamABusy && !teamBBusy && !teamAConsecutive && !teamBConsecutive) {
+      // Check if neither team played in the previous match (prevent consecutive matches)
+      if (teamALastIndex !== currentMatchIndex - 1 && teamBLastIndex !== currentMatchIndex - 1) {
+        // Schedule this match
         scheduled.push({
           ...match,
-          date: day.date,
-          time: time,
-          day: day.day,
-          matchNumber: scheduled.length + 1,
+          date: '', // Will be assigned later based on match sequence
+          time: START_TIME,
+          day: '',
+          matchNumber: currentMatchIndex + 1,
         })
-        teamSchedule[match.teamA].push({ date: day.date, time: time, timeIndex: currentTimeIndex })
-        teamSchedule[match.teamB].push({ date: day.date, time: time, timeIndex: currentTimeIndex })
-        found = true
+        
+        // Update last match index for both teams
+        teamLastMatchIndex[match.teamA] = currentMatchIndex
+        teamLastMatchIndex[match.teamB] = currentMatchIndex
+        
+        // Remove from unscheduled
+        unscheduled.splice(i, 1)
+        currentMatchIndex++
+        matchScheduled = true
+        break
       }
-      
-      timeIndex++
-      if (timeIndex >= TIME_SLOTS.length) {
-        timeIndex = 0
-        dayIndex++
-      }
-      attempts++
     }
     
-    if (!found) {
-      // Fallback: just assign to next slot without consecutive check
-      const day = DAYS[dayIndex % DAYS.length]
-      const time = TIME_SLOTS[timeIndex % TIME_SLOTS.length]
-      const currentTimeIndex = dayIndex * TIME_SLOTS.length + timeIndex
+    // If no match could be scheduled without consecutive play, just schedule the first one
+    if (!matchScheduled && unscheduled.length > 0) {
+      const match = unscheduled[0]
       scheduled.push({
         ...match,
-        date: day.date,
-        time: time,
-        day: day.day,
-        matchNumber: scheduled.length + 1,
+        date: '',
+        time: START_TIME,
+        day: '',
+        matchNumber: currentMatchIndex + 1,
       })
-      teamSchedule[match.teamA].push({ date: day.date, time: time, timeIndex: currentTimeIndex })
-      teamSchedule[match.teamB].push({ date: day.date, time: time, timeIndex: currentTimeIndex })
-      timeIndex++
-      if (timeIndex >= TIME_SLOTS.length) {
-        timeIndex = 0
-        dayIndex++
-      }
+      teamLastMatchIndex[match.teamA] = currentMatchIndex
+      teamLastMatchIndex[match.teamB] = currentMatchIndex
+      unscheduled.splice(0, 1)
+      currentMatchIndex++
     }
   }
+  
+  // Assign dates to matches (distribute across days)
+  const matchesPerDay = Math.ceil(scheduled.length / DAYS.length)
+  scheduled.forEach((match, index) => {
+    const dayIndex = Math.floor(index / matchesPerDay)
+    const day = DAYS[Math.min(dayIndex, DAYS.length - 1)]
+    match.date = day.date
+    match.day = day.day
+  })
   
   return scheduled
 }
