@@ -63,6 +63,7 @@ export default function AuctionOBSPage() {
   const [imgError, setImgError] = useState(false)
   const [showSoldAnimation, setShowSoldAnimation] = useState(false)
   const [lastSoldPlayer, setLastSoldPlayer] = useState<{ name: string; team: string; points: number } | null>(null)
+  const [lastShownAnimationKey, setLastShownAnimationKey] = useState<string>('')
 
   const norm = (s: string) => String(s || '').toLowerCase().replace(/\s+/g, ' ').trim()
 
@@ -89,14 +90,16 @@ export default function AuctionOBSPage() {
           const [name, data] = sorted[0]
           const soldData = data as { team: string; points: number; time: string }
           const newSoldPlayer = { name, team: soldData.team, points: soldData.points }
+          const animationKey = `${name}-${soldData.team}-${soldData.points}`
           
-          // Check if this is a new sold player (and animation is not already showing)
-          if ((!previousPlayer || previousPlayer.name !== name || previousPlayer.team !== soldData.team) && !showSoldAnimation) {
+          // Check if this is a new sold player that we haven't shown animation for yet
+          if (animationKey !== lastShownAnimationKey) {
             setPreviousPlayer(newSoldPlayer)
             setLastSoldPlayer(newSoldPlayer)
+            setLastShownAnimationKey(animationKey)
             setShowSoldAnimation(true)
             setTimeout(() => setShowSoldAnimation(false), 4000) // Hide after 4 seconds
-          } else if (previousPlayer?.name !== name || previousPlayer?.team !== soldData.team) {
+          } else if (!previousPlayer || previousPlayer.name !== name || previousPlayer.team !== soldData.team) {
             // Update previous player without triggering animation
             setPreviousPlayer(newSoldPlayer)
           }
