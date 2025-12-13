@@ -10,8 +10,8 @@ export default function SponsorsBar() {
     { label: 'Co-Sponsor', icon: Award, color: 'green', logoPath: '/sponsors/co-sponsor-bpb.png', name: 'BPB' },
     { label: 'T-Shirt Sponsor', icon: Shirt, color: 'purple', logoPath: '/sponsors/tshirt-sponsor-guru-ganesh.jpeg', name: 'Guru Ganesh' },
     { label: 'Water Bottle Sponsor', icon: Droplets, color: 'cyan', logoPath: '/sponsors/water-bottle-jain-trading.png', name: 'Jain Trading Company' },
-    { label: 'Community & FairPlay Partner', icon: UserCheck, color: 'blue', logoPath: '/sponsors/community-fairplay-shri-rahulbabu-puglia.png', name: 'Shri RahulBabu Puglia' },
-    { label: 'Presentation Partner', icon: Gift, color: 'indigo', logoPath: '/sponsors/presentation-praful-traders.png', name: 'Praful Traders' },
+    { label: 'Community & FairPlay Partner', icon: UserCheck, color: 'blue', logoPath: '/sponsors/community-fairplay-shri-rahulbabu-puglia.jpeg', name: 'Shri RahulBabu Puglia' },
+    { label: 'Presentation Partner', icon: Gift, color: 'indigo', logoPath: '/sponsors/presentation-praful-traders.jpeg', name: 'Praful Traders' },
     { label: 'Entry Gate Partner', icon: DoorOpen, color: 'amber', logoPath: '/sponsors/entry-gate-rajesh-jewellers.png', name: 'Rajesh Jewellers' },
     { label: 'Product Stall Partner', icon: Store, color: 'teal', logoPath: '/sponsors/product-stall-kalptree.png', name: 'Kalptree' },
     { label: 'Hospitality Partner', icon: Home, color: 'emerald', logoPath: '/sponsors/hospitality-partner-chandralok.png', name: 'Chandralok Creations' },
@@ -77,6 +77,7 @@ export default function SponsorsBar() {
                           alt={category.name}
                           fill
                           className="object-contain p-1"
+                          unoptimized
                         />
                       ) : (
                         <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100 rounded flex items-center justify-center">
