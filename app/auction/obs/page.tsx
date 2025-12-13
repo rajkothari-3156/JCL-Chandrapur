@@ -211,32 +211,44 @@ export default function AuctionOBSPage() {
                       
                       {/* Player Name */}
                       <div className="w-full">
-                        <div className="text-white text-3xl font-bold drop-shadow-lg">
-                          {currentPlayer}
-                        </div>
+                        {(() => {
+                          const age = currentPlayerInfo?.age
+                          const n = typeof age === 'number' ? age : parseInt(String(age ?? ''), 10)
+                          const is35Plus = Number.isFinite(n) && (n as number) >= 35
+                          return (
+                            <div className={`text-3xl font-bold drop-shadow-lg ${is35Plus ? 'text-orange-400' : 'text-white'}`}>
+                              {currentPlayer}
+                            </div>
+                          )
+                        })()}
                       </div>
                     </div>
                     
-                    {currentPlayerInfo && (
-                      <div className="grid grid-cols-4 gap-2 mt-3 text-white">
-                        <div className="bg-black/30 rounded-lg p-2">
-                          <div className="text-yellow-200 text-xs mb-1">Serial #</div>
-                          <div className="text-xl font-bold">{currentPlayerInfo.serialNumber || '-'}</div>
+                    {currentPlayerInfo && (() => {
+                      const age = currentPlayerInfo.age
+                      const n = typeof age === 'number' ? age : parseInt(String(age ?? ''), 10)
+                      const is35Plus = Number.isFinite(n) && (n as number) >= 35
+                      return (
+                        <div className="grid grid-cols-4 gap-2 mt-3 text-white">
+                          <div className="bg-black/30 rounded-lg p-2">
+                            <div className="text-yellow-200 text-xs mb-1">Serial #</div>
+                            <div className={`text-xl font-bold ${is35Plus ? 'text-orange-400' : 'text-white'}`}>{currentPlayerInfo.serialNumber || '-'}</div>
+                          </div>
+                          <div className="bg-black/30 rounded-lg p-2">
+                            <div className="text-yellow-200 text-xs mb-1">Age</div>
+                            <div className={`text-xl font-bold ${is35Plus ? 'text-orange-400' : 'text-white'}`}>{currentPlayerInfo.age || '-'}</div>
+                          </div>
+                          <div className="bg-black/30 rounded-lg p-2">
+                            <div className="text-yellow-200 text-xs mb-1">Style</div>
+                            <div className="text-sm font-semibold truncate">{currentPlayerInfo.playingStyle || '-'}</div>
+                          </div>
+                          <div className="bg-black/30 rounded-lg p-2">
+                            <div className="text-yellow-200 text-xs mb-1">T-Shirt</div>
+                            <div className="text-xl font-bold">{currentPlayerInfo.tshirtSize || '-'}</div>
+                          </div>
                         </div>
-                        <div className="bg-black/30 rounded-lg p-2">
-                          <div className="text-yellow-200 text-xs mb-1">Age</div>
-                          <div className="text-xl font-bold">{currentPlayerInfo.age || '-'}</div>
-                        </div>
-                        <div className="bg-black/30 rounded-lg p-2">
-                          <div className="text-yellow-200 text-xs mb-1">Style</div>
-                          <div className="text-sm font-semibold truncate">{currentPlayerInfo.playingStyle || '-'}</div>
-                        </div>
-                        <div className="bg-black/30 rounded-lg p-2">
-                          <div className="text-yellow-200 text-xs mb-1">T-Shirt</div>
-                          <div className="text-xl font-bold">{currentPlayerInfo.tshirtSize || '-'}</div>
-                        </div>
-                      </div>
-                    )}
+                      )
+                    })()}
                   </>
                 ) : (
                   <div className="text-white text-2xl">

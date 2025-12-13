@@ -615,16 +615,18 @@ export default function AuctionPage() {
                     )}
                   </div>
                   <div className="space-y-1">
-                    <div className="text-white text-xl font-bold">{picked ? picked.fullName : '—'}</div>
-                    <div className="text-green-200 text-sm">Serial #: {picked?.serialNumber ?? '—'}</div>
-                    <div className="text-green-200 text-sm">Age: {picked?.age ?? ''} {(() => {
+                    {(() => {
                       const age = picked?.age
                       const n = typeof age === 'number' ? age : parseInt(String(age ?? ''), 10)
-                      if (Number.isFinite(n)) {
-                        return `• ${(n as number) >= 35 ? '35+' : 'Below 35'}`
-                      }
-                      return ''
-                    })()}</div>
+                      const is35Plus = Number.isFinite(n) && (n as number) >= 35
+                      return (
+                        <>
+                          <div className={`text-xl font-bold ${is35Plus ? 'text-orange-400' : 'text-white'}`}>{picked ? picked.fullName : '—'}</div>
+                          <div className={`text-sm ${is35Plus ? 'text-orange-300' : 'text-green-200'}`}>Serial #: {picked?.serialNumber ?? '—'}</div>
+                          <div className={`text-sm ${is35Plus ? 'text-orange-300' : 'text-green-200'}`}>Age: {picked?.age ?? ''} {Number.isFinite(n) ? `• ${(n as number) >= 35 ? '35+' : 'Below 35'}` : ''}</div>
+                        </>
+                      )
+                    })()}
                     <div className="text-green-200 text-sm">Style: {picked?.playingStyle ?? ''}</div>
                     <div className="text-green-200 text-sm">T-shirt: {picked?.tshirtSize ?? ''}</div>
                     <div className="text-green-200 text-sm">Contact: {picked?.contact ?? ''}</div>
