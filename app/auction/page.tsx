@@ -755,14 +755,30 @@ export default function AuctionPage() {
                   <label className="block text-green-200 text-sm mb-1">Team</label>
                   <select value={sellTeam} onChange={(e)=>setSellTeam(e.target.value)} className="w-full rounded-md border border-green-800 bg-green-900/40 text-white px-3 py-2">
                     <option value="">Select team</option>
-                    {Object.keys(state?.teams || {}).map(t => (
-                      <option key={t} value={t}>{t}</option>
-                    ))}
+                    {Object.keys(state?.teams || {}).map(t => {
+                      const summary = (state?.summary as any)?.[t]
+                      const walletInfo = summary ? ` (R: ${summary.reserveRemaining || 0}, F: ${summary.floatingRemaining || 0})` : ''
+                      return (
+                        <option key={t} value={t}>{t}{walletInfo}</option>
+                      )
+                    })}
                   </select>
                 </div>
                 <div>
                   <label className="block text-green-200 text-sm mb-1">Points</label>
                   <input type="number" value={sellPoints} onChange={(e)=>setSellPoints(e.target.value === '' ? '' : parseInt(e.target.value,10))} className="w-40 rounded-md border border-green-800 bg-green-900/40 text-white px-3 py-2" />
+                  {sellTeam && sellPoints !== '' && (() => {
+                    const summary = (state?.summary as any)?.[sellTeam]
+                    if (!summary) return null
+                    const reserveNeeded = 100
+                    const floatingNeeded = Math.max(0, Number(sellPoints) - 100)
+                    const canAfford = reserveNeeded <= (summary.reserveRemaining || 0) && floatingNeeded <= (summary.floatingRemaining || 0)
+                    return (
+                      <div className={`text-xs mt-1 ${canAfford ? 'text-green-300' : 'text-red-300'}`}>
+                        {canAfford ? '✓ Affordable' : '✗ Insufficient wallet'}
+                      </div>
+                    )
+                  })()}
                 </div>
                 <button onClick={sellPicked} disabled={!picked || !sellTeam || sellPoints === ''} className="px-4 py-2 rounded-md bg-cricket-gold text-black font-semibold disabled:opacity-50">Save Sale</button>
                 <button onClick={markUnsold} disabled={!picked} className="px-4 py-2 rounded-md border border-yellow-600 text-yellow-300 disabled:opacity-50">Mark Unsold</button>
@@ -781,6 +797,12 @@ export default function AuctionPage() {
             {activeTab==='budgets' && (
             <div className="bg-green-900/30 border border-green-800 rounded-lg p-4">
               <div className="text-white font-semibold mb-2">Team Budgets</div>
+              <div className="mb-4 p-3 bg-blue-900/20 border border-blue-800 rounded-lg">
+                <div className="text-blue-200 text-sm">
+                  <strong>Wallet Structure:</strong> Each team's budget is divided into Reserve Wallet (900 pts for 2 retentions, 1000 pts for 1 retention, 1100 pts for 0 retentions) and Floating Wallet (remaining budget). 
+                  <strong>Purchase Rule:</strong> 100 points deducted from Reserve, remainder from Floating per player.
+                </div>
+              </div>
               <div className="grid md:grid-cols-4 gap-3">
                 {Object.entries(state?.summary || {}).map(([name, s]) => {
                   const regIndex = new Map(regs.map(r => [norm(r.fullName), r]))
@@ -792,14 +814,20 @@ export default function AuctionPage() {
                   }, 0)
                   const spent = (s as any).spent + baseFee
                   const remaining = (s as any).budget - spent
+                  const summary = s as any
                   return (
                     <div key={name} className="rounded border border-green-800 p-3 bg-green-900/40">
-                      <div className="text-white font-medium">{name}</div>
-                      <div className="text-green-200 text-sm">Budget: {(s as any).budget}</div>
+                      <div className="text-white font-medium mb-2">{name}</div>
+                      <div className="text-green-200 text-sm">Budget: {summary.budget}</div>
                       <div className="text-green-200 text-sm">Base Fee: {baseFee}</div>
                       <div className="text-green-200 text-sm">Spent: {spent}</div>
                       <div className="text-green-200 text-sm">Remaining: {remaining}</div>
-                      <div className="text-green-200 text-sm">Players: {(s as any).count}</div>
+                      <div className="text-green-200 text-sm">Players: {summary.count}</div>
+                      <div className="mt-2 pt-2 border-t border-green-700">
+                        <div className="text-yellow-300 text-xs font-semibold mb-1">Wallet Breakdown:</div>
+                        <div className="text-green-300 text-xs">Reserve: {summary.reserveRemaining || 0}/{summary.reserveWallet || 0}</div>
+                        <div className="text-green-300 text-xs">Floating: {summary.floatingRemaining || 0}/{summary.floatingWallet || 0}</div>
+                      </div>
                     </div>
                   )
                 })}
@@ -886,8 +914,12 @@ export default function AuctionPage() {
                           }, 0)
                           const spent = (s as any).spent + baseFee
                           const remaining = (s as any).budget - spent
+                          const summary = s as any
                           return (
-                            <div className="text-green-200 text-sm">Budget: {(s as any).budget} • Spent: {spent} • Remaining: {remaining} • Players: {(s as any).count}</div>
+                            <>
+                              <div className="text-green-200 text-sm">Budget: {summary.budget} • Spent: {spent} • Remaining: {remaining} • Players: {summary.count}</div>
+                              <div className="text-yellow-300 text-xs mt-1">Reserve: {summary.reserveRemaining || 0}/{summary.reserveWallet || 0} • Floating: {summary.floatingRemaining || 0}/{summary.floatingWallet || 0}</div>
+                            </>
                           )
                         })()}
                         <div className="text-green-300 text-xs mt-1">Owner: {state?.owners?.[name]?.name || '—'} {state?.owners?.[name] ? (state?.owners?.[name]?.playing ? '(Playing)' : '(Non-playing)') : ''}</div>
