@@ -247,33 +247,39 @@ export default function AuctionOBSPage() {
             </div>
 
             {/* Previous Player Sold */}
-            {previousPlayer && (
-              <div className="bg-gradient-to-r from-green-700 to-green-900 rounded-xl p-3 shadow-xl border-2 border-green-500">
-                <div className="text-center">
-                  <div className="text-green-200 text-sm font-semibold mb-2 uppercase tracking-wider">
-                    Last Player Sold
-                  </div>
-                  <div className="text-white text-2xl font-bold mb-2">
-                    {previousPlayer.name}
-                  </div>
-                  <div className="flex justify-center gap-6 text-white text-base">
-                    <div>
-                      <span className="text-green-300">Team:</span> <span className="font-semibold">{previousPlayer.team}</span>
-                    </div>
-                    <div>
-                      <span className="text-green-300">Points:</span> <span className="font-bold text-yellow-300">{previousPlayer.points}</span>
-                    </div>
-                  </div>
+            <div className="bg-gradient-to-r from-green-700 to-green-900 rounded-xl p-3 shadow-xl border-2 border-green-500">
+              <div className="text-center">
+                <div className="text-green-200 text-sm font-semibold mb-2 uppercase tracking-wider">
+                  Last Player Sold
                 </div>
+                {previousPlayer ? (
+                  <>
+                    <div className="text-white text-2xl font-bold mb-2">
+                      {previousPlayer.name}
+                    </div>
+                    <div className="flex justify-center gap-6 text-white text-base">
+                      <div>
+                        <span className="text-green-300">Team:</span> <span className="font-semibold">{previousPlayer.team}</span>
+                      </div>
+                      <div>
+                        <span className="text-green-300">Points:</span> <span className="font-bold text-yellow-300">{previousPlayer.points}</span>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-white text-lg opacity-60">
+                    No player sold yet
+                  </div>
+                )}
               </div>
-            )}
+            </div>
 
             {/* Team Balances */}
             <div className="bg-gradient-to-br from-blue-900 to-purple-900 rounded-xl p-3 shadow-xl border-2 border-blue-500">
-              <div className="text-center mb-3">
-                <h2 className="text-2xl font-bold text-white uppercase tracking-wider">Team Balances</h2>
+              <div className="text-center mb-2">
+                <h2 className="text-xl font-bold text-white uppercase tracking-wider">Team Balances</h2>
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
                 {Object.entries(state?.summary || {}).map(([name, s]) => {
                   const regIndex = new Map(regs.map(r => [norm(r.fullName), r]))
                   const baseFee = (state?.retentions?.[name] || []).reduce((acc, r) => {
@@ -284,30 +290,14 @@ export default function AuctionOBSPage() {
                   }, 0)
                   const spent = s.spent + baseFee
                   const remaining = s.budget - spent
-                  const totalPlayers = s.count + (state?.retentions?.[name] || []).length
 
                   return (
-                    <div key={name} className="bg-white/10 backdrop-blur-sm rounded-lg p-3 border border-white/20">
-                      <div className="text-white font-bold text-base mb-2 truncate" title={name}>
+                    <div key={name} className="bg-white/10 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/20 flex justify-between items-center">
+                      <div className="text-white font-bold text-sm truncate flex-1" title={name}>
                         {name}
                       </div>
-                      <div className="space-y-1 text-white">
-                        <div className="flex justify-between text-xs">
-                          <span className="text-blue-200">Budget:</span>
-                          <span className="font-semibold">{s.budget}</span>
-                        </div>
-                        <div className="flex justify-between text-xs">
-                          <span className="text-blue-200">Spent:</span>
-                          <span className="font-semibold">{spent}</span>
-                        </div>
-                        <div className="flex justify-between text-base bg-yellow-500/20 rounded px-2 py-1">
-                          <span className="text-yellow-300 font-semibold">Remaining:</span>
-                          <span className="font-bold text-yellow-300">{remaining}</span>
-                        </div>
-                        <div className="flex justify-between text-xs border-t border-white/20 pt-1">
-                          <span className="text-blue-200">Players:</span>
-                          <span className="font-semibold">{totalPlayers}</span>
-                        </div>
+                      <div className="text-yellow-300 font-bold text-base ml-2">
+                        {remaining}
                       </div>
                     </div>
                   )
