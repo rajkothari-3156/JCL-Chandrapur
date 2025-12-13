@@ -86,6 +86,7 @@ function generateSchedule(groupA: string[], groupB: string[]): Match[] {
   
   // Shuffle matchups for randomness
   const shuffledMatchups = shuffleArray(allMatchups)
+  const scheduledMatchups = new Set<string>() // Track which matchups have been scheduled
   
   // Schedule matches day by day, ensuring each team plays max 1 match per day
   DAYS.forEach(day => {
@@ -93,32 +94,40 @@ function generateSchedule(groupA: string[], groupB: string[]): Match[] {
     
     // Try to schedule matches for this day
     for (const matchup of shuffledMatchups) {
-      // Check if both teams are available today (haven't played yet today)
-      if (!teamsPlayedToday.has(matchup.teamA) && !teamsPlayedToday.has(matchup.teamB)) {
-        // Check if both teams haven't played on this specific day before
-        if (!teamSchedule[matchup.teamA].has(day.date) && !teamSchedule[matchup.teamB].has(day.date)) {
-          // Find available time slot
-          const availableSlots = TIME_SLOTS.filter(slot => !globalTimeSlots[day.date].has(slot))
-          
-          if (availableSlots.length > 0) {
-            const timeSlot = availableSlots[0]
+      const matchupKey = `${matchup.teamA}-${matchup.teamB}`
+      
+      // Check if this matchup hasn't been scheduled yet
+      if (!scheduledMatchups.has(matchupKey)) {
+        // Check if both teams are available today (haven't played yet today)
+        if (!teamsPlayedToday.has(matchup.teamA) && !teamsPlayedToday.has(matchup.teamB)) {
+          // Check if both teams haven't played on this specific day before
+          if (!teamSchedule[matchup.teamA].has(day.date) && !teamSchedule[matchup.teamB].has(day.date)) {
+            // Find available time slot
+            const availableSlots = TIME_SLOTS.filter(slot => !globalTimeSlots[day.date].has(slot))
             
-            // Schedule the match
-            matches.push({
-              id: `${matchup.teamA}-${matchup.teamB}-${day.date}`,
-              teamA: matchup.teamA,
-              teamB: matchup.teamB,
-              date: day.date,
-              time: timeSlot,
-              day: day.day,
-            })
-            
-            // Mark teams as played today and on this date
-            teamsPlayedToday.add(matchup.teamA)
-            teamsPlayedToday.add(matchup.teamB)
-            teamSchedule[matchup.teamA].add(day.date)
-            teamSchedule[matchup.teamB].add(day.date)
-            globalTimeSlots[day.date].add(timeSlot)
+            if (availableSlots.length > 0) {
+              const timeSlot = availableSlots[0]
+              
+              // Schedule the match
+              matches.push({
+                id: `${matchup.teamA}-${matchup.teamB}-${day.date}`,
+                teamA: matchup.teamA,
+                teamB: matchup.teamB,
+                date: day.date,
+                time: timeSlot,
+                day: day.day,
+              })
+              
+              // Mark this matchup as scheduled
+              scheduledMatchups.add(matchupKey)
+              
+              // Mark teams as played today and on this date
+              teamsPlayedToday.add(matchup.teamA)
+              teamsPlayedToday.add(matchup.teamB)
+              teamSchedule[matchup.teamA].add(day.date)
+              teamSchedule[matchup.teamB].add(day.date)
+              globalTimeSlots[day.date].add(timeSlot)
+            }
           }
         }
       }
