@@ -11,6 +11,7 @@
   "dependencies": {
     "@upstash/redis": "^1.35.6",
     "googleapis": "^130.0.0",
+    "html2pdf.js": "^0.12.1",
     "ioredis": "^5.8.2",
     "jspdf": "^3.0.4",
     "jspdf-autotable": "^5.0.2",
