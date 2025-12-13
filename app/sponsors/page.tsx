@@ -72,7 +72,7 @@ export default function SponsorsPage() {
       icon: UserCheck, 
       color: 'blue',
       description: 'Promoting fair play and community values',
-      logoPath: '/sponsors/community-fairplay-shri-rahulbabu-puglia.jpegpng',
+      logoPath: '/sponsors/community-fairplay-shri-rahulbabu-puglia.jpeg',
       name: 'Shri RahulBabu Puglia',
       height: 200
     },
@@ -81,7 +81,7 @@ export default function SponsorsPage() {
       icon: Gift, 
       color: 'indigo',
       description: 'Associated with trophy and award presentations',
-      logoPath: '/sponsors/presentation-praful-traders.png',
+      logoPath: '/sponsors/presentation-praful-traders.jpeg',
       name: 'Praful Traders',
       height: 200
     },
