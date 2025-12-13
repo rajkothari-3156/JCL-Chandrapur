@@ -143,6 +143,7 @@ export default function SponsorsPage() {
         { name: 'Maruti Group Cotton Gining', logoPath: '/sponsors/event-partner-maruti.jpeg' },
         { name: 'Giriraj Marketing', logoPath: '/sponsors/event-partner-giriraj.png' },
         { name: 'Absolute Healthcare', logoPath: '/sponsors/event-partner-absolute.jpeg' },
+        { name: 'Shanti Traders', logoPath: '/sponsors/event-partner-shanti-traders.jpeg' },
       ],
       height: 100
     },
