@@ -90,13 +90,14 @@ export default function AuctionOBSPage() {
           const soldData = data as { team: string; points: number; time: string }
           const newSoldPlayer = { name, team: soldData.team, points: soldData.points }
           
-          // Check if this is a new sold player
-          if (!previousPlayer || previousPlayer.name !== name || previousPlayer.team !== soldData.team) {
+          // Check if this is a new sold player (and animation is not already showing)
+          if ((!previousPlayer || previousPlayer.name !== name || previousPlayer.team !== soldData.team) && !showSoldAnimation) {
             setPreviousPlayer(newSoldPlayer)
             setLastSoldPlayer(newSoldPlayer)
             setShowSoldAnimation(true)
-            setTimeout(() => setShowSoldAnimation(false), 5000) // Hide after 5 seconds
-          } else {
+            setTimeout(() => setShowSoldAnimation(false), 4000) // Hide after 4 seconds
+          } else if (previousPlayer?.name !== name || previousPlayer?.team !== soldData.team) {
+            // Update previous player without triggering animation
             setPreviousPlayer(newSoldPlayer)
           }
         }
@@ -128,8 +129,8 @@ export default function AuctionOBSPage() {
   }, [currentPlayer])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-950 via-green-900 to-black" style={{ width: '800px', height: '1000px', overflow: 'hidden' }}>
-      <div className="w-full h-full p-4 space-y-3 overflow-y-auto">
+    <div className="min-h-screen bg-gradient-to-br from-green-950 via-green-900 to-black flex items-center justify-center">
+      <div className="w-full h-full p-4 space-y-3 overflow-y-auto" style={{ width: '800px', height: '1000px', maxWidth: '100vw', maxHeight: '100vh' }}>
         {/* Header */}
         <div className="text-center mb-3">
           <h1 className="text-4xl font-bold text-white drop-shadow-2xl mb-1">JCL AUCTION 2025</h1>
