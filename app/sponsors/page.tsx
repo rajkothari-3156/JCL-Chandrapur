@@ -122,6 +122,15 @@ export default function SponsorsPage() {
       height: 200
     },
     { 
+      label: '11K Sponsor', 
+      icon: Heart, 
+      color: 'rose',
+      description: 'Supporting healthcare and wellness at JCL Chandrapur',
+      logoPath: '/sponsors/first-aid-jain-hospital.jpeg',
+      name: 'First Aid Jain Hospital',
+      height: 180
+    },
+    { 
       label: 'Event Partners', 
       icon: Users, 
       color: 'pink',

@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { Trophy, Award, UtensilsCrossed, Shirt, Gift, Droplets, UserCheck, DoorOpen, Users, Store, Radio, ExternalLink, Home } from 'lucide-react'
+import { Trophy, Award, UtensilsCrossed, Shirt, Gift, Droplets, UserCheck, DoorOpen, Users, Store, Radio, ExternalLink, Home, Heart } from 'lucide-react'
 
 export default function SponsorsBar() {
   const sponsorCategories = [
@@ -16,6 +16,7 @@ export default function SponsorsBar() {
     { label: 'Product Stall Partner', icon: Store, color: 'teal', logoPath: '/sponsors/product-stall-kalptree.png', name: 'Kalptree' },
     { label: 'Hospitality Partner', icon: Home, color: 'emerald', logoPath: '/sponsors/hospitality-partner-chandralok.png', name: 'Chandralok Creations' },
     { label: 'Media Partner', icon: Radio, color: 'red', logoPath: '/sponsors/media-partner-arihant-new.jpg', name: 'Arihant Furniture' },
+    { label: '11K Sponsor', icon: Heart, color: 'rose', logoPath: '/sponsors/first-aid-jain-hospital.jpeg', name: 'First Aid Jain Hospital' },
     { label: 'Event Partners', icon: Users, color: 'pink', logoPath: null, name: 'Event Partners' },
   ]
 
@@ -47,6 +48,7 @@ export default function SponsorsBar() {
                 pink: 'border-pink-400 hover:border-pink-500',
                 red: 'border-red-400 hover:border-red-500',
                 emerald: 'border-emerald-400 hover:border-emerald-500',
+                rose: 'border-rose-400 hover:border-rose-500',
               }
               const iconColorClasses = {
                 green: 'text-green-500',
@@ -61,6 +63,7 @@ export default function SponsorsBar() {
                 pink: 'text-pink-500',
                 red: 'text-red-500',
                 emerald: 'text-emerald-500',
+                rose: 'text-rose-500',
               }
               
               return (
