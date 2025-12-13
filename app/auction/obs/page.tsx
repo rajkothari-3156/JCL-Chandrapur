@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 
 type AuctionState = {
   teams: Record<string, { budget: number; players: Array<{ fullName: string; points: number; time: string }> }>
@@ -63,7 +63,7 @@ export default function AuctionOBSPage() {
   const [imgError, setImgError] = useState(false)
   const [showSoldAnimation, setShowSoldAnimation] = useState(false)
   const [lastSoldPlayer, setLastSoldPlayer] = useState<{ name: string; team: string; points: number } | null>(null)
-  const [lastShownAnimationKey, setLastShownAnimationKey] = useState<string>('')
+  const lastShownAnimationKeyRef = useRef<string>('')
 
   const norm = (s: string) => String(s || '').toLowerCase().replace(/\s+/g, ' ').trim()
 
@@ -93,10 +93,10 @@ export default function AuctionOBSPage() {
           const animationKey = `${name}-${soldData.team}-${soldData.points}`
           
           // Check if this is a new sold player that we haven't shown animation for yet
-          if (animationKey !== lastShownAnimationKey) {
+          if (animationKey !== lastShownAnimationKeyRef.current) {
             setPreviousPlayer(newSoldPlayer)
             setLastSoldPlayer(newSoldPlayer)
-            setLastShownAnimationKey(animationKey)
+            lastShownAnimationKeyRef.current = animationKey
             setShowSoldAnimation(true)
             setTimeout(() => setShowSoldAnimation(false), 4000) // Hide after 4 seconds
           } else if (!previousPlayer || previousPlayer.name !== name || previousPlayer.team !== soldData.team) {

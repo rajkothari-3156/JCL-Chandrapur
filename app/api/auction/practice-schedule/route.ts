@@ -61,11 +61,16 @@ async function savePracticeSchedule(data: PracticeSchedule) {
 function generateSchedule(groupA: string[], groupB: string[]): Match[] {
   const matches: Match[] = []
   const teamSchedule: Record<string, { day: string; time: string }[]> = {}
+  const globalTimeSlots: Record<string, Set<string>> = {} // Track used time slots per day globally
   
-  // Initialize team schedules
+  // Initialize team schedules and global time slot tracking
   const allTeams = [...groupA, ...groupB]
   allTeams.forEach(team => {
     teamSchedule[team] = []
+  })
+  
+  DAYS.forEach(day => {
+    globalTimeSlots[day.date] = new Set()
   })
 
   // For each team in Group A, schedule 4 matches against 4 teams from Group B
@@ -87,25 +92,23 @@ function generateSchedule(groupA: string[], groupB: string[]): Match[] {
         .map(s => s.time)
       const usedTimesThisDay = [...usedTimesTeamA, ...usedTimesTeamB]
       
-      // Also check which times each team has used across all days (to ensure variety)
-      const allUsedTimesTeamA = teamSchedule[teamA].map(s => s.time)
-      const allUsedTimesTeamB = teamSchedule[opponent].map(s => s.time)
-      
       // Find a time slot that:
       // 1. Neither team is using on this day
-      // 2. Preferably neither team has used before (for variety)
-      const availableSlots = TIME_SLOTS.filter(slot => !usedTimesThisDay.includes(slot))
-      const preferredSlots = availableSlots.filter(
-        slot => !allUsedTimesTeamA.includes(slot) && !allUsedTimesTeamB.includes(slot)
+      // 2. The time slot is not already used globally on this day
+      const availableSlots = TIME_SLOTS.filter(slot => 
+        !usedTimesThisDay.includes(slot) && !globalTimeSlots[day.date].has(slot)
       )
       
-      if (preferredSlots.length > 0) {
-        timeSlot = preferredSlots[Math.floor(Math.random() * preferredSlots.length)]
-      } else if (availableSlots.length > 0) {
-        timeSlot = availableSlots[Math.floor(Math.random() * availableSlots.length)]
+      if (availableSlots.length > 0) {
+        timeSlot = availableSlots[0] // Take first available slot for consistency
       } else {
-        // Fallback: use any slot
-        timeSlot = TIME_SLOTS[Math.floor(Math.random() * TIME_SLOTS.length)]
+        // If no slots available, reuse slots (shouldn't happen with 5 slots and 4 teams per group)
+        const fallbackSlots = TIME_SLOTS.filter(slot => !usedTimesThisDay.includes(slot))
+        if (fallbackSlots.length > 0) {
+          timeSlot = fallbackSlots[0]
+        } else {
+          timeSlot = TIME_SLOTS[0]
+        }
       }
       
       // Record the match
@@ -118,9 +121,10 @@ function generateSchedule(groupA: string[], groupB: string[]): Match[] {
         day: day.day,
       })
       
-      // Update team schedules
+      // Update team schedules and global time slot tracking
       teamSchedule[teamA].push({ day: day.date, time: timeSlot })
       teamSchedule[opponent].push({ day: day.date, time: timeSlot })
+      globalTimeSlots[day.date].add(timeSlot)
     })
   })
   
