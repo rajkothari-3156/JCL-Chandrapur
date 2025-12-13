@@ -477,6 +477,11 @@ export default function AuctionPage() {
               <button type="button" onClick={() => setActiveTab('owners')} className={`px-3 py-1.5 rounded-md text-sm font-semibold border ${activeTab==='owners' ? 'bg-cricket-gold text-black border-cricket-gold' : 'bg-green-900/40 text-green-100 border-green-800'}`}>Owners & Retentions</button>
               <button type="button" onClick={() => setActiveTab('auction')} className={`px-3 py-1.5 rounded-md text-sm font-semibold border ${activeTab==='auction' ? 'bg-cricket-gold text-black border-cricket-gold' : 'bg-green-900/40 text-green-100 border-green-800'}`}>Player Auction</button>
               <button type="button" onClick={() => setActiveTab('budgets')} className={`px-3 py-1.5 rounded-md text-sm font-semibold border ${activeTab==='budgets' ? 'bg-cricket-gold text-black border-cricket-gold' : 'bg-green-900/40 text-green-100 border-green-800'}`}>Team Budgets</button>
+              <div className="ml-auto flex gap-2">
+                <button type="button" onClick={() => window.location.href = '/auction/team-numbers'} className="px-3 py-1.5 rounded-md text-sm font-semibold bg-blue-600 text-white hover:bg-blue-700">Team Numbers</button>
+                <button type="button" onClick={() => window.location.href = '/auction/colors'} className="px-3 py-1.5 rounded-md text-sm font-semibold bg-purple-600 text-white hover:bg-purple-700">Colour Auction</button>
+                <button type="button" onClick={() => window.location.href = '/auction/practice-schedule'} className="px-3 py-1.5 rounded-md text-sm font-semibold bg-indigo-600 text-white hover:bg-indigo-700">Practice Schedule</button>
+              </div>
             </div>
             {activeTab==='init' && (
             <div className="bg-green-900/30 border border-green-800 rounded-lg p-4">
