@@ -56,13 +56,13 @@ export async function POST(req: NextRequest) {
 
     if (action === 'randomize') {
       // Get teams from auction state
-      const auctionState = await kv.get('jcl:auction_state')
+      const auctionState = await kv.get('auction:state:v1')
       if (!auctionState) {
         return NextResponse.json({ error: 'Auction state not found' }, { status: 400 })
       }
 
       const state = JSON.parse(auctionState as string)
-      const teams = Object.keys(state.summary || {})
+      const teams = Object.keys(state.teams || {})
 
       if (teams.length !== 8) {
         return NextResponse.json({ error: 'Expected 8 teams' }, { status: 400 })
