@@ -63,74 +63,57 @@ async function savePracticeSchedule(data: PracticeSchedule) {
 
 function generateSchedule(groupA: string[], groupB: string[]): Match[] {
   const matches: Match[] = []
-  const teamSchedule: Record<string, Set<string>> = {} // Track which days each team has played
-  const globalTimeSlots: Record<string, Set<string>> = {} // Track used time slots per day globally
   
-  // Initialize team schedules and global time slot tracking
-  const allTeams = [...groupA, ...groupB]
-  allTeams.forEach(team => {
-    teamSchedule[team] = new Set()
+  // Master schedule based on team numbers
+  // Group A = Teams 1-4, Group B = Teams 5-8
+  const masterSchedule = [
+    // Dec 22
+    { date: '2025-12-22', day: 'Monday', time: '08:00 PM - 09:00 PM', teamANum: 1, teamBNum: 5 },
+    { date: '2025-12-22', day: 'Monday', time: '09:00 PM - 10:00 PM', teamANum: 2, teamBNum: 6 },
+    { date: '2025-12-22', day: 'Monday', time: '10:00 PM - 11:00 PM', teamANum: 3, teamBNum: 7 },
+    { date: '2025-12-22', day: 'Monday', time: '11:00 PM - 12:00 AM', teamANum: 4, teamBNum: 8 },
+    // Dec 23
+    { date: '2025-12-23', day: 'Tuesday', time: '08:00 PM - 09:00 PM', teamANum: 3, teamBNum: 8 },
+    { date: '2025-12-23', day: 'Tuesday', time: '09:00 PM - 10:00 PM', teamANum: 4, teamBNum: 7 },
+    { date: '2025-12-23', day: 'Tuesday', time: '10:00 PM - 11:00 PM', teamANum: 1, teamBNum: 6 },
+    { date: '2025-12-23', day: 'Tuesday', time: '11:00 PM - 12:00 AM', teamANum: 2, teamBNum: 5 },
+    // Dec 24
+    { date: '2025-12-24', day: 'Wednesday', time: '08:00 PM - 09:00 PM', teamANum: 4, teamBNum: 6 },
+    { date: '2025-12-24', day: 'Wednesday', time: '09:00 PM - 10:00 PM', teamANum: 3, teamBNum: 5 },
+    { date: '2025-12-24', day: 'Wednesday', time: '10:00 PM - 11:00 PM', teamANum: 2, teamBNum: 8 },
+    { date: '2025-12-24', day: 'Wednesday', time: '11:00 PM - 12:00 AM', teamANum: 1, teamBNum: 7 },
+    // Dec 25
+    { date: '2025-12-25', day: 'Thursday', time: '08:00 PM - 09:00 PM', teamANum: 2, teamBNum: 7 },
+    { date: '2025-12-25', day: 'Thursday', time: '09:00 PM - 10:00 PM', teamANum: 1, teamBNum: 8 },
+    { date: '2025-12-25', day: 'Thursday', time: '10:00 PM - 11:00 PM', teamANum: 4, teamBNum: 5 },
+    { date: '2025-12-25', day: 'Thursday', time: '11:00 PM - 12:00 AM', teamANum: 3, teamBNum: 6 },
+  ]
+  
+  // Map team numbers to team names
+  // Group A teams are indexed 0-3, mapped to team numbers 1-4
+  // Group B teams are indexed 0-3, mapped to team numbers 5-8
+  const teamNumberToName: Record<number, string> = {}
+  groupA.forEach((team, idx) => {
+    teamNumberToName[idx + 1] = team
+  })
+  groupB.forEach((team, idx) => {
+    teamNumberToName[idx + 5] = team
   })
   
-  DAYS.forEach(day => {
-    globalTimeSlots[day.date] = new Set()
-  })
-
-  // Create all possible matchups between Group A and Group B
-  const allMatchups: Array<{ teamA: string; teamB: string }> = []
-  groupA.forEach(teamA => {
-    groupB.forEach(teamB => {
-      allMatchups.push({ teamA, teamB })
-    })
-  })
-  
-  // Shuffle matchups for randomness
-  const shuffledMatchups = shuffleArray(allMatchups)
-  const scheduledMatchups = new Set<string>() // Track which matchups have been scheduled
-  
-  // Schedule matches day by day, ensuring each team plays max 1 match per day
-  DAYS.forEach(day => {
-    const teamsPlayedToday = new Set<string>()
+  // Create matches from master schedule
+  masterSchedule.forEach((slot, index) => {
+    const teamA = teamNumberToName[slot.teamANum]
+    const teamB = teamNumberToName[slot.teamBNum]
     
-    // Try to schedule matches for this day
-    for (const matchup of shuffledMatchups) {
-      const matchupKey = `${matchup.teamA}-${matchup.teamB}`
-      
-      // Check if this matchup hasn't been scheduled yet
-      if (!scheduledMatchups.has(matchupKey)) {
-        // Check if both teams are available today (haven't played yet today)
-        if (!teamsPlayedToday.has(matchup.teamA) && !teamsPlayedToday.has(matchup.teamB)) {
-          // Check if both teams haven't played on this specific day before
-          if (!teamSchedule[matchup.teamA].has(day.date) && !teamSchedule[matchup.teamB].has(day.date)) {
-            // Find available time slot
-            const availableSlots = TIME_SLOTS.filter(slot => !globalTimeSlots[day.date].has(slot))
-            
-            if (availableSlots.length > 0) {
-              const timeSlot = availableSlots[0]
-              
-              // Schedule the match
-              matches.push({
-                id: `${matchup.teamA}-${matchup.teamB}-${day.date}`,
-                teamA: matchup.teamA,
-                teamB: matchup.teamB,
-                date: day.date,
-                time: timeSlot,
-                day: day.day,
-              })
-              
-              // Mark this matchup as scheduled
-              scheduledMatchups.add(matchupKey)
-              
-              // Mark teams as played today and on this date
-              teamsPlayedToday.add(matchup.teamA)
-              teamsPlayedToday.add(matchup.teamB)
-              teamSchedule[matchup.teamA].add(day.date)
-              teamSchedule[matchup.teamB].add(day.date)
-              globalTimeSlots[day.date].add(timeSlot)
-            }
-          }
-        }
-      }
+    if (teamA && teamB) {
+      matches.push({
+        id: `${teamA}-${teamB}-${slot.date}`,
+        teamA,
+        teamB,
+        date: slot.date,
+        time: slot.time,
+        day: slot.day,
+      })
     }
   })
   
@@ -170,8 +153,13 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Invalid group configuration' }, { status: 400 })
       }
 
-      // Generate matches
-      const matches = generateSchedule(groupA, groupB)
+      // Sort groups by team number to ensure correct mapping
+      // Team numbers are already assigned 1-4 for groupA and 5-8 for groupB
+      const sortedGroupA = [...groupA].sort((a, b) => numbers[a] - numbers[b])
+      const sortedGroupB = [...groupB].sort((a, b) => numbers[a] - numbers[b])
+
+      // Generate matches using sorted groups
+      const matches = generateSchedule(sortedGroupA, sortedGroupB)
 
       const data: PracticeSchedule = {
         matches,
