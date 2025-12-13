@@ -221,6 +221,7 @@ export default function SponsorsPage() {
                                 alt={partner.name}
                                 fill
                                 className="object-contain p-2"
+                                unoptimized
                               />
                             </div>
                           </div>
@@ -238,6 +239,7 @@ export default function SponsorsPage() {
                             alt={category.name!}
                             fill
                             className="object-contain p-4"
+                            unoptimized
                           />
                         </div>
                       </div>
