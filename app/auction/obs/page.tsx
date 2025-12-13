@@ -61,6 +61,8 @@ export default function AuctionOBSPage() {
   const [previousPlayer, setPreviousPlayer] = useState<{ name: string; team: string; points: number } | null>(null)
   const [imgLoaded, setImgLoaded] = useState(false)
   const [imgError, setImgError] = useState(false)
+  const [showSoldAnimation, setShowSoldAnimation] = useState(false)
+  const [lastSoldPlayer, setLastSoldPlayer] = useState<{ name: string; team: string; points: number } | null>(null)
 
   const norm = (s: string) => String(s || '').toLowerCase().replace(/\s+/g, ' ').trim()
 
@@ -86,7 +88,17 @@ export default function AuctionOBSPage() {
           })
           const [name, data] = sorted[0]
           const soldData = data as { team: string; points: number; time: string }
-          setPreviousPlayer({ name, team: soldData.team, points: soldData.points })
+          const newSoldPlayer = { name, team: soldData.team, points: soldData.points }
+          
+          // Check if this is a new sold player
+          if (!previousPlayer || previousPlayer.name !== name || previousPlayer.team !== soldData.team) {
+            setPreviousPlayer(newSoldPlayer)
+            setLastSoldPlayer(newSoldPlayer)
+            setShowSoldAnimation(true)
+            setTimeout(() => setShowSoldAnimation(false), 5000) // Hide after 5 seconds
+          } else {
+            setPreviousPlayer(newSoldPlayer)
+          }
         }
       }
     } catch (e: any) {
@@ -116,13 +128,39 @@ export default function AuctionOBSPage() {
   }, [currentPlayer])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-950 via-green-900 to-black p-8">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-green-950 via-green-900 to-black" style={{ width: '800px', height: '1000px', overflow: 'hidden' }}>
+      <div className="w-full h-full p-4 space-y-3 overflow-y-auto">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-6xl font-bold text-white drop-shadow-2xl mb-2">JCL AUCTION 2025</h1>
-          <p className="text-2xl text-cricket-gold">LIVE</p>
+        <div className="text-center mb-3">
+          <h1 className="text-4xl font-bold text-white drop-shadow-2xl mb-1">JCL AUCTION 2025</h1>
+          <p className="text-xl text-cricket-gold">LIVE</p>
         </div>
+
+        {/* Sold Player Celebration Animation */}
+        {showSoldAnimation && lastSoldPlayer && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm animate-fade-in">
+            <div className="text-center animate-scale-in">
+              <div className="text-8xl mb-4 animate-bounce">🎉</div>
+              <div className="text-6xl font-bold text-yellow-400 mb-4 drop-shadow-2xl animate-pulse">
+                SOLD!
+              </div>
+              <div className="text-4xl font-bold text-white mb-3">
+                {lastSoldPlayer.name}
+              </div>
+              <div className="text-3xl text-green-400 font-semibold mb-2">
+                {lastSoldPlayer.team}
+              </div>
+              <div className="text-5xl font-bold text-yellow-300">
+                {lastSoldPlayer.points} Points
+              </div>
+              <div className="mt-6 flex justify-center gap-4">
+                <div className="text-6xl animate-bounce" style={{ animationDelay: '0.1s' }}>🏏</div>
+                <div className="text-6xl animate-bounce" style={{ animationDelay: '0.2s' }}>⭐</div>
+                <div className="text-6xl animate-bounce" style={{ animationDelay: '0.3s' }}>🎊</div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {loading && (
           <div className="text-center text-white text-2xl">Loading auction data...</div>
@@ -135,17 +173,17 @@ export default function AuctionOBSPage() {
         {!loading && !error && (
           <>
             {/* Current Player Being Sold */}
-            <div className="bg-gradient-to-r from-orange-600 to-red-600 rounded-2xl p-8 shadow-2xl border-4 border-yellow-400">
+            <div className="bg-gradient-to-r from-orange-600 to-red-600 rounded-xl p-4 shadow-2xl border-4 border-yellow-400">
               <div className="text-center">
-                <div className="text-yellow-200 text-2xl font-semibold mb-4 uppercase tracking-wider">
+                <div className="text-yellow-200 text-xl font-semibold mb-2 uppercase tracking-wider">
                   Current Player
                 </div>
                 {currentPlayer ? (
                   <>
-                    <div className="flex flex-col md:flex-row items-center justify-center gap-8 mb-6">
+                    <div className="flex flex-col items-center justify-center gap-3 mb-3">
                       {/* Player Photo */}
                       {currentPlayerInfo?.photoUrl && !imgError ? (
-                        <div className="w-64 h-64 bg-black/30 rounded-xl flex items-center justify-center overflow-hidden border-4 border-yellow-400 shadow-2xl relative">
+                        <div className="w-40 h-40 bg-black/30 rounded-xl flex items-center justify-center overflow-hidden border-4 border-yellow-400 shadow-2xl relative">
                           <img
                             src={driveThumbUrl(currentPlayerInfo.photoUrl)}
                             alt={currentPlayer}
@@ -166,42 +204,42 @@ export default function AuctionOBSPage() {
                           )}
                         </div>
                       ) : (
-                        <div className="w-64 h-64 bg-black/30 rounded-xl flex items-center justify-center border-4 border-yellow-400">
-                          <div className="text-yellow-200 text-lg">{imgError ? 'Photo Load Failed' : 'No Photo'}</div>
+                        <div className="w-40 h-40 bg-black/30 rounded-xl flex items-center justify-center border-4 border-yellow-400">
+                          <div className="text-yellow-200 text-sm">{imgError ? 'Photo Load Failed' : 'No Photo'}</div>
                         </div>
                       )}
                       
                       {/* Player Name */}
-                      <div className="flex-1">
-                        <div className="text-white text-6xl font-bold drop-shadow-lg">
+                      <div className="w-full">
+                        <div className="text-white text-3xl font-bold drop-shadow-lg">
                           {currentPlayer}
                         </div>
                       </div>
                     </div>
                     
                     {currentPlayerInfo && (
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 text-white">
-                        <div className="bg-black/30 rounded-lg p-4">
-                          <div className="text-yellow-200 text-sm mb-1">Serial #</div>
-                          <div className="text-3xl font-bold">{currentPlayerInfo.serialNumber || '-'}</div>
+                      <div className="grid grid-cols-4 gap-2 mt-3 text-white">
+                        <div className="bg-black/30 rounded-lg p-2">
+                          <div className="text-yellow-200 text-xs mb-1">Serial #</div>
+                          <div className="text-xl font-bold">{currentPlayerInfo.serialNumber || '-'}</div>
                         </div>
-                        <div className="bg-black/30 rounded-lg p-4">
-                          <div className="text-yellow-200 text-sm mb-1">Age</div>
-                          <div className="text-3xl font-bold">{currentPlayerInfo.age || '-'}</div>
+                        <div className="bg-black/30 rounded-lg p-2">
+                          <div className="text-yellow-200 text-xs mb-1">Age</div>
+                          <div className="text-xl font-bold">{currentPlayerInfo.age || '-'}</div>
                         </div>
-                        <div className="bg-black/30 rounded-lg p-4">
-                          <div className="text-yellow-200 text-sm mb-1">Style</div>
-                          <div className="text-xl font-semibold">{currentPlayerInfo.playingStyle || '-'}</div>
+                        <div className="bg-black/30 rounded-lg p-2">
+                          <div className="text-yellow-200 text-xs mb-1">Style</div>
+                          <div className="text-sm font-semibold truncate">{currentPlayerInfo.playingStyle || '-'}</div>
                         </div>
-                        <div className="bg-black/30 rounded-lg p-4">
-                          <div className="text-yellow-200 text-sm mb-1">T-Shirt</div>
-                          <div className="text-3xl font-bold">{currentPlayerInfo.tshirtSize || '-'}</div>
+                        <div className="bg-black/30 rounded-lg p-2">
+                          <div className="text-yellow-200 text-xs mb-1">T-Shirt</div>
+                          <div className="text-xl font-bold">{currentPlayerInfo.tshirtSize || '-'}</div>
                         </div>
                       </div>
                     )}
                   </>
                 ) : (
-                  <div className="text-white text-4xl">
+                  <div className="text-white text-2xl">
                     Waiting for random pick...
                   </div>
                 )}
@@ -210,15 +248,15 @@ export default function AuctionOBSPage() {
 
             {/* Previous Player Sold */}
             {previousPlayer && (
-              <div className="bg-gradient-to-r from-green-700 to-green-900 rounded-2xl p-6 shadow-xl border-2 border-green-500">
+              <div className="bg-gradient-to-r from-green-700 to-green-900 rounded-xl p-3 shadow-xl border-2 border-green-500">
                 <div className="text-center">
-                  <div className="text-green-200 text-xl font-semibold mb-3 uppercase tracking-wider">
+                  <div className="text-green-200 text-sm font-semibold mb-2 uppercase tracking-wider">
                     Last Player Sold
                   </div>
-                  <div className="text-white text-4xl font-bold mb-2">
+                  <div className="text-white text-2xl font-bold mb-2">
                     {previousPlayer.name}
                   </div>
-                  <div className="flex justify-center gap-8 text-white text-xl">
+                  <div className="flex justify-center gap-6 text-white text-base">
                     <div>
                       <span className="text-green-300">Team:</span> <span className="font-semibold">{previousPlayer.team}</span>
                     </div>
@@ -231,11 +269,11 @@ export default function AuctionOBSPage() {
             )}
 
             {/* Team Balances */}
-            <div className="bg-gradient-to-br from-blue-900 to-purple-900 rounded-2xl p-6 shadow-xl border-2 border-blue-500">
-              <div className="text-center mb-6">
-                <h2 className="text-3xl font-bold text-white uppercase tracking-wider">Team Balances</h2>
+            <div className="bg-gradient-to-br from-blue-900 to-purple-900 rounded-xl p-3 shadow-xl border-2 border-blue-500">
+              <div className="text-center mb-3">
+                <h2 className="text-2xl font-bold text-white uppercase tracking-wider">Team Balances</h2>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 {Object.entries(state?.summary || {}).map(([name, s]) => {
                   const regIndex = new Map(regs.map(r => [norm(r.fullName), r]))
                   const baseFee = (state?.retentions?.[name] || []).reduce((acc, r) => {
@@ -249,24 +287,24 @@ export default function AuctionOBSPage() {
                   const totalPlayers = s.count + (state?.retentions?.[name] || []).length
 
                   return (
-                    <div key={name} className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                      <div className="text-white font-bold text-lg mb-3 truncate" title={name}>
+                    <div key={name} className="bg-white/10 backdrop-blur-sm rounded-lg p-3 border border-white/20">
+                      <div className="text-white font-bold text-base mb-2 truncate" title={name}>
                         {name}
                       </div>
-                      <div className="space-y-2 text-white">
-                        <div className="flex justify-between text-sm">
+                      <div className="space-y-1 text-white">
+                        <div className="flex justify-between text-xs">
                           <span className="text-blue-200">Budget:</span>
                           <span className="font-semibold">{s.budget}</span>
                         </div>
-                        <div className="flex justify-between text-sm">
+                        <div className="flex justify-between text-xs">
                           <span className="text-blue-200">Spent:</span>
                           <span className="font-semibold">{spent}</span>
                         </div>
-                        <div className="flex justify-between text-lg">
-                          <span className="text-yellow-300">Remaining:</span>
+                        <div className="flex justify-between text-base bg-yellow-500/20 rounded px-2 py-1">
+                          <span className="text-yellow-300 font-semibold">Remaining:</span>
                           <span className="font-bold text-yellow-300">{remaining}</span>
                         </div>
-                        <div className="flex justify-between text-sm border-t border-white/20 pt-2">
+                        <div className="flex justify-between text-xs border-t border-white/20 pt-1">
                           <span className="text-blue-200">Players:</span>
                           <span className="font-semibold">{totalPlayers}</span>
                         </div>
@@ -278,17 +316,17 @@ export default function AuctionOBSPage() {
             </div>
 
             {/* Control Panel */}
-            <div className="bg-gray-800 rounded-xl p-4 border border-gray-600">
+            <div className="bg-gray-800 rounded-lg p-2 border border-gray-600">
               <div className="flex items-center justify-between">
-                <div className="text-gray-300 text-sm">
-                  Auto-refresh: Every 3 seconds
+                <div className="text-gray-300 text-xs">
+                  Auto-refresh: 3s
                 </div>
-                <div className="flex gap-3">
+                <div className="flex gap-2">
                   <button
                     onClick={load}
-                    className="px-4 py-2 rounded-lg bg-cricket-gold text-black font-semibold hover:bg-yellow-500 transition"
+                    className="px-3 py-1 rounded-lg bg-cricket-gold text-black text-xs font-semibold hover:bg-yellow-500 transition"
                   >
-                    Refresh Now
+                    Refresh
                   </button>
                   <button
                     onClick={async () => {
@@ -303,9 +341,9 @@ export default function AuctionOBSPage() {
                         console.error('Failed to clear current pick:', err)
                       }
                     }}
-                    className="px-4 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 transition"
+                    className="px-3 py-1 rounded-lg bg-red-600 text-white text-xs font-semibold hover:bg-red-700 transition"
                   >
-                    Clear Current
+                    Clear
                   </button>
                 </div>
               </div>
