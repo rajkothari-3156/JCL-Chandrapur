@@ -12,7 +12,7 @@ type ColorAuction = {
 async function getColorAuction(): Promise<ColorAuction> {
   const data = await kv.get(COLOR_AUCTION_KEY)
   if (data) {
-    return JSON.parse(data as string)
+    return typeof data === 'string' ? JSON.parse(data) : data
   }
   
   // Fixed team-to-owner mapping
