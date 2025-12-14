@@ -171,6 +171,34 @@ export async function POST(req: Request) {
         }, { status: 400 })
       }
       
+      // Validate total budget including base fees
+      const currentSpent = (state.teams[team].players || []).reduce((acc, p) => acc + (p.points || 0), 0)
+      const totalBudget = state.teams[team].budget || 0
+      const newSpent = currentSpent + points
+      
+      // Calculate base fee to check total remaining
+      const regsForValidation = await fetchRegistrations()
+      let baseFee = 0
+      if (regsForValidation && Array.isArray(regsForValidation)) {
+        const regIndex = new Map(regsForValidation.map((r: any) => [
+          String(r.fullName || '').toLowerCase().replace(/\s+/g, ' ').trim(),
+          r
+        ]))
+        baseFee = (state.retentions?.[team] || []).reduce((acc: number, r: any) => {
+          const reg = regIndex.get(String(r.fullName || '').toLowerCase().replace(/\s+/g, ' ').trim())
+          const age = typeof reg?.age === 'number' ? reg.age : parseInt(String(reg?.age ?? ''), 10)
+          if (Number.isFinite(age) && age >= 35) return acc + 1000
+          return acc + 2500
+        }, 0)
+      }
+      
+      const totalRemaining = totalBudget - newSpent - baseFee
+      if (totalRemaining < 0) {
+        return NextResponse.json({ 
+          error: `Insufficient total budget. This purchase would exceed budget by ${Math.abs(totalRemaining)} points.` 
+        }, { status: 400 })
+      }
+      
       state.teams[team].players.push({ fullName, points, time })
       state.sold[key] = { team, points, time }
       // ensure unsold list removes this player if present
@@ -178,8 +206,7 @@ export async function POST(req: Request) {
       // clear current pick after sale
       state.currentPick = null
       await writeState(state)
-      const registrations = await fetchRegistrations()
-      return NextResponse.json({ ok: true, state: enrichStateWithSummary(state, registrations) })
+      return NextResponse.json({ ok: true, state: enrichStateWithSummary(state, regsForValidation) })
     }
 
     if (action === 'unsell') {

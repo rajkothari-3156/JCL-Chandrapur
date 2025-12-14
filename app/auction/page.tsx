@@ -69,8 +69,8 @@ export default function AuctionPage() {
   const [error, setError] = useState<string | null>(null)
 
   const [state, setState] = useState<AuctionState | null>(null)
-  const [teamsInput, setTeamsInput] = useState('SR Rangers, KT Lions, Power Hitters, Falcon Giants, Parshv Panthers, Chandralok Warriors, Gladiators Cricket Club, Toxic 11')
-  const [budgetInput, setBudgetInput] = useState<number>(10000)
+  const [teamsInput, setTeamsInput] = useState('KT Lions, Parshv Panthers, Rajwada Royals, Chandralok Warriors, Dhansiddh Earthmovers, Jain United, Falcon Giants, Dominant Demons')
+  const [budgetInput, setBudgetInput] = useState<number>(11000)
 
   const [picked, setPicked] = useState<Registration | null>(null)
   const [pickedAnimating, setPickedAnimating] = useState(false)
@@ -135,7 +135,27 @@ export default function AuctionPage() {
     }
   }
 
-  useEffect(() => { if (auth) loadAll() }, [auth])
+  useEffect(() => { 
+    if (auth) {
+      loadAll().then(async () => {
+        // Initialize teams by default if not already initialized
+        const res = await fetch('/api/auction/state', { cache: 'no-store' })
+        const json = await res.json()
+        if (res.ok && json && Object.keys(json.teams || {}).length === 0) {
+          // No teams exist, initialize with defaults
+          const names = teamsInput.split(',').map(s => s.trim()).filter(Boolean)
+          const teams = names.map(name => ({ name, budget: budgetInput }))
+          await fetch('/api/auction/state', { 
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json' }, 
+            body: JSON.stringify({ action: 'setTeams', teams }) 
+          })
+          // Reload state after initialization
+          await loadAll()
+        }
+      })
+    }
+  }, [auth])
 
   // Lazy-load mapping and CSVs when a player is picked the first time
   const ensureAuxData = async () => {
