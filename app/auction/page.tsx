@@ -829,11 +829,6 @@ export default function AuctionPage() {
                       <div className="text-green-200 text-sm">Spent: {spent}</div>
                       <div className="text-green-200 text-sm">Remaining: {remaining}</div>
                       <div className="text-green-200 text-sm">Players: {summary.count}</div>
-                      <div className="mt-2 pt-2 border-t border-green-700">
-                        <div className="text-yellow-300 text-xs font-semibold mb-1">Wallet Breakdown:</div>
-                        <div className="text-green-300 text-xs">Reserve: {summary.reserveRemaining || 0}/{summary.reserveWallet || 0}</div>
-                        <div className="text-green-300 text-xs">Floating: {summary.floatingRemaining || 0}/{summary.floatingWallet || 0}</div>
-                      </div>
                     </div>
                   )
                 })}
