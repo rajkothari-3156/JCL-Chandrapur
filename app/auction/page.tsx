@@ -360,6 +360,15 @@ export default function AuctionPage() {
     notify('Cleared unsold queue', 'success')
   }
 
+  const restoreUnassigned = async () => {
+    const res = await fetch('/api/auction/state', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'restoreUnassigned' }) })
+    const json = await res.json()
+    if (!res.ok) { const m = json?.error || 'Failed to restore unassigned'; setActionMsg(m); notify(m, 'error'); return }
+    setState(json.state)
+    setActionMsg('Unassigned players restored to unsold queue')
+    notify('Unassigned players restored to unsold queue', 'success')
+  }
+
   // ...
 
   const updatePoints = async (team: string, fullName: string, points: number) => {
@@ -871,7 +880,9 @@ export default function AuctionPage() {
               </div>
               <div className="mt-3 flex items-center gap-3">
                 <div className="text-green-200 text-sm">Unsold Queue: {unsoldQueue.length}</div>
+                <div className="text-green-200 text-sm">Unassigned: {(state?.unsold || []).filter(u => u.unassigned).length}</div>
                 <button onClick={clearUnsold} className="px-3 py-1.5 rounded-md border border-green-800 text-green-100 text-sm">Clear Unsold</button>
+                <button onClick={restoreUnassigned} className="px-3 py-1.5 rounded-md border border-blue-800 text-blue-100 text-sm">Restore Unassigned</button>
                 <button onClick={() => {
                   const printWindow = window.open('', '_blank')
                   if (!printWindow) { notify('Please allow popups to download PDF', 'error'); return }

@@ -295,6 +295,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true, state: enrichStateWithSummary(state, registrations) })
     }
 
+    if (action === 'restoreUnassigned') {
+      state.unsold = (state.unsold || []).map(u => {
+        if (u.unassigned) {
+          return { ...u, unassigned: false, time: new Date().toISOString() }
+        }
+        return u
+      })
+      await writeState(state)
+      const registrations = await fetchRegistrations()
+      return NextResponse.json({ ok: true, state: enrichStateWithSummary(state, registrations) })
+    }
+
     if (action === 'setCurrentPick') {
       const fullName = String(body.fullName || '').trim()
       if (!fullName) return NextResponse.json({ error: 'fullName required' }, { status: 400 })
