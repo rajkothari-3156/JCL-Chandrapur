@@ -761,13 +761,9 @@ export default function AuctionPage() {
                   <label className="block text-green-200 text-sm mb-1">Team</label>
                   <select value={sellTeam} onChange={(e)=>setSellTeam(e.target.value)} className="w-full rounded-md border border-green-800 bg-green-900/40 text-white px-3 py-2">
                     <option value="">Select team</option>
-                    {Object.keys(state?.teams || {}).map(t => {
-                      const summary = (state?.summary as any)?.[t]
-                      const walletInfo = summary ? ` (R: ${summary.reserveRemaining || 0}, F: ${summary.floatingRemaining || 0})` : ''
-                      return (
-                        <option key={t} value={t}>{t}{walletInfo}</option>
-                      )
-                    })}
+                    {Object.keys(state?.teams || {}).map(t => (
+                      <option key={t} value={t}>{t}</option>
+                    ))}
                   </select>
                 </div>
                 <div>
