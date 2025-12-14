@@ -131,73 +131,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'Player already sold' }, { status: 409 })
       }
       
-      // Calculate wallet constraints
-      const wallets = calculateWallets(team, state)
-      const currentPlayers = (state.teams[team].players || []).length
-      const reserveUsed = Math.min(currentPlayers * 100, wallets.reserveWallet)
-      const floatingUsed = (state.teams[team].players || []).reduce((acc, p) => acc + (p.points || 0), 0) - reserveUsed
-      const reserveRemaining = wallets.reserveWallet - reserveUsed
-      const floatingRemaining = wallets.floatingWallet - floatingUsed
-      
-      // Validate purchase: 
-      // If reserve wallet has capacity, use 100 from reserve and (points - 100) from floating
-      // If reserve wallet is depleted, use full points from floating wallet
-      let reserveNeeded = 0
-      let floatingNeeded = 0
-      
-      if (reserveRemaining >= 100) {
-        // Reserve wallet has capacity - use standard allocation
-        reserveNeeded = 100
-        floatingNeeded = Math.max(0, points - 100)
-      } else if (reserveRemaining > 0) {
-        // Reserve wallet partially depleted - use what's left from reserve, rest from floating
-        reserveNeeded = reserveRemaining
-        floatingNeeded = points - reserveRemaining
-      } else {
-        // Reserve wallet fully depleted - use full amount from floating
-        reserveNeeded = 0
-        floatingNeeded = points
-      }
-      
-      if (reserveNeeded > reserveRemaining) {
-        return NextResponse.json({ 
-          error: `Insufficient reserve wallet. Need ${reserveNeeded}, have ${reserveRemaining}.` 
-        }, { status: 400 })
-      }
-      
-      if (floatingNeeded > floatingRemaining) {
-        return NextResponse.json({ 
-          error: `Insufficient floating wallet. Need ${floatingNeeded}, have ${floatingRemaining}.` 
-        }, { status: 400 })
-      }
-      
-      // Validate total budget including base fees
-      const currentSpent = (state.teams[team].players || []).reduce((acc, p) => acc + (p.points || 0), 0)
-      const totalBudget = state.teams[team].budget || 0
-      const newSpent = currentSpent + points
-      
-      // Calculate base fee to check total remaining
       const regsForValidation = await fetchRegistrations()
-      let baseFee = 0
-      if (regsForValidation && Array.isArray(regsForValidation)) {
-        const regIndex = new Map(regsForValidation.map((r: any) => [
-          String(r.fullName || '').toLowerCase().replace(/\s+/g, ' ').trim(),
-          r
-        ]))
-        baseFee = (state.retentions?.[team] || []).reduce((acc: number, r: any) => {
-          const reg = regIndex.get(String(r.fullName || '').toLowerCase().replace(/\s+/g, ' ').trim())
-          const age = typeof reg?.age === 'number' ? reg.age : parseInt(String(reg?.age ?? ''), 10)
-          if (Number.isFinite(age) && age >= 35) return acc + 1000
-          return acc + 2500
-        }, 0)
-      }
-      
-      const totalRemaining = totalBudget - newSpent - baseFee
-      if (totalRemaining < 0) {
-        return NextResponse.json({ 
-          error: `Insufficient total budget. This purchase would exceed budget by ${Math.abs(totalRemaining)} points.` 
-        }, { status: 400 })
-      }
       
       state.teams[team].players.push({ fullName, points, time })
       state.sold[key] = { team, points, time }

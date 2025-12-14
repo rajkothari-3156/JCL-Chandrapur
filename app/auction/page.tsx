@@ -253,10 +253,11 @@ export default function AuctionPage() {
   const startRandomPick = async () => {
     if (pickedAnimating) { setActionMsg('Random pick already in progress'); return }
     if (picked) { setActionMsg('Finish action on current player (sell or mark unsold) before picking next'); return }
-    let pool = useUnsoldPool ? regs.filter(r => unsoldQueue.includes(r.fullName)) : unsold
+    const unsoldQueueNorm = new Set(unsoldQueue.map(norm))
+    let pool = useUnsoldPool ? regs.filter(r => unsoldQueueNorm.has(norm(r.fullName))) : unsold
     if (!pool.length) {
       // If first-round pool is empty but unsold queue has players, auto-switch to Unsold Queue
-      const fallback = regs.filter(r => unsoldQueue.includes(r.fullName))
+      const fallback = regs.filter(r => unsoldQueueNorm.has(norm(r.fullName)))
       if (fallback.length) {
         setUseUnsoldPool(true)
         pool = fallback
