@@ -38,37 +38,40 @@ function calculateWallets(team: string, state: any) {
   return { reserveWallet, floatingWallet }
 }
 
+function enrichStateWithSummary(state: any) {
+  return {
+    ...state,
+    summary: Object.fromEntries(
+      Object.entries(state.teams).map(([name, t]: [string, any]) => {
+        const spent = (t.players || []).reduce((acc: number, p: any) => acc + (p.points || 0), 0)
+        const remaining = (t.budget || 0) - spent
+        const wallets = calculateWallets(name, state)
+        const playerCount = (t.players || []).length
+        const reserveUsed = Math.min(playerCount * 100, wallets.reserveWallet)
+        const floatingUsed = spent - reserveUsed
+        const reserveRemaining = wallets.reserveWallet - reserveUsed
+        const floatingRemaining = wallets.floatingWallet - floatingUsed
+        return [name, { 
+          budget: t.budget || 0, 
+          spent, 
+          remaining, 
+          count: playerCount,
+          reserveWallet: wallets.reserveWallet,
+          floatingWallet: wallets.floatingWallet,
+          reserveUsed,
+          floatingUsed,
+          reserveRemaining,
+          floatingRemaining
+        }]
+      })
+    ),
+  }
+}
+
 export async function GET() {
   try {
     const state = await readState()
-    // compute spent lazily on return
-    const enriched = {
-      ...state,
-      summary: Object.fromEntries(
-        Object.entries(state.teams).map(([name, t]) => {
-          const spent = (t.players || []).reduce((acc, p) => acc + (p.points || 0), 0)
-          const remaining = (t.budget || 0) - spent
-          const wallets = calculateWallets(name, state)
-          const playerCount = (t.players || []).length
-          const reserveUsed = Math.min(playerCount * 100, wallets.reserveWallet)
-          const floatingUsed = spent - reserveUsed
-          const reserveRemaining = wallets.reserveWallet - reserveUsed
-          const floatingRemaining = wallets.floatingWallet - floatingUsed
-          return [name, { 
-            budget: t.budget || 0, 
-            spent, 
-            remaining, 
-            count: playerCount,
-            reserveWallet: wallets.reserveWallet,
-            floatingWallet: wallets.floatingWallet,
-            reserveUsed,
-            floatingUsed,
-            reserveRemaining,
-            floatingRemaining
-          }]
-        })
-      ),
-    }
+    const enriched = enrichStateWithSummary(state)
     return NextResponse.json(enriched)
   } catch (e: any) {
     return NextResponse.json({ error: 'Failed to read auction state', details: e?.message ?? String(e) }, { status: 500 })
@@ -127,7 +130,7 @@ export async function POST(req: Request) {
       // clear current pick after sale
       state.currentPick = null
       await writeState(state)
-      return NextResponse.json({ ok: true, state })
+      return NextResponse.json({ ok: true, state: enrichStateWithSummary(state) })
     }
 
     if (action === 'unsell') {
@@ -139,7 +142,7 @@ export async function POST(req: Request) {
       state.teams[team].players = (state.teams[team].players || []).filter(p => normName(p.fullName) !== key)
       delete state.sold[key]
       await writeState(state)
-      return NextResponse.json({ ok: true, state })
+      return NextResponse.json({ ok: true, state: enrichStateWithSummary(state) })
     }
 
     if (action === 'updatePoints') {
@@ -159,7 +162,7 @@ export async function POST(req: Request) {
       if (!found) return NextResponse.json({ error: 'Player not found in team' }, { status: 404 })
       if (state.sold[key]) state.sold[key].points = points
       await writeState(state)
-      return NextResponse.json({ ok: true, state })
+      return NextResponse.json({ ok: true, state: enrichStateWithSummary(state) })
     }
 
     if (action === 'setTeams') {
@@ -172,7 +175,7 @@ export async function POST(req: Request) {
         state.teams[name].budget = budget
       }
       await writeState(state)
-      return NextResponse.json({ ok: true, state })
+      return NextResponse.json({ ok: true, state: enrichStateWithSummary(state) })
     }
 
     if (action === 'setBudget') {
@@ -184,7 +187,7 @@ export async function POST(req: Request) {
       if (!state.teams[name]) state.teams[name] = { budget, players: [] }
       state.teams[name].budget = budget
       await writeState(state)
-      return NextResponse.json({ ok: true, state })
+      return NextResponse.json({ ok: true, state: enrichStateWithSummary(state) })
     }
 
     if (action === 'setOwner') {
@@ -195,7 +198,7 @@ export async function POST(req: Request) {
       state.owners = state.owners || {}
       state.owners[team] = { name: ownerName, playing }
       await writeState(state)
-      return NextResponse.json({ ok: true, state })
+      return NextResponse.json({ ok: true, state: enrichStateWithSummary(state) })
     }
 
     if (action === 'retain') {
@@ -230,7 +233,7 @@ export async function POST(req: Request) {
       arr.push({ fullName, time: new Date().toISOString() })
       state.retentions[team] = arr
       await writeState(state)
-      return NextResponse.json({ ok: true, state })
+      return NextResponse.json({ ok: true, state: enrichStateWithSummary(state) })
     }
 
     if (action === 'unsold') {
@@ -252,7 +255,7 @@ export async function POST(req: Request) {
       // clear current pick after marking unsold
       state.currentPick = null
       await writeState(state)
-      return NextResponse.json({ ok: true, state })
+      return NextResponse.json({ ok: true, state: enrichStateWithSummary(state) })
     }
 
     if (action === 'markUnassigned') {
@@ -264,13 +267,13 @@ export async function POST(req: Request) {
       const existing = state.unsold[i]
       state.unsold[i] = { ...existing, unassigned: true, time: new Date().toISOString(), rounds: Math.max(1, Number(existing.rounds || 1)) }
       await writeState(state)
-      return NextResponse.json({ ok: true, state })
+      return NextResponse.json({ ok: true, state: enrichStateWithSummary(state) })
     }
 
     if (action === 'clearUnsold') {
       state.unsold = []
       await writeState(state)
-      return NextResponse.json({ ok: true, state })
+      return NextResponse.json({ ok: true, state: enrichStateWithSummary(state) })
     }
 
     if (action === 'setCurrentPick') {
@@ -278,19 +281,19 @@ export async function POST(req: Request) {
       if (!fullName) return NextResponse.json({ error: 'fullName required' }, { status: 400 })
       state.currentPick = { fullName, time: new Date().toISOString() }
       await writeState(state)
-      return NextResponse.json({ ok: true, state })
+      return NextResponse.json({ ok: true, state: enrichStateWithSummary(state) })
     }
 
     if (action === 'clearCurrentPick') {
       state.currentPick = null
       await writeState(state)
-      return NextResponse.json({ ok: true, state })
+      return NextResponse.json({ ok: true, state: enrichStateWithSummary(state) })
     }
 
     if (action === 'reset') {
       const empty = { teams: {}, sold: {} as Record<string, { team: string; points: number; time: string }>, owners: {}, retentions: {}, unsold: [] as Array<{ fullName: string; time: string }>, currentPick: null } 
       await writeState(empty)
-      return NextResponse.json({ ok: true, state: empty })
+      return NextResponse.json({ ok: true, state: enrichStateWithSummary(empty) })
     }
 
     return NextResponse.json({ error: 'Unknown action' }, { status: 400 })
