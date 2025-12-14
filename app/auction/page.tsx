@@ -776,9 +776,26 @@ export default function AuctionPage() {
                   {sellTeam && sellPoints !== '' && (() => {
                     const summary = (state?.summary as any)?.[sellTeam]
                     if (!summary) return null
-                    const reserveNeeded = 100
-                    const floatingNeeded = Math.max(0, Number(sellPoints) - 100)
-                    const canAfford = reserveNeeded <= (summary.reserveRemaining || 0) && floatingNeeded <= (summary.floatingRemaining || 0)
+                    const points = Number(sellPoints)
+                    const reserveRemaining = summary.reserveRemaining || 0
+                    const floatingRemaining = summary.floatingRemaining || 0
+                    
+                    // Match backend logic: use reserve if available, otherwise use floating
+                    let reserveNeeded = 0
+                    let floatingNeeded = 0
+                    
+                    if (reserveRemaining >= 100) {
+                      reserveNeeded = 100
+                      floatingNeeded = Math.max(0, points - 100)
+                    } else if (reserveRemaining > 0) {
+                      reserveNeeded = reserveRemaining
+                      floatingNeeded = points - reserveRemaining
+                    } else {
+                      reserveNeeded = 0
+                      floatingNeeded = points
+                    }
+                    
+                    const canAfford = reserveNeeded <= reserveRemaining && floatingNeeded <= floatingRemaining
                     return (
                       <div className={`text-xs mt-1 ${canAfford ? 'text-green-300' : 'text-red-300'}`}>
                         {canAfford ? '✓ Affordable' : '✗ Insufficient wallet'}
