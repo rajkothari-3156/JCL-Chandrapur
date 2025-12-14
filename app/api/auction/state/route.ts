@@ -139,13 +139,29 @@ export async function POST(req: Request) {
       const reserveRemaining = wallets.reserveWallet - reserveUsed
       const floatingRemaining = wallets.floatingWallet - floatingUsed
       
-      // Validate purchase: need 100 from reserve and (points - 100) from floating
-      const reserveNeeded = 100
-      const floatingNeeded = Math.max(0, points - 100)
+      // Validate purchase: 
+      // If reserve wallet has capacity, use 100 from reserve and (points - 100) from floating
+      // If reserve wallet is depleted, use full points from floating wallet
+      let reserveNeeded = 0
+      let floatingNeeded = 0
+      
+      if (reserveRemaining >= 100) {
+        // Reserve wallet has capacity - use standard allocation
+        reserveNeeded = 100
+        floatingNeeded = Math.max(0, points - 100)
+      } else if (reserveRemaining > 0) {
+        // Reserve wallet partially depleted - use what's left from reserve, rest from floating
+        reserveNeeded = reserveRemaining
+        floatingNeeded = points - reserveRemaining
+      } else {
+        // Reserve wallet fully depleted - use full amount from floating
+        reserveNeeded = 0
+        floatingNeeded = points
+      }
       
       if (reserveNeeded > reserveRemaining) {
         return NextResponse.json({ 
-          error: `Insufficient reserve wallet. Need ${reserveNeeded}, have ${reserveRemaining}. Must maintain minimum capacity for 11 players.` 
+          error: `Insufficient reserve wallet. Need ${reserveNeeded}, have ${reserveRemaining}.` 
         }, { status: 400 })
       }
       
