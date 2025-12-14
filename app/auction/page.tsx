@@ -96,6 +96,7 @@ export default function AuctionPage() {
   const [ty, setTy] = useState<number>(0)
   const [panning, setPanning] = useState<boolean>(false)
   const [last, setLast] = useState<{ x: number; y: number } | null>(null)
+  const [editingPoints, setEditingPoints] = useState<Record<string, number>>({})
 
   const notify = (message: string, type: 'success' | 'error' = 'success') => {
     setToast({ type, message })
@@ -493,7 +494,7 @@ export default function AuctionPage() {
                 </div>
                 <div>
                   <label className="block text-green-200 text-sm mb-1">Budget per Team</label>
-                  <input type="number" value={budgetInput} onChange={(e)=>setBudgetInput(parseInt(e.target.value||'0',10))} className="w-40 rounded-md border border-green-800 bg-green-900/40 text-white px-3 py-2" />
+                  <input type="number" value={budgetInput} onChange={(e)=>setBudgetInput(parseInt(e.target.value||'0',10))} onWheel={(e)=>e.currentTarget.blur()} className="w-40 rounded-md border border-green-800 bg-green-900/40 text-white px-3 py-2" />
                 </div>
                 <button onClick={ensureTeams} className="px-4 py-2 rounded-md bg-cricket-gold text-black font-semibold">Save</button>
               </div>
@@ -771,7 +772,7 @@ export default function AuctionPage() {
                 </div>
                 <div>
                   <label className="block text-green-200 text-sm mb-1">Points</label>
-                  <input type="number" value={sellPoints} onChange={(e)=>setSellPoints(e.target.value === '' ? '' : parseInt(e.target.value,10))} className="w-40 rounded-md border border-green-800 bg-green-900/40 text-white px-3 py-2" />
+                  <input type="number" value={sellPoints} onChange={(e)=>setSellPoints(e.target.value === '' ? '' : parseInt(e.target.value,10))} onWheel={(e)=>e.currentTarget.blur()} className="w-40 rounded-md border border-green-800 bg-green-900/40 text-white px-3 py-2" />
                   {sellTeam && sellPoints !== '' && (() => {
                     const summary = (state?.summary as any)?.[sellTeam]
                     if (!summary) return null
@@ -958,22 +959,34 @@ export default function AuctionPage() {
                         <div className="mb-3">
                           <div className="text-white font-medium mb-2">Auctioned Players</div>
                           <div className="grid gap-2">
-                            {(state?.teams[name]?.players || []).map((p, i) => (
-                              <div key={i} className="grid grid-cols-[1fr_auto_auto_auto] items-center gap-2 rounded border border-green-800 bg-green-900/40 px-3 py-2">
-                                <div className="text-green-100 truncate" title={p.fullName}>{p.fullName}</div>
-                                <input
-                                  type="number"
-                                  defaultValue={p.points}
-                                  className="w-24 rounded-md border border-green-800 bg-green-900/40 text-white px-2 py-1 text-sm"
-                                  onBlur={(e)=>{
-                                    const val = parseInt(e.currentTarget.value||'0',10);
-                                    if (!isNaN(val) && val !== p.points) updatePoints(name, p.fullName, val)
-                                  }}
-                                />
-                                <button onClick={()=>updatePoints(name, p.fullName, parseInt((document.activeElement as HTMLInputElement)?.value || String(p.points), 10) || p.points)} className="px-2 py-1 rounded-md bg-cricket-gold text-black text-sm">Save</button>
-                                <button onClick={()=>removePlayer(p.fullName)} className="px-2 py-1 rounded-md border border-red-700 text-red-300 text-sm">Delete</button>
-                              </div>
-                            ))}
+                            {(state?.teams[name]?.players || []).map((p, i) => {
+                              const key = `${name}-${p.fullName}`
+                              const currentValue = editingPoints[key] !== undefined ? editingPoints[key] : p.points
+                              return (
+                                <div key={i} className="grid grid-cols-[1fr_auto_auto_auto] items-center gap-2 rounded border border-green-800 bg-green-900/40 px-3 py-2">
+                                  <div className="text-green-100 truncate" title={p.fullName}>{p.fullName}</div>
+                                  <input
+                                    type="number"
+                                    value={currentValue}
+                                    onChange={(e)=>{
+                                      const val = e.target.value === '' ? 0 : parseInt(e.target.value, 10)
+                                      setEditingPoints(prev => ({...prev, [key]: val}))
+                                    }}
+                                    onWheel={(e)=>e.currentTarget.blur()}
+                                    className="w-24 rounded-md border border-green-800 bg-green-900/40 text-white px-2 py-1 text-sm"
+                                  />
+                                  <button onClick={()=>{
+                                    updatePoints(name, p.fullName, currentValue)
+                                    setEditingPoints(prev => {
+                                      const newState = {...prev}
+                                      delete newState[key]
+                                      return newState
+                                    })
+                                  }} className="px-2 py-1 rounded-md bg-cricket-gold text-black text-sm">Save</button>
+                                  <button onClick={()=>removePlayer(p.fullName)} className="px-2 py-1 rounded-md border border-red-700 text-red-300 text-sm">Delete</button>
+                                </div>
+                              )
+                            })}
                           </div>
                         </div>
                       )}
