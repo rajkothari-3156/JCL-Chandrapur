@@ -838,6 +838,8 @@ export default function AuctionPage() {
                   const spent = (s as any).spent + baseFee
                   const remaining = (s as any).budget - spent
                   const summary = s as any
+                  const retentionCount = (state?.retentions?.[name] || []).length
+                  const totalPlayers = summary.count + retentionCount
                   return (
                     <div key={name} className="rounded border border-green-800 p-3 bg-green-900/40">
                       <div className="text-white font-medium mb-2">{name}</div>
@@ -845,7 +847,7 @@ export default function AuctionPage() {
                       <div className="text-green-200 text-sm">Base Fee: {baseFee}</div>
                       <div className="text-green-200 text-sm">Spent: {spent}</div>
                       <div className="text-green-200 text-sm">Remaining: {remaining}</div>
-                      <div className="text-green-200 text-sm">Players: {summary.count}</div>
+                      <div className="text-green-200 text-sm">Players: {totalPlayers}</div>
                     </div>
                   )
                 })}
